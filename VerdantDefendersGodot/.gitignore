@@ -1,3 +1,22 @@
-# Godot 4+ specific ignores
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Editor swap files
+*~
+*.swp
+
+# Logs
+*.log
+
+# Godot export and build artifacts
+export/
+
+# Ignore Godot-specific metadata
 .godot/
 /android/
+godot/
+godot.zip
+
+# Godot script import metadata
+**/*.gd.uid
