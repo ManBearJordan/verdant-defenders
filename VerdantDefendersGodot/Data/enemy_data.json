@@ -1,0 +1,36 @@
+{
+  "basic": [
+    {
+      "id": "forest_sprite",
+      "name": "Forest Sprite",
+      "hp": 40,
+      "damage": 8,
+      "abilities": ["single_attack"]
+    }
+  ],
+  "minion": [
+    {
+      "id": "vine_guard",
+      "name": "Vine Guard",
+      "hp": 30,
+      "damage": 5,
+      "abilities": ["retaliate"]
+    },
+    {
+      "id": "seed_spore",
+      "name": "Seed Spore",
+      "hp": 15,
+      "damage": 5,
+      "abilities": ["explode_on_death"]
+    }
+  ],
+  "elite": [
+    {
+      "id": "thorn_beast",
+      "name": "Thorn Beast",
+      "hp": 80,
+      "damage": 15,
+      "abilities": ["aoe_every_3"]
+    }
+  ]
+}
