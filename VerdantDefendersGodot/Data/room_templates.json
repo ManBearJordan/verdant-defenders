@@ -1,0 +1,20 @@
+[
+  {
+    "type": "combat",
+    "enemies": [
+      {"tier": "basic", "count": 2}
+    ]
+  },
+  {
+    "type": "shop",
+    "enemies": []
+  },
+  {
+    "type": "event",
+    "enemies": []
+  },
+  {
+    "type": "treasure",
+    "enemies": []
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "common_price": 50,
+  "uncommon_price": 100,
+  "rare_price": 150,
+  "remove_price": 75,
+  "heal_price": 75,
+  "options_per_shop": 3
+}

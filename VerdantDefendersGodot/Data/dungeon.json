@@ -1,0 +1,8 @@
+{
+  "layers": [
+    {"name": "Growth", "rooms": 15, "boss": "Thorn King"},
+    {"name": "Decay", "rooms": 15, "boss": "Blight Colossus"},
+    {"name": "Elemental", "rooms": 15, "boss": "Storm Wyrm"},
+    {"name": "Final", "rooms": 15, "boss": "Verdant Overlord"}
+  ]
+}

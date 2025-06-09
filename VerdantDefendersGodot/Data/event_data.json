@@ -1,0 +1,10 @@
+[
+  {
+    "id": "mysterious_seed",
+    "text": "You find a glowing seed. What do you do?",
+    "choices": [
+      {"text": "Plant it", "effect": "gain_seed"},
+      {"text": "Sell it", "effect": "gain_gold"}
+    ]
+  }
+]
