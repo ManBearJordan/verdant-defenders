@@ -1,0 +1,178 @@
+--- VerdantDefendersGodot/scripts/GameController.gd
++++ VerdantDefendersGodot/scripts/GameController.gd
+@@ -1,175 +0,0 @@
+-extends Node2D
+-const CardDatabase = preload("res://scripts/CardDatabase.gd")
+-
+-# Handles deck setup and drawing cards to the hand
+-
+-const STARTER_DECK : Array[String] = [
+-    # Strikes
+-    "Thorn Lash", "Blossom Strike", "Vine Whip", "Bud Burst", "Petal Spray",
+-    "Root Smash", "Sap Shot", "Thorned Blade", "Gilded Bud", "Blooming Edge",
+-    # Tactics
+-    "Seed Shield", "Vine Trap", "Sprout Heal", "Fertile Soil", "Rooting Pulse",
+-    "Seedlings", "Thorn Wall", "Petal Veil", "Sap Shield", "Bud Barrier",
+-    # Rituals
+-    "Growth Ritual", "Garden Bloom", "Growth Aura", "Seed Surge", "Thorned Roots",
+-    # Filler cards
+-    "Seed Spark", "Nature's Whistle", "Elemental Flicker", "Rot Drop", "Arcane Echo"
+-]
+-
+-var deck : Array[String] = []
+-var discard : Array[String] = []
+-var hand_nodes := []
+-var gold : int = 100
+-var hp : int = 100
+-var max_hp : int = 100
+-
+-# Energy restored each turn
+-const STARTING_ENERGY : int = 3
+-var energy : int = STARTING_ENERGY
+-@onready var card_db = CardDatabase.new()
+-var enemy_data := {}
+-var room_number : int = 0
+-var state : String = "combat"
+-
+-const EnemyScene: PackedScene = preload("res://Scenes/Enemy.tscn")
+-
+-func _ready():
+-    randomize()
+-    deck = STARTER_DECK.duplicate()
+-    deck.shuffle()
+-    discard = []
+-    _load_enemy_data()
+-    spawn_combat_room()
+-
+-func start_turn():
+-    energy = STARTING_ENERGY
+-    _update_energy_label()
+-    var boss = _get_active_boss()
+-    if boss:
+-        boss._on_turn_start()
+-    draw_cards(5)
+-
+-func _get_active_boss():
+-    const Boss = preload("res://scripts/Boss.gd")
+-    for child in get_parent().get_children():
+-        if child is Boss:
+-            return child
+-    return null
+-
+-func draw_cards(count:int):
+-    for i in range(count):
+-        if deck.is_empty():
+-            _reshuffle_discard()
+-        if deck.is_empty():
+-            break
+-        var card_name = deck.pop_back()
+-        var card_ui = CardUI.instantiate()
+-        card_ui.setup(card_db.get_card(card_name))
+-        $Hand.add_child(card_ui)
+-        hand_nodes.append(card_ui)
+-    _update_deck_size_label()
+-
+-func _reshuffle_discard():
+-    if discard.size() > 0:
+-        deck = discard.duplicate()
+-        deck.shuffle()
+-        discard.clear()
+-        _update_deck_size_label()
+-
+-# Reference to CardUI scene
+-const CardUI: PackedScene = preload("res://Scenes/CardUI.tscn")
+-const EnemyContainerPath = "Enemies"
+-
+-func play_card(name:String):
+-    var data = card_db.get_card(name)
+-    if data == null:
+-        return
+-    if energy < data.cost:
+-        print("Not enough energy")
+-        return
+-    energy -= data.cost
+-    _update_energy_label()
+-    if data.damage > 0:
+-        _apply_damage_to_enemy(data.damage)
+-    if data.block > 0:
+-        print("Gain %d Block" % data.block)
+-    discard.append(name)
+-    for n in hand_nodes:
+-        if n.card_data.card_name == name:
+-            hand_nodes.erase(n)
+-            n.queue_free()
+-            break
+-
+-func end_turn():
+-    for n in hand_nodes:
+-        discard.append(n.card_data.card_name)
+-        n.queue_free()
+-    hand_nodes.clear()
+-    start_turn()
+-
+-func _update_energy_label():
+-    $EnergyLabel.text = "Energy: %d" % energy
+-
+-func _update_deck_size_label():
+-    $DeckSizeLabel.text = "Deck: %d" % deck.size()
+-
+-func _on_EndTurnButton_pressed():
+-    end_turn()
+-
+-func _apply_damage_to_enemy(dmg:int):
+-    var container = get_node(EnemyContainerPath)
+-    if container.get_child_count() > 0:
+-        var enemy = container.get_child(0)
+-        enemy.apply_damage(dmg)
+-
+-func buy_card(card_name:String):
+-    gold -= 50
+-    deck.append(card_name)
+-    _update_deck_size_label()
+-
+-func heal_player():
+-    hp = min(max_hp, hp + 20)
+-    print("Healed to %d" % hp)
+-
+-func remove_from_deck():
+-    if deck.size() > 0:
+-        var removed = deck.pop_back()
+-        print("Removed %s" % removed)
+-
+-func apply_event_effect(effect:String):
+-    match effect:
+-        "gain_seed":
+-            print("Gained a seed")
+-        "gain_gold":
+-            gold += 50
+-        _:
+-            pass
+-
+-func _load_enemy_data():
+-    var file = FileAccess.open("res://Data/enemy_data.json", FileAccess.READ)
+-    if file:
+-        enemy_data = JSON.parse_string(file.get_as_text())
+-
+-func spawn_combat_room():
+-    state = "combat"
+-    room_number += 1
+-    start_turn()
+-    var container = get_node(EnemyContainerPath)
+-    for child in container.get_children():
+-        child.queue_free()
+-    for i in range(2):
+-        var names = enemy_data.keys()
+-        var n = names[randi() % names.size()]
+-        var e = EnemyScene.instantiate()
+-        e.setup(n, enemy_data[n])
+-        container.add_child(e)
+-        e.position = Vector2(200 * i, 0)
+-        e.connect("enemy_died", Callable(self, "_on_enemy_died"))
+-
+-func _on_enemy_died(enemy):
+-    if get_node(EnemyContainerPath).get_child_count() == 0:
+-        _room_cleared()
+-
+-func _room_cleared():
+-    print("Room %d cleared" % room_number)
+-    spawn_combat_room()

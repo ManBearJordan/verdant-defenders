@@ -1,0 +1,6 @@
+{
+  "Forest Sprite": {"max_hp": 40, "damage": 8},
+  "Vine Guard": {"max_hp": 30, "damage": 5},
+  "Seed Spore": {"max_hp": 15, "damage": 5},
+  "Thorn Beast": {"max_hp": 80, "damage": 15}
+}
