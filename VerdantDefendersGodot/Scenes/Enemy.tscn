@@ -1,16 +1,20 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://bkm2t5h7p4r9x"]
+
+[ext_resource type="Script" path="res://scripts/Enemy.gd" id="1_34567"]
 
 [node name="Enemy" type="Node2D"]
-script = ExtResource( 1 )
+script = ExtResource("1_34567")
 
 [node name="Label" type="Label" parent="."]
+anchors_preset = 8
 anchor_left = 0.5
-anchor_right = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -20.0
+offset_right = 50.0
+offset_bottom = 20.0
+text = "Enemy"
 horizontal_alignment = 1
 vertical_alignment = 1
-position = Vector2(0, 0)
-text = "Enemy"
-
-[ext_resource path="res://scripts/Enemy.gd" type="Script" id=1]

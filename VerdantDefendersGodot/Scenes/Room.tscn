@@ -1,10 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://cm8x6y4z2k9n1"]
+
+[ext_resource type="Script" path="res://scripts/RoomController.gd" id="1_78901"]
 
 [node name="Room" type="Node2D"]
-script = ExtResource( 1 )
+script = ExtResource("1_78901")
 
 [node name="TileMap" type="TileMap" parent="."]
 
 [node name="EnemyContainer" type="Node2D" parent="."]
-
-[ext_resource path="res://scripts/RoomController.gd" type="Script" id=1]
+position = Vector2(0, 100)

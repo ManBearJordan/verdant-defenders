@@ -26,7 +26,7 @@ var max_hp : int = 100
 # Energy restored each turn
 const STARTING_ENERGY : int = 3
 var energy : int = STARTING_ENERGY
-onready var card_db = CardDatabase.new()
+@onready var card_db = CardDatabase.new()
 var enemy_data := {}
 var room_number : int = 0
 var state : String = "combat"
@@ -34,6 +34,7 @@ var state : String = "combat"
 const EnemyScene = preload("res://Scenes/Enemy.tscn")
 
 func _ready():
+    add_to_group("game_controller")  # Add to group for easy access
     randomize()
     deck = STARTER_DECK.duplicate()
     deck.shuffle()

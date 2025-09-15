@@ -11,10 +11,10 @@ func _ready():
 func spawn_random_enemy():
 	# Pick a random grid cell
 	var cell: Vector2i = Vector2i(randi() % map_size.x, randi() % map_size.y)
-	# Get the cell size (in pixels)
-	var cs: Vector2 = tilemap.get_cell_size().to_vector2()
+	# Use a standard tile size of 64x64 pixels
+	var tile_size: Vector2 = Vector2(64, 64)
 	# Compute the world position (top-left + half cell to center)
-	var world_pos: Vector2 = Vector2(cell.x * cs.x, cell.y * cs.y) + cs * 0.5
+	var world_pos: Vector2 = Vector2(cell.x * tile_size.x, cell.y * tile_size.y) + tile_size * 0.5
 
 	# Instance and place the enemy
 	var enemy = EnemyScene.instantiate()

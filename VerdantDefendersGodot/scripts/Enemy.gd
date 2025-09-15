@@ -8,7 +8,7 @@ var max_hp : int
 var hp : int
 var damage : int
 
-onready var label = $Label
+@onready var label = $Label
 
 func setup(_name:String, data:Dictionary):
     name = _name

@@ -1,14 +1,33 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://dz5y8k9n7m1p3"]
+
+[ext_resource type="Script" path="res://scripts/ShopController.gd" id="1_56789"]
 
 [node name="Shop" type="Control"]
-script = ExtResource( 1 )
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_56789")
 
-[node name="Cards" type="HBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
 
-[node name="HealButton" type="Button" parent="."]
-text = "Heal"
+[node name="Cards" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
 
-[node name="RemoveButton" type="Button" parent="."]
-text = "Remove"
+[node name="HealButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Heal (50 gold)"
 
-[ext_resource path="res://scripts/ShopController.gd" type="Script" id=1]
+[node name="RemoveButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Remove Card (75 gold)"
