@@ -17,3 +17,9 @@ export/
 /android/
 godot/
 godot.zip
+
+# Development artifacts - prevent future accumulation
+*.orig
+*.rej
+*.patch
+**/*.uid
