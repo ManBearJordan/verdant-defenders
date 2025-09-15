@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/CardUI.gd" id="1_23456"]
 
 [node name="CardUI" type="Panel"]
-custom_minimum_size = Vector2(100, 150)
+custom_minimum_size = Vector2(120, 180)
 script = ExtResource("1_23456")
 
 [node name="NameLabel" type="Label" parent="."]
@@ -11,10 +11,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = -30.0
+offset_left = 4.0
+offset_top = 25.0
+offset_right = -4.0
+offset_bottom = -4.0
 text = "Card"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="CostLabel" type="Label" parent="."]
 layout_mode = 0
@@ -23,3 +27,17 @@ offset_top = 4.0
 offset_right = 24.0
 offset_bottom = 20.0
 text = "0"
+add_theme_font_size_override("font_size", 16)
+
+[node name="TypeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 160.0
+offset_right = 116.0
+offset_bottom = 176.0
+text = "Type"
+horizontal_alignment = 1
+add_theme_font_size_override("font_size", 12)
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
