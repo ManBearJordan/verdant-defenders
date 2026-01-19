@@ -9,7 +9,7 @@ class_name GameFlowController
 # Scene Paths
 const SCENES = {
 	"MAIN_MENU": "res://Scenes/MainMenu.tscn",
-	"MAP": "res://Scenes/UI/Map/MapScreen.tscn",
+	"MAP": "res://Scenes/UI/Map/MapScene.tscn",
 	"COMBAT": "res://Scenes/UI/Combat/CombatScreen.tscn",
 	"REWARD": "res://Scenes/UI/Combat/RewardScreen.tscn",
 	"SHOP": "res://Scenes/UI/Shop/ShopScreen.tscn",

@@ -38,7 +38,7 @@ var cleared_nodes: Array = []
 # Navigation
 # Navigation
 const SCENE_MAIN_MENU = "res://Scenes/UI/MainMenu.tscn"
-const SCENE_MAP = "res://Scenes/UI/Map/MapScreen.tscn"
+const SCENE_MAP = "res://Scenes/UI/Map/MapScene.tscn"
 const SCENE_BATTLE = "res://Scenes/UI/Combat/CombatScreen.tscn"
 const SCENE_REWARD = "res://Scenes/UI/Combat/RewardScreen.tscn"
 const SCENE_SHOP = "res://Scenes/UI/Shop/ShopScreen.tscn"

@@ -40,6 +40,7 @@ MetaPersistence="*res://scripts/MetaPersistence.gd"
 TelemetrySystem="*res://scripts/TelemetrySystem.gd"
 FlowController="*res://scripts/FlowController.gd"
 RunController="*res://scripts/RunController.gd"
+MapController="*res://scripts/MapController.gd"
 
 [display]
 
