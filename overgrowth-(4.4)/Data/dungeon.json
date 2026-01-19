@@ -1,0 +1,19 @@
+{
+  "layers": [
+    {
+      "id": "grove",
+      "name": "Whispering Grove",
+      "rooms": [
+        "fight",
+        "event",
+        "fight",
+        "shop",
+        "fight",
+        "elite",
+        "event",
+        "fight",
+        "boss"
+      ]
+    }
+  ]
+}

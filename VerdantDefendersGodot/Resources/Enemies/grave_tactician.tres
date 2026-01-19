@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_eianc"]
+
+[resource]
+script = ExtResource("1_eianc")
+id = "grave_tactician"
+display_name = "Grave Tactician"
+texture_path = ""
+max_hp = 50
+defense = 0
+tier = "elite"
+pool = "decay"
+archetype_counter = ""
+intents = Array[String](["Attack 8", "Buff (+6 Block, +1 Str)", "Attack 8 + Apply Weak"])
+special_ability = "Adaptive Guard: First time each turn you play Strike/Tactic/Ritual, he gains 6 Block."
+logic_meta = {}

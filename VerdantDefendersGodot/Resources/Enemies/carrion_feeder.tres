@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_1fkps"]
+
+[resource]
+script = ExtResource("1_1fkps")
+id = "carrion_feeder"
+display_name = "Carrion Feeder"
+texture_path = ""
+max_hp = 210
+defense = 0
+tier = "boss"
+pool = "decay"
+archetype_counter = ""
+intents = Array[String](["Attack 8 x 2", "Debuff (3 Vulnerable)", "Attack 20 + Heal"])
+special_ability = "Reflects 2 damage the FIRST time it takes Poison damage per turn."
+logic_meta = {}

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_evaxa"]
+
+[resource]
+script = ExtResource("1_evaxa")
+id = "pestilence_storm"
+display_name = "Pestilence Storm"
+art_id = "pestilence_storm"
+type = "Strike"
+cost = 3
+damage = 6
+block = 0
+effect_text = "Deal 6× damage."
+rarity = "common"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {}

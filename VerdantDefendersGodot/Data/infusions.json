@@ -1,0 +1,32 @@
+[
+    {
+        "id": "vitality_extract",
+        "name": "Vitality Extract",
+        "description": "Heal 15 HP.",
+        "rarity": "common",
+        "target_type": "player",
+        "effects": {
+            "heal": 15
+        }
+    },
+    {
+        "id": "barkskin_oil",
+        "name": "Barkskin Oil",
+        "description": "Gain 10 Block.",
+        "rarity": "common",
+        "target_type": "player",
+        "effects": {
+            "block": 10
+        }
+    },
+    {
+        "id": "liquid_flame",
+        "name": "Liquid Flame",
+        "description": "Deal 10 damage to a random enemy",
+        "rarity": "common",
+        "target_type": "enemy_random",
+        "effects": {
+            "damage": 10
+        }
+    }
+]

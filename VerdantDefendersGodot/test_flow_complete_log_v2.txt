@@ -1,0 +1,54 @@
+﻿Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+Test: Canonical Scene Flow
+godot.cmd : SCRIPT 
+ERROR: Parse Error: 
+Function 
+"_start_run()" not 
+found in base self.
+At line:1 char:1
++ & './godot.cmd' 
+--headless --script te
+sts/test_flow_complete
+.gd 2>&1  ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (SCRIPT ERR   
+ OR: P...d in base    
+ self.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+   at: 
+GDScript::reload (res:
+//scripts/MainMenu.gd:
+75)
+SCRIPT ERROR: Parse 
+Error: Identifier 
+"class_id" not 
+declared in the 
+current scope.
+   at: 
+GDScript::reload (res:
+//scripts/MainMenu.gd:
+112)
+ERROR: Failed to load 
+script "res://scripts/
+MainMenu.gd" with 
+error "Parse error".
+   at: load (modules/g
+dscript/gdscript.cpp:3
+022)
+TelemetrySystem V2 Ready. Logging DISABLED.
+Current Scene: MainMenu
+Action: Start Run
+FAIL: No _start_run method
+Current Scene: MainMenu
+FAIL: Expected MapScreen, got MainMenu
+Flow State: 0

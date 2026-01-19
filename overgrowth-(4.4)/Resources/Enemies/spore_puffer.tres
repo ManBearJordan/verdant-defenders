@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_2ic3e"]
+
+[resource]
+script = ExtResource("1_2ic3e")
+id = "spore_puffer"
+display_name = "Spore Puffer"
+texture_path = ""
+max_hp = 18
+defense = 0
+tier = "normal"
+pool = "growth"
+intents = Array[String](["Debuff (2 Poison)", "Attack 4", "Debuff (2 Poison)", "Rest"])
+special_ability = "On death, apply +1 Poison to all enemies"
+logic_meta = {}

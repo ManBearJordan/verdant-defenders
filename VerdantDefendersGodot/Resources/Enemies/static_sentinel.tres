@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_b1fgy"]
+
+[resource]
+script = ExtResource("1_b1fgy")
+id = "static_sentinel"
+display_name = "Static Sentinel"
+texture_path = ""
+max_hp = 54
+defense = 0
+tier = "elite"
+pool = "decay"
+archetype_counter = ""
+intents = Array[String](["Block 10 + Spikes 2", "Block 15", "Attack 8"])
+special_ability = "Static Charge: Each card played adds 1 Charge. At 6 -> Deals 18 Dmg (Ignores Dodge) + Reset."
+logic_meta = {}

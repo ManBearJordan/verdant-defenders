@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_ahe05"]
+
+[resource]
+script = ExtResource("1_ahe05")
+id = "e_elemental_ward"
+display_name = "Elemental Ward"
+art_id = "e_elemental_ward"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "uncommon"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"else": [{
+"amount": 6.0,
+"type": "gain_block"
+}],
+"kind": "ritual",
+"min": 1.0,
+"then": [{
+"amount": 10.0,
+"type": "gain_block"
+}],
+"type": "if_played_kind_this_turn"
+}]
+}

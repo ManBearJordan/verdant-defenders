@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_7ix3h"]
+
+[resource]
+script = ExtResource("1_7ix3h")
+id = "sproutling"
+display_name = "Sproutling"
+texture_path = ""
+max_hp = 20
+defense = 0
+tier = "normal"
+pool = "growth"
+intents = Array[String](["Attack 6", "Attack 6", "Buff (+2 Block, Gain Thorns 1)"])
+special_ability = "Gains Thorns 1 when buffing"
+logic_meta = {}

@@ -1,0 +1,147 @@
+[gd_scene load_steps=4 format=3 uid="uid://b52nu3ma8q0b"]
+
+[ext_resource type="Script" uid="uid://b8g3su2xxtm8x" path="res://scripts/CardView.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://b3wftln2bbvmm" path="res://Art/cards/frame_common.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dsvvmyiapy0ho" path="res://Art/cards/cost_orb.png" id="3"]
+
+[node name="CardView" type="Control"]
+custom_minimum_size = Vector2(240, 340)
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 1
+script = ExtResource("1")
+
+[node name="Shadow" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 236.0
+offset_bottom = 336.0
+color = Color(0, 0, 0, 0.407843)
+
+[node name="Frame" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ArtContainer" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 45.0
+offset_right = 100.0
+offset_bottom = 185.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="Art" type="TextureRect" parent="ArtContainer"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CostOrb" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 68.0
+offset_bottom = 68.0
+mouse_filter = 2
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CostLabel" type="Label" parent="CostOrb"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleBackground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 30.0
+offset_top = 8.0
+offset_right = -15.0
+offset_bottom = 38.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.133333, 0.133333, 0.133333, 0.705882)
+
+[node name="NameLabel" type="Label" parent="TitleBackground"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 18
+text = "Card Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="DescContainer" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -140.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Effect" type="RichTextLabel" parent="DescContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[center]Effect description goes here.[/center]"
+fit_content = true
+scroll_active = false
+
+[node name="ClickCatcher" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+mouse_filter = 0
+flat = true

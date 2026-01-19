@@ -1,0 +1,57 @@
+﻿Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+Test: UI Architecture Separation V2
+TelemetrySystem V2 Ready. Logging DISABLED.
+GameUI: Force layout refresh complete.
+Initial Mode: 4
+Triggering Map Mode...
+SUCCESS: ViewMode is MAP
+SUCCESS: Header Hidden in Map Mode
+SUCCESS: Enemies Hidden in Map Mode
+Triggering Combat Mode...
+SUCCESS: ViewMode is COMBAT
+SUCCESS: Header Visible in Combat Mode
+godot.cmd : WARNING: 
+1 RID of type 
+"CanvasItem" was 
+leaked.
+At line:1 char:1
++ & './godot.cmd' 
+--headless --script te
+sts/test_ui_vis_v2.gd 
+2>&1 | Ou ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (WARNING: 1   
+  RID ...em" was l    
+eaked.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+   at: _free_rids (ser
+vers/rendering/rendere
+r_canvas_cull.cpp:2677
+)
+ERROR: 2 RID 
+allocations of type 'P
+N13RendererDummy14Text
+ureStorage12DummyTextu
+reE' were leaked at 
+exit.
+ERROR: 1 RID 
+allocations of type 'P
+N18TextServerAdvanced1
+2FontAdvancedE' were 
+leaked at exit.
+WARNING: ObjectDB 
+instances leaked at 
+exit (run with 
+--verbose for 
+details).
+   at: cleanup (core/o
+bject/object.cpp:2378)

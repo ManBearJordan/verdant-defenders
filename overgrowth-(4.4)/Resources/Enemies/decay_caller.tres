@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_3b16o"]
+
+[resource]
+script = ExtResource("1_3b16o")
+id = "decay_caller"
+display_name = "Decay Caller"
+texture_path = ""
+max_hp = 20
+defense = 0
+tier = "normal"
+pool = "decay"
+intents = Array[String](["Buff Allies (+1 Decay on hits)", "Rest", "Buff Allies", "Attack 4"])
+special_ability = "Allies deal +1 Decay on hit while buff is active"
+logic_meta = {}

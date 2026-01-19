@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_moxyn"]
+
+[resource]
+script = ExtResource("1_moxyn")
+id = "sprout_sentry"
+display_name = "Sprout Sentry"
+art_id = "sprout_sentry"
+type = "Tactic"
+cost = 2
+damage = 0
+block = 0
+effect_text = "Summon a Seedling: at end of turn, heal 2 HP."
+rarity = "uncommon"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_37nrq"]
+
+[resource]
+script = ExtResource("1_37nrq")
+id = "barkshield"
+display_name = "Barkshield"
+texture_path = ""
+max_hp = 30
+defense = 0
+tier = "normal"
+pool = "growth"
+archetype_counter = ""
+intents = Array[String](["Block 12", "Attack 8", "Block 12", "Attack 8"])
+special_ability = "Gains +3 Block when taking unblocked damage"
+logic_meta = {}

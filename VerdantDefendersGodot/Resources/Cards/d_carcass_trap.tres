@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_ko6aa"]
+
+[resource]
+script = ExtResource("1_ko6aa")
+id = "d_carcass_trap"
+display_name = "Carcass Trap"
+art_id = "d_carcass_trap"
+type = "Strike"
+cost = 1
+damage = 0
+block = 0
+effect_text = ""
+rarity = "uncommon"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"effects": [{
+"amount": 6.0,
+"type": "deal_damage_to_attacker"
+}, {
+"min": 1.0,
+"status": "poison",
+"then": [{
+"damage_per_removed": 2.0,
+"max": 3.0,
+"status": "poison",
+"type": "remove_status_attacker_up_to_then_deal_damage_per_removed"
+}],
+"type": "if_attacker_has_status"
+}],
+"trigger": "on_enemy_attack_next_turn_first",
+"type": "set_trap"
+}]
+}

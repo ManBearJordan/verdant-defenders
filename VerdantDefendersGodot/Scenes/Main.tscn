@@ -1,43 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://22n36bcevtbg"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" uid="uid://5ddy0paeh2on" path="res://scripts/DungeonController.gd" id="1"]
-[ext_resource type="Script" uid="uid://d3po6tfxe8wws" path="res://scripts/GameController.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/GameFlowController.gd" id="1"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node"]
 script = ExtResource("1")
 
-[node name="Game" type="Node2D" parent="."]
-script = ExtResource("2")
-
-[node name="Hand" type="Control" parent="Game"]
-layout_mode = 3
-anchors_preset = 13
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_top = 400.0
-offset_bottom = 400.0
-
-[node name="Enemies" type="Node2D" parent="Game"]
-position = Vector2(0, 200)
-
-[node name="DeckSizeLabel" type="Label" parent="Game"]
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 10.0
-offset_bottom = 10.0
-text = "Deck: 0"
-
-[node name="EnergyLabel" type="Label" parent="Game"]
-offset_left = 10.0
-offset_top = 30.0
-offset_right = 10.0
-offset_bottom = 30.0
-text = "Energy: 3"
-
-[node name="EndTurnButton" type="Button" parent="Game"]
-offset_left = 10.0
-offset_top = 60.0
-offset_right = 10.0
-offset_bottom = 60.0
-text = "End Turn"
+[node name="ScreenLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+layer = 1

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_4d6ja"]
+
+[resource]
+script = ExtResource("1_4d6ja")
+id = "fungus_flail"
+display_name = "Fungus Flail"
+art_id = "fungus_flail"
+type = "Strike"
+cost = 2
+damage = 6
+block = 0
+effect_text = "Deal twice; heal 3 HP."
+rarity = "common"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {}

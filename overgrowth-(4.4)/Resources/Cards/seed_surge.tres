@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_erbd5"]
+
+[resource]
+script = ExtResource("1_erbd5")
+id = "seed_surge"
+display_name = "Seed Surge"
+art_id = "seed_surge"
+type = "Ritual"
+cost = 3
+damage = 0
+block = 0
+effect_text = "At start of each turn, gain 1 Energy."
+rarity = "rare"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_3wob5"]
+
+[resource]
+script = ExtResource("1_3wob5")
+id = "d_putrid_cleave"
+display_name = "Putrid Cleave"
+art_id = "d_putrid_cleave"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "common"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 6.0,
+"type": "deal_damage_all_enemies"
+}, {
+"amount": 1.0,
+"status": "poison",
+"type": "apply_status_all_enemies"
+}, {
+"min": 3.0,
+"status": "poison",
+"then": [{
+"max_each": 1.0,
+"max_total": 999.0,
+"status": "poison",
+"type": "remove_status_all_enemies_up_to"
+}, {
+"amount": 8.0,
+"type": "gain_block"
+}],
+"type": "if_any_enemy_has_status"
+}]
+}

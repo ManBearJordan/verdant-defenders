@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_klcfi"]
+
+[resource]
+script = ExtResource("1_klcfi")
+id = "d_carrion_cage"
+display_name = "Carrion Cage"
+art_id = "d_carrion_cage"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "uncommon"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"effects": [{
+"amount": 10.0,
+"type": "deal_damage_to_attacker"
+}, {
+"amount": 2.0,
+"status": "poison",
+"type": "apply_status_to_attacker"
+}],
+"trigger": "on_enemy_attack_next_turn_first",
+"type": "set_trap"
+}]
+}

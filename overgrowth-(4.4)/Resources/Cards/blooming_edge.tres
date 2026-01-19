@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_chy08"]
+
+[resource]
+script = ExtResource("1_chy08")
+id = "blooming_edge"
+display_name = "Blooming Edge"
+art_id = "blooming_edge"
+type = "Strike"
+cost = 2
+damage = 6
+block = 0
+effect_text = "Apply 1 Vulnerable."
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

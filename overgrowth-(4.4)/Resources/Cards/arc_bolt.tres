@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_b82o7"]
+
+[resource]
+script = ExtResource("1_b82o7")
+id = "arc_bolt"
+display_name = "Arc Bolt"
+art_id = "arc_bolt"
+type = "Strike"
+cost = 2
+damage = 6
+block = 0
+effect_text = "Pierces Block."
+rarity = "common"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {}

@@ -3,12 +3,14 @@
     {
       "id": "ember_shard",
       "name": "Ember Shard",
-      "rarity": "common",
-      "tier": 1,
-      "text": "Whenever you play 2 Attacks in a single turn, gain 1 Energy.",
+      "rarity": "rare",
+      "tier": 2,
+      "text": "The first card you play each turn is played twice. Max Hand Size -2.",
       "trigger": "card_played",
-      "condition": { "type": "attack", "every": 2, "count_scope": "turn" },
-      "effect": { "type": "gain_energy", "amount": 1 }
+      "effect": {
+        "type": "double_first_card",
+        "hand_size_malus": 2
+      }
     },
     {
       "id": "focused_lens",
@@ -17,8 +19,15 @@
       "tier": 1,
       "text": "Draw 1 extra card the turn you play 3 Skills.",
       "trigger": "card_played",
-      "condition": { "type": "skill", "every": 3, "count_scope": "turn" },
-      "effect": { "type": "draw_cards", "count": 1 }
+      "condition": {
+        "type": "skill",
+        "every": 3,
+        "count_scope": "turn"
+      },
+      "effect": {
+        "type": "draw_cards",
+        "count": 1
+      }
     },
     {
       "id": "quickstep_emblem",
@@ -27,8 +36,14 @@
       "tier": 1,
       "text": "The first time you play a Skill each turn, gain 3 Block.",
       "trigger": "card_played",
-      "condition": { "type": "skill", "first_of_turn": true },
-      "effect": { "type": "gain_block", "amount": 3 }
+      "condition": {
+        "type": "skill",
+        "first_of_turn": true
+      },
+      "effect": {
+        "type": "gain_block",
+        "amount": 3
+      }
     },
     {
       "id": "vital_coil",
@@ -37,17 +52,23 @@
       "tier": 1,
       "text": "Whenever you gain Block, heal 2 HP.",
       "trigger": "gain_block",
-      "effect": { "type": "heal", "amount": 2 }
+      "effect": {
+        "type": "heal",
+        "amount": 2
+      }
     },
     {
       "id": "ancient_spark",
       "name": "Ancient Spark",
-      "rarity": "common",
-      "tier": 1,
-      "text": "Whenever you play an Attack, deal 1 damage to a random enemy.",
-      "trigger": "card_played",
-      "condition": { "type": "attack" },
-      "effect": { "type": "deal_random", "amount": 1 }
+      "rarity": "rare",
+      "tier": 2,
+      "text": "Whenever you apply Poison, apply +2 Bonus Poison. Start combat with 5 Poison.",
+      "trigger": "apply_status",
+      "effect": {
+        "type": "poison_bonus",
+        "amount": 2,
+        "start_combat_self_poison": 5
+      }
     },
     {
       "id": "resonant_heart",
@@ -56,8 +77,13 @@
       "tier": 2,
       "text": "At the end of your turn, if you played no Attacks, gain 1 Strength.",
       "trigger": "turn_end",
-      "condition": { "no_attacks_this_turn": true },
-      "effect": { "type": "gain_strength", "stacks": 1 }
+      "condition": {
+        "no_attacks_this_turn": true
+      },
+      "effect": {
+        "type": "gain_strength",
+        "stacks": 1
+      }
     },
     {
       "id": "ironbound_sigil",
@@ -66,7 +92,10 @@
       "tier": 2,
       "text": "At the start of each combat, gain 5 Block.",
       "trigger": "combat_start",
-      "effect": { "type": "gain_block", "amount": 5 }
+      "effect": {
+        "type": "gain_block",
+        "amount": 5
+      }
     },
     {
       "id": "shard_of_insight",
@@ -75,8 +104,13 @@
       "tier": 2,
       "text": "If you draw zero cards during your draw phase, draw 1 additional card.",
       "trigger": "turn_start",
-      "condition": { "drawn_in_phase": 0 },
-      "effect": { "type": "draw_cards", "count": 1 }
+      "condition": {
+        "drawn_in_phase": 0
+      },
+      "effect": {
+        "type": "draw_cards",
+        "count": 1
+      }
     },
     {
       "id": "greeds_edge",
@@ -85,8 +119,13 @@
       "tier": 2,
       "text": "When you end a turn having spent no Energy, gain 5 Gold.",
       "trigger": "turn_end",
-      "condition": { "energy_spent_this_turn": 0 },
-      "effect": { "type": "gain_gold", "amount": 5 }
+      "condition": {
+        "energy_spent_this_turn": 0
+      },
+      "effect": {
+        "type": "gain_gold",
+        "amount": 5
+      }
     },
     {
       "id": "mana_tap",
@@ -95,7 +134,10 @@
       "tier": 2,
       "text": "Whenever you spend Energy, gain 1 Gold per Energy spent.",
       "trigger": "spend_energy",
-      "effect": { "type": "gain_gold", "per_energy": 1 }
+      "effect": {
+        "type": "gain_gold",
+        "per_energy": 1
+      }
     },
     {
       "id": "catalyst_of_wrath",
@@ -104,8 +146,14 @@
       "tier": 3,
       "text": "Once per combat, upgrade a random card in your hand.",
       "trigger": "combat_start",
-      "limit": { "once_per_combat": true },
-      "effect": { "type": "upgrade_random_in_pile", "pile": "hand", "count": 1 }
+      "limit": {
+        "once_per_combat": true
+      },
+      "effect": {
+        "type": "upgrade_random_in_pile",
+        "pile": "hand",
+        "count": 1
+      }
     },
     {
       "id": "aegis_of_the_ancients",
@@ -114,7 +162,10 @@
       "tier": 3,
       "text": "Whenever you lose Block, gain 2 Strength.",
       "trigger": "block_lost",
-      "effect": { "type": "gain_strength", "stacks": 2 }
+      "effect": {
+        "type": "gain_strength",
+        "stacks": 2
+      }
     },
     {
       "id": "echo_of_fortune",
@@ -123,7 +174,9 @@
       "tier": 3,
       "text": "After any combat victory, remove one card from your deck and add a new card of the same rarity.",
       "trigger": "victory",
-      "effect": { "type": "deck_edit_same_rarity" }
+      "effect": {
+        "type": "deck_edit_same_rarity"
+      }
     },
     {
       "id": "reverberating_echo",
@@ -132,8 +185,13 @@
       "tier": 3,
       "text": "Whenever you play an upgraded card, gain 1 Energy.",
       "trigger": "card_played",
-      "condition": { "upgraded": true },
-      "effect": { "type": "gain_energy", "amount": 1 }
+      "condition": {
+        "upgraded": true
+      },
+      "effect": {
+        "type": "gain_energy",
+        "amount": 1
+      }
     },
     {
       "id": "battleforged_crest",
@@ -142,7 +200,11 @@
       "tier": 3,
       "text": "At the start of each combat, upgrade a random card in your draw pile.",
       "trigger": "combat_start",
-      "effect": { "type": "upgrade_random_in_pile", "pile": "draw", "count": 1 }
+      "effect": {
+        "type": "upgrade_random_in_pile",
+        "pile": "draw",
+        "count": 1
+      }
     },
     {
       "id": "avatars_core",
@@ -151,7 +213,10 @@
       "tier": 4,
       "text": "Start each combat with 2 additional Energy.",
       "trigger": "combat_start",
-      "effect": { "type": "gain_energy", "amount": 2 }
+      "effect": {
+        "type": "gain_energy",
+        "amount": 2
+      }
     },
     {
       "id": "worldbreaker_glyph",
@@ -160,8 +225,14 @@
       "tier": 4,
       "text": "Whenever you play your tenth card in a combat, immediately gain 3 Energy.",
       "trigger": "card_played",
-      "condition": { "every": 10, "count_scope": "combat" },
-      "effect": { "type": "gain_energy", "amount": 3 }
+      "condition": {
+        "every": 10,
+        "count_scope": "combat"
+      },
+      "effect": {
+        "type": "gain_energy",
+        "amount": 3
+      }
     },
     {
       "id": "chronomancers_pendant",
@@ -170,9 +241,16 @@
       "tier": 4,
       "text": "Once per combat, when you play your last card for the turn, refill your Energy to full.",
       "trigger": "card_played",
-      "condition": { "energy_exact": 0, "last_of_turn": true },
-      "limit": { "once_per_combat": true },
-      "effect": { "type": "refill_energy" }
+      "condition": {
+        "energy_exact": 0,
+        "last_of_turn": true
+      },
+      "limit": {
+        "once_per_combat": true
+      },
+      "effect": {
+        "type": "refill_energy"
+      }
     },
     {
       "id": "soul_nexus",
@@ -181,8 +259,13 @@
       "tier": 4,
       "text": "Whenever you play a Skill, gain 1 temporary HP.",
       "trigger": "card_played",
-      "condition": { "type": "skill" },
-      "effect": { "type": "temp_hp", "amount": 1 }
+      "condition": {
+        "type": "skill"
+      },
+      "effect": {
+        "type": "temp_hp",
+        "amount": 1
+      }
     },
     {
       "id": "sigil_of_renewal",
@@ -191,7 +274,10 @@
       "tier": 4,
       "text": "At the start of each combat, heal 15% of your maximum HP.",
       "trigger": "combat_start",
-      "effect": { "type": "heal_percent", "percent": 15 }
+      "effect": {
+        "type": "heal_percent",
+        "percent": 15
+      }
     }
   ]
 }

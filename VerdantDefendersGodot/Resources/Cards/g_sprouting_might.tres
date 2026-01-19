@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_kgiv2"]
+
+[resource]
+script = ExtResource("1_kgiv2")
+id = "g_sprouting_might"
+display_name = "Sprouting Might"
+art_id = "g_sprouting_might"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "if_last_turn_strikes_ge_3_first_strike_cost_0",
+"type": "set_ritual"
+}]
+}

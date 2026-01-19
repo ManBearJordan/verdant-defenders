@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_ygx5j"]
+
+[resource]
+script = ExtResource("1_ygx5j")
+id = "purifier_construct"
+display_name = "Purifier Construct"
+texture_path = ""
+max_hp = 220
+defense = 0
+tier = "boss"
+pool = "growth"
+archetype_counter = ""
+intents = Array[String](["Attack 6", "Debuff (Cleanse Player Poison)", "Attack 10 + Block 10"])
+special_ability = "Every 4 turns: Cleanses ALL Poison from self. Takes reduced DoT."
+logic_meta = {}

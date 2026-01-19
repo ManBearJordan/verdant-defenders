@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_34bpx"]
+
+[resource]
+script = ExtResource("1_34bpx")
+id = "e_gale_slash"
+display_name = "Gale Slash"
+art_id = "e_gale_slash"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "common"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 10.0,
+"type": "deal_damage"
+}, {
+"min": 1.0,
+"status": "chill",
+"then": [{
+"amount": 1.0,
+"type": "gain_block"
+}],
+"type": "if_any_enemy_has_status"
+}]
+}

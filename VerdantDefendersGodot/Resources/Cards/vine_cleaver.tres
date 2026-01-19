@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_ll5qy"]
+
+[resource]
+script = ExtResource("1_ll5qy")
+id = "vine_cleaver"
+display_name = "Vine Cleaver"
+art_id = "vine_cleaver"
+type = "Strike"
+cost = 2
+damage = 9
+block = 0
+effect_text = "Deal 9 damage to all enemies if you have ≥4 Seeds."
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

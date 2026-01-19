@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[node name="RunSummary" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource( 1 )
+
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 0.2
+anchor_right = 0.8
+anchor_top = 0.1
+anchor_bottom = 0.9
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+spacing = 20
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+text = "Run Summary"
+align = 1
+valign = 1
+
+[node name="Stats" type="RichTextLabel" parent="Panel/VBox"]
+custom_minimum_size = Vector2(0, 300)
+scroll_active = true
+scroll_following = true
+
+[node name="ReturnButton" type="Button" parent="Panel/VBox"]
+text = "Return to Main Menu"

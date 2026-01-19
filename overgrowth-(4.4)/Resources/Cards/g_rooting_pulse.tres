@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_mwogf"]
+
+[resource]
+script = ExtResource("1_mwogf")
+id = "g_rooting_pulse"
+display_name = "Rooting Pulse"
+art_id = "g_rooting_pulse"
+type = "Strike"
+cost = 1
+damage = 0
+block = 0
+effect_text = ""
+rarity = "uncommon"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 1.0,
+"status": "fragile",
+"type": "apply_status_all_enemies"
+}]
+}

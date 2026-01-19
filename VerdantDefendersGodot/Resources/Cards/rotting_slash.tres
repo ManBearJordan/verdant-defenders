@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_1rs7c"]
+
+[resource]
+script = ExtResource("1_1rs7c")
+id = "rotting_slash"
+display_name = "Rotting Slash"
+art_id = "rotting_slash"
+type = "Strike"
+cost = 1
+damage = 4
+block = 0
+effect_text = "Deal twice; if target is Poisoned, +2 damage."
+rarity = "common"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {}

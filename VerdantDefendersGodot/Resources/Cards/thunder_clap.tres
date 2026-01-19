@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_7rh7x"]
+
+[resource]
+script = ExtResource("1_7rh7x")
+id = "thunder_clap"
+display_name = "Thunder Clap"
+art_id = "thunder_clap"
+type = "Strike"
+cost = 3
+damage = 12
+block = 0
+effect_text = "Deal to all enemies."
+rarity = "common"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {}

@@ -1,0 +1,148 @@
+[
+    {
+        "name": "World Reclaimer",
+        "phases": [
+            {
+                "id": 1,
+                "from_hp_pct": 100,
+                "to_hp_pct": 0,
+                "moves": [
+                    {
+                        "id": "wr_attack_common",
+                        "intent": "attack",
+                        "damage": 16,
+                        "weight": 1,
+                        "cooldown": 0
+                    },
+                    {
+                        "id": "wr_defend_sap",
+                        "intent": "block",
+                        "value": 12,
+                        "effects": [
+                            {
+                                "type": "gain_block",
+                                "amount": 12
+                            }
+                        ],
+                        "apply": [
+                            {
+                                "status": "sap",
+                                "amount": 1,
+                                "target": "player"
+                            }
+                        ],
+                        "weight": 1,
+                        "cooldown": 0
+                    },
+                    {
+                        "id": "wr_spike",
+                        "intent": "attack",
+                        "damage": 26,
+                        "weight": 1,
+                        "cooldown": 2
+                    }
+                ],
+                "mechanics": [
+                    {
+                        "timing": "start_of_boss_turn",
+                        "logic": {
+                            "type": "scripted_check",
+                            "script": "seed_harvest"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Eternal Arbiter",
+        "phases": [
+            {
+                "id": 1,
+                "from_hp_pct": 100,
+                "to_hp_pct": 0,
+                "moves": [
+                    {
+                        "id": "ea_attack_sap",
+                        "intent": "attack",
+                        "damage": 15,
+                        "weight": 1,
+                        "apply": [
+                            {
+                                "status": "sap",
+                                "amount": 1,
+                                "target": "player"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "ea_multi_hit",
+                        "intent": "attack",
+                        "damage": 10,
+                        "hits": 2,
+                        "weight": 1
+                    },
+                    {
+                        "id": "ea_spike",
+                        "intent": "attack",
+                        "damage": 28,
+                        "weight": 1,
+                        "cooldown": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Chronoshard",
+        "phases": [
+            {
+                "id": 1,
+                "from_hp_pct": 100,
+                "to_hp_pct": 0,
+                "moves": [
+                    {
+                        "id": "cs_attack_common",
+                        "intent": "attack",
+                        "damage": 14,
+                        "weight": 1
+                    },
+                    {
+                        "id": "cs_setup",
+                        "intent": "block",
+                        "value": 10,
+                        "effects": [
+                            {
+                                "type": "gain_block",
+                                "amount": 10
+                            }
+                        ],
+                        "apply": [
+                            {
+                                "status": "shock",
+                                "amount": 2,
+                                "target": "player"
+                            }
+                        ],
+                        "weight": 1
+                    },
+                    {
+                        "id": "cs_spike",
+                        "intent": "attack",
+                        "damage": 24,
+                        "weight": 1,
+                        "cooldown": 2
+                    },
+                    {
+                        "id": "cs_special_aoe",
+                        "intent": "attack",
+                        "damage": 9,
+                        "weight": 100,
+                        "cooldown": 4,
+                        "is_special": true
+                    }
+                ]
+            }
+        ]
+    }
+]

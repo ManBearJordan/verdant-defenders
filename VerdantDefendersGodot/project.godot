@@ -10,9 +10,9 @@ config_version=5
 
 [application]
 
-config/name="VerdantDefendersGodot"
-run/main_scene="res://Scenes/StartScreen.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/name="Overgrowth"
+run/main_scene="res://Scenes/Main.tscn"
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -31,6 +31,15 @@ TargetingSystem="*res://scripts/TargetingSystem.gd"
 ArtRegistry="*res://scripts/ArtRegistry.gd"
 RoomDeck="*res://scripts/RoomDeck.gd"
 SigilSystem="*res://scripts/SigilSystem.gd"
+EffectSystem="*res://scripts/EffectSystem.gd"
+RelicSystem="*res://scripts/RelicSystem.gd"
+InfusionSystem="*res://scripts/InfusionSystem.gd"
+ThemeLoader="*res://scripts/ThemeLoader.gd"
+RunPersistence="*res://scripts/RunPersistence.gd"
+MetaPersistence="*res://scripts/MetaPersistence.gd"
+TelemetrySystem="*res://scripts/TelemetrySystem.gd"
+FlowController="*res://scripts/FlowController.gd"
+RunController="*res://scripts/RunController.gd"
 
 [display]
 

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_xk57v"]
+
+[resource]
+script = ExtResource("1_xk57v")
+id = "thorned_blade"
+display_name = "Thorned Blade"
+art_id = "thorned_blade"
+type = "Strike"
+cost = 1
+damage = 5
+block = 0
+effect_text = "If played consecutively, cost 0 next Strike."
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

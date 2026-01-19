@@ -1,230 +1,280 @@
 extends Node
 
-# ---------- Public data ----------
-# Mapping of card ID to the underlying card dictionary.  Cards are stored once
-# here and duplicated when returned via getters to avoid accidental mutation.
-var cards_by_id: Dictionary = {}          # id -> card (Dictionary)
-# Mapping of class_id to an array of cards belonging to that class.  Populated
-# when the card database is loaded; keys come from the top‑level keys in
-# `card_data.json` when that file is a dictionary of arrays.
-var cards_by_class: Dictionary = {}       # class_id -> Array[Dictionary]
-# Flat list of all cards in the database.  This is recomputed on load and
-# returned directly by get_cards_all() for efficiency.
-var cards_all: Array[Dictionary] = []
-# Starting deck definitions loaded from `starting_decks.json`.  Each value
-# should be an array of objects (or strings) describing how to assemble the
-# starting deck for a class.
-var starting_decks: Dictionary = {}       # class_id -> Array
-# Optional economy configuration loaded from `economy.json`.  May contain
-# values such as `base_energy`.
-var economy_config: Dictionary = {}       # optional
+# ---------- Data Storage ----------
+var cards_by_id: Dictionary = {}          # id -> CardResource
+var cards_by_tag: Dictionary = {}         # tag -> Array[CardResource]
+var cards_by_pool: Dictionary = {}        # pool -> Array[CardResource]
+var cards_all: Array[CardResource] = []
 
-const CARD_DB_PATH := "res://Data/card_data.json"
+var enemies_by_id: Dictionary = {}        # id -> EnemyResource
+var enemies_by_tier: Dictionary = {}      # tier -> Array[EnemyResource]
+var enemies_by_pool: Dictionary = {}      # pool -> Array[EnemyResource]
+
+# Legacy / Other Data
+var relics_by_id: Dictionary = {}
+var infusions_by_id: Dictionary = {}
+var starting_decks_config: Dictionary = {}
+var economy_config: Dictionary = {}
+var effects_map: Dictionary = {}
+
+const CARD_RES_PATH := "res://Resources/Cards/"
+const ENEMY_RES_PATH := "res://Resources/Enemies/"
+
 const STARTERS_PATH := "res://Data/starting_decks.json"
 const ECONOMY_PATH := "res://Data/economy.json"
+const EFFECTS_PATH := "res://Data/effects.json"
+const RELICS_PATH := "res://Data/relics.json"
+const INFUSIONS_PATH := "res://Data/infusions.json"
+const SIGILS_PATH := "res://Data/sigils.json"
+
+var sigils_by_id: Dictionary = {}
 
 func _ready() -> void:
 	load_all()
 
 func load_all() -> void:
-	# Reset all caches before loading.  This ensures stale values are discarded
-	# if load_all() is called more than once in a session.
 	cards_by_id.clear()
-	cards_by_class.clear()
+	cards_by_pool.clear()
 	cards_all.clear()
+	enemies_by_id.clear()
+	enemies_by_tier.clear()
+	enemies_by_pool.clear()
+	
+	_load_cards_from_resources()
+	_load_enemies_from_resources()
+	_load_legacy_data()
+	_load_unlocks()
 
-	# ---- Card DB (supports three shapes) ----
-	var card_raw: Variant = _read_json(CARD_DB_PATH)
+var unlocks_config: Dictionary = {}
 
-	# Shape 1: { "cards": [ {id:...}, ... ] }
-	if card_raw is Dictionary and (card_raw as Dictionary).has("cards") and (card_raw["cards"] is Array):
-		var list_var: Variant = card_raw["cards"]
-		var arr: Array = []
-		if list_var is Array:
-			arr = list_var as Array
-		# treat all cards as belonging to an unknown class "*"
-		var class_cards: Array[Dictionary] = []
-		for c_v in arr:
-			if c_v is Dictionary:
-				var c: Dictionary = c_v as Dictionary
-				# Determine a unique identifier; fall back to name
-				var cid: String = String(c.get("id", c.get("name", "")))
-				if cid != "":
-					var copy: Dictionary = c.duplicate(true)
-					cards_by_id[cid] = copy
-					class_cards.append(copy)
-					cards_all.append(copy)
-		cards_by_class["*"] = class_cards
+func _load_unlocks() -> void:
+	var path = "res://Data/unlocks.json"
+	if FileAccess.file_exists(path):
+		var file = FileAccess.open(path, FileAccess.READ)
+		var json = JSON.new()
+		if json.parse(file.get_as_text()) == OK:
+			unlocks_config = json.data
+	else:
+		print("DataLayer: No unlocks.json found")
 
-	# Shape 2: [ {id:...}, ... ]
-	elif card_raw is Array:
-		var arr2: Array = card_raw as Array
-		var class_cards2: Array[Dictionary] = []
-		for c_v in arr2:
-			if c_v is Dictionary:
-				var c: Dictionary = c_v as Dictionary
-				var cid2: String = String(c.get("id", c.get("name", "")))
-				if cid2 != "":
-					var copy2: Dictionary = c.duplicate(true)
-					cards_by_id[cid2] = copy2
-					class_cards2.append(copy2)
-					cards_all.append(copy2)
-		cards_by_class["*"] = class_cards2
-
-	# Shape 3: { "Growth":[{...}], "Cunning":[{...}], ... }  (flatten)
-	elif card_raw is Dictionary:
-		var d: Dictionary = card_raw as Dictionary
-		for k_v in d.keys():
-			var class_id: String = String(k_v)
-			var arr_v: Variant = d[k_v]
-			if arr_v is Array:
-				var arr3: Array = arr_v as Array
-				var class_list: Array[Dictionary] = []
-				for c_v in arr3:
-					if c_v is Dictionary:
-						var c3: Dictionary = c_v as Dictionary
-						var cid3: String = String(c3.get("id", c3.get("name", "")))
-						if cid3 != "":
-							# Copy the card before storing; also annotate with its class for convenience
-							var copy3: Dictionary = c3.duplicate(true)
-							copy3["class"] = class_id
-							cards_by_id[cid3] = copy3
-							class_list.append(copy3)
-							cards_all.append(copy3)
-				# store even if empty so lookups don't raise errors
-				cards_by_class[class_id] = class_list
-
-	# ---- Starter decks (optional file) ----
-	starting_decks.clear()
-	var sd_v: Variant = _read_json(STARTERS_PATH)
-	if sd_v is Dictionary:
-		var sd_dict: Dictionary = sd_v as Dictionary
-		# duplicate to avoid downstream modification
-		starting_decks = sd_dict.duplicate(true)
-
-	# ---- Economy config (optional) ----
-	economy_config.clear()
-	var eco_v: Variant = _read_json(ECONOMY_PATH)
-	if eco_v is Dictionary:
-		economy_config = (eco_v as Dictionary).duplicate(true)
-
-# ---------- Queries ----------
-func get_card(id: String) -> Dictionary:
-	return (cards_by_id.get(id, {}) as Dictionary).duplicate(true)
-
-func get_cards_all() -> Array[Dictionary]:
-	# Return a duplicated list of all cards.  Use the cached array to avoid
-	# repeatedly iterating over the dictionary.  Each element is duplicated
-	# to prevent callers from mutating the stored data.
-	var out: Array[Dictionary] = []
-	for c in cards_all:
-		if c is Dictionary:
-			out.append((c as Dictionary).duplicate(true))
+func get_unlocks_for_level(lvl: int) -> Array:
+	var out = []
+	var key = str(lvl)
+	if unlocks_config.has(key):
+		var entry = unlocks_config[key]
+		out.append_array(entry.get("cards", []))
 	return out
 
-func get_starting_deck(class_id: String) -> Array[Dictionary]:
-	# Build the starting deck for the given class.  Each entry in the
-	# definition can be a String (card id) or a Dictionary containing
-	# "id"/"name" and optional "count".  This method will expand counts,
-	# verify that each referenced card exists in cards_by_id, and ensure
-	# the returned deck contains exactly 30 cards by repeating cards if
-	# necessary.  If the starting deck definition is missing or empty,
-	# it will fall back to the global card pool to assemble a 30‑card list.
-	var result: Array[Dictionary] = []
-	# fetch the raw definition
-	var def_raw: Variant = starting_decks.get(class_id, [])
-	if def_raw is Array:
-		var def_arr: Array = def_raw as Array
-		for entry in def_arr:
-			# Handle string identifiers directly
+func is_card_locked(id: String) -> bool:
+	# 1. Is it in unlocks config at all?
+	var is_locked_content = false
+	for lvl in unlocks_config:
+		var entry = unlocks_config[lvl]
+		if id in entry.get("cards", []):
+			is_locked_content = true
+			break
+	
+	if not is_locked_content:
+		return false # Core content
+		
+	# 2. Check MetaPersistence
+	var mp = get_node_or_null("/root/MetaPersistence")
+	if mp:
+		return not mp.is_unlocked(id)
+	
+	return true # Default to locked if MP missing but content is locked
+
+func _load_cards_from_resources() -> void:
+	var dir = DirAccess.open(CARD_RES_PATH)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir() and file_name.ends_with(".tres"):
+				var full_path = CARD_RES_PATH + file_name
+				var res = load(full_path)
+				if res and res is CardResource:
+					_register_card(res)
+			file_name = dir.get_next()
+	else:
+		print("DataLayer: Failed to open Card Resource path: ", CARD_RES_PATH)
+
+func _register_card(c: CardResource) -> void:
+	cards_by_id[c.id] = c
+	cards_all.append(c)
+	
+	var p = c.pool if c.pool != "" else "neutral"
+	if not cards_by_pool.has(p):
+		cards_by_pool[p] = []
+	cards_by_pool[p].append(c)
+	
+	for t in c.tags:
+		if not cards_by_tag.has(t):
+			cards_by_tag[t] = []
+		cards_by_tag[t].append(c)
+
+func _load_enemies_from_resources() -> void:
+	var dir = DirAccess.open(ENEMY_RES_PATH)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir() and file_name.ends_with(".tres"):
+				var full_path = ENEMY_RES_PATH + file_name
+				var res = load(full_path)
+				if res and res is EnemyResource:
+					_register_enemy(res)
+			file_name = dir.get_next()
+
+func _register_enemy(e: EnemyResource) -> void:
+	enemies_by_id[e.id] = e
+	
+	# Tier
+	var t = e.tier if e.tier != "" else "normal"
+	if not enemies_by_tier.has(t): 
+		var arr: Array[EnemyResource] = []
+		enemies_by_tier[t] = arr
+	enemies_by_tier[t].append(e)
+	
+	# Pool
+	var p = e.pool if e.pool != "" else "core"
+	if not enemies_by_pool.has(p): 
+		var arr: Array[EnemyResource] = []
+		enemies_by_pool[p] = arr
+	enemies_by_pool[p].append(e)
+
+func _load_legacy_data() -> void:
+	var sd_v = _read_json(STARTERS_PATH)
+	if sd_v is Dictionary:
+		starting_decks_config = sd_v
+		
+	var eco_v = _read_json(ECONOMY_PATH)
+	if eco_v is Dictionary:
+		economy_config = eco_v
+		
+	var fx_v = _read_json(EFFECTS_PATH)
+	if fx_v is Dictionary and fx_v.has("by_name"):
+		effects_map = fx_v["by_name"]
+
+	relics_by_id.clear()
+	var r_raw = _read_json(RELICS_PATH)
+	if r_raw is Array:
+		for r in r_raw:
+			if r is Dictionary:
+				relics_by_id[String(r.get("id", ""))] = r
+	
+	infusions_by_id.clear()
+	var i_raw = _read_json(INFUSIONS_PATH)
+	if i_raw is Array:
+		for i in i_raw:
+			if i is Dictionary:
+				infusions_by_id[String(i.get("id", ""))] = i
+
+	sigils_by_id.clear()
+	var s_raw = _read_json(SIGILS_PATH)
+	if s_raw is Dictionary and s_raw.has("sigils"):
+		for s in s_raw["sigils"]:
+			sigils_by_id[String(s.get("id", ""))] = s
+
+# ---------- Getters ----------
+
+func get_card(id: String) -> CardResource:
+	return cards_by_id.get(id, null)
+
+func get_all_cards(include_locked: bool = false) -> Array[CardResource]:
+	var out: Array[CardResource] = []
+	for id in cards_by_id:
+		if include_locked or not is_card_locked(id):
+			out.append(cards_by_id[id])
+	return out
+
+func get_enemy(id: String) -> EnemyResource:
+	return enemies_by_id.get(id, null)
+
+func get_enemies_by_tier(tier: String) -> Array[EnemyResource]:
+	if enemies_by_tier.has(tier):
+		return enemies_by_tier[tier]
+	return []
+
+func get_enemies_by_pool(pool: String) -> Array[EnemyResource]:
+	if enemies_by_pool.has(pool):
+		return enemies_by_pool[pool]
+	return []
+
+func get_starting_deck(class_id: String) -> Array[CardResource]:
+	var deck: Array[CardResource] = []
+	var config = starting_decks_config.get(class_id, [])
+	
+	if config is Array:
+		for entry in config:
 			if entry is String:
-				var cid_str: String = entry as String
-				if cards_by_id.has(cid_str):
-					var card_def: Dictionary = cards_by_id[cid_str]
-					result.append(card_def.duplicate(true))
-			# Handle dictionaries with id/name and optional count
+				var c = get_card(entry)
+				if c: deck.append(c)
 			elif entry is Dictionary:
-				var entry_dict: Dictionary = entry as Dictionary
-				var cid: String = ""
-				if entry_dict.has("id"):
-					cid = String(entry_dict["id"])
-				elif entry_dict.has("name"):
-					cid = String(entry_dict["name"])
-				var cnt: int = 1
-				if entry_dict.has("count"):
-					# Only accept integer counts ≥ 1
-					cnt = max(1, int(entry_dict["count"]))
-				if cid != "" and cards_by_id.has(cid):
-					var base_card: Dictionary = cards_by_id[cid]
-					for i in range(cnt):
-						result.append(base_card.duplicate(true))
-	# If no cards were added from the definition, build a fallback deck from all cards
-	if result.is_empty():
-		var all_cards: Array[Dictionary] = get_cards_all()
-		var idx: int = 0
-		# Add up to 30 cards, cycling through the pool if necessary
-		while result.size() < 30 and all_cards.size() > 0:
-			var card: Dictionary = all_cards[idx % all_cards.size()] as Dictionary
-			result.append(card.duplicate(true))
-			idx += 1
-		return result
-	# Trim or pad the deck to exactly 30 entries
-	# Trim if too many
-	if result.size() > 30:
-		result = result.slice(0, 30)
-	# Pad by cycling through the existing result if too few
-	var pad_index: int = 0
-	while result.size() < 30:
-		var pad_card: Dictionary = result[pad_index % result.size()] as Dictionary
-		result.append(pad_card.duplicate(true))
-		pad_index += 1
-	return result
+				var id = entry.get("id", entry.get("name", ""))
+				var count = int(entry.get("count", 1))
+				var c = get_card(id)
+				if c:
+					for i in range(count):
+						deck.append(c)
+	
+	if deck.is_empty() and not cards_all.is_empty():
+		for i in range(10):
+			deck.append(cards_all.pick_random())
+
+	return deck
+
+func get_relic_def(id: String) -> Dictionary:
+	return relics_by_id.get(id, {}).duplicate(true)
+
+func get_infusion_def(id: String) -> Dictionary:
+	return infusions_by_id.get(id, {}).duplicate(true)
+
+func get_sigil_def(id: String) -> Dictionary:
+	return sigils_by_id.get(id, {}).duplicate(true)	
+func get_all_relics() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for val in relics_by_id.values():
+		out.append(val.duplicate(true))
+	return out
+
+# Strict Filtering
+func get_cards_by_criteria(pool: String, rarity: String = "", include_locked: bool = false) -> Array[CardResource]:
+	var out: Array[CardResource] = []
+	var source_list: Array = []
+	
+	# Primary Source: Pool
+	if pool == "any":
+		source_list = cards_all
+	elif cards_by_pool.has(pool):
+		source_list = cards_by_pool[pool]
+	else:
+		return []
+		
+	for c in source_list:
+		# 1. Unlock Check
+		if not include_locked and is_card_locked(c.id):
+			continue
+			
+		# 2. Rarity Check
+		if rarity != "" and c.rarity.to_lower() != rarity.to_lower():
+			continue
+			
+		out.append(c)
+		
+	return out
 
 func get_economy_config() -> Dictionary:
 	return economy_config.duplicate(true)
 
-# ---------- JSON helpers (tolerant) ----------
+# ---------- Private Helpers ----------
+
 func _read_json(path: String) -> Variant:
-	if not FileAccess.file_exists(path):
-		return {}
-	var f := FileAccess.open(path, FileAccess.READ)
-	if f == null:
-		return {}
-	var txt: String = f.get_as_text()
-	f.close()
-
-	# allow comments and trailing commas common in design docs
-	txt = _strip_json_comments(txt).strip_edges()
-	if txt == "":
-		return {}
-
-	var p: Variant = JSON.parse_string(txt)
-	if typeof(p) != TYPE_NIL:
-		return p
-
-	# last-ditch: remove some trailing commas that break strict JSON
-	txt = txt.replace(",\n]", "\n]").replace(",\r\n]", "\r\n]").replace(", ]", " ]")
-	txt = txt.replace(",\n}", "\n}").replace(",\r\n}", "\r\n}").replace(", }", " }")
-	p = JSON.parse_string(txt)
-	return p if typeof(p) != TYPE_NIL else {}
-
-func _strip_json_comments(t: String) -> String:
-	var out := ""
-	var in_block := false
-	for line in t.split("\n"):
-		var s: String = String(line)
-		if in_block:
-			var end := s.find("*/")
-			if end == -1:
-				continue
-			in_block = false
-			s = s.substr(end + 2)
-		var start := s.find("/*")
-		if start != -1:
-			in_block = true
-			s = s.substr(0, start)
-		var sl := s.find("//")
-		if sl != -1:
-			s = s.substr(0, sl)
-		out += s + "\n"
-	return out
+	if not FileAccess.file_exists(path): return {}
+	var f = FileAccess.open(path, FileAccess.READ)
+	if not f: return {}
+	var txt = f.get_as_text()
+	var json = JSON.new()
+	if json.parse(txt) == OK:
+		return json.data
+	return {}

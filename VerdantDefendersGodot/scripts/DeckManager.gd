@@ -1,249 +1,316 @@
 extends Node
 
 # --- config ---
-# Default number of cards to draw at the start of each turn
 const HAND_SIZE: int = 5
 
 # --- signals ---
-# Emitted whenever the contents of the player's hand changes.  Hand changes
-# occur when the deck is reset, when drawing cards at the start of the turn,
-# and when cards are removed from the hand.  The current hand (a duplicated
-# array of dictionaries) is passed to listeners.
-signal hand_changed(hand: Array[Dictionary])
-# Emitted whenever the player's current energy value changes.  Energy changes
-# occur at the start of the turn and when energy is spent by playing a card.
+signal hand_changed(hand: Array[CardResource])
 signal energy_changed(current: int)
+signal piles_changed()
 
 # --- piles / state ---
-var draw_pile: Array[Dictionary] = []
-var discard_pile: Array[Dictionary] = []
-var hand: Array[Dictionary] = []
-var exhaust: Array[Dictionary] = []
+# All piles hold unique CardResource instances (duplicated from templates)
+var draw_pile: Array[CardResource] = []
+var discard_pile: Array[CardResource] = []
+var hand: Array[CardResource] = []
+var exhaust: Array[CardResource] = []
 var energy: int = 0
 var max_energy: int = 3
+var turn_draws: int = 0
+var turn_energy_gained: int = 0
+const MAX_TURN_DRAWS = 50
+const MAX_TURN_ENERGY_GAIN = 20
 
-# Internal random number generator used to shuffle the deck.  Can be seeded
-# externally via set_rng() to support deterministic runs.
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-# Set the RNG used by the deck manager.  This should be called by
-# GameController during run initialization so that all random operations
-# (e.g. shuffling the deck) use the same seed.
 func set_rng(rng: RandomNumberGenerator) -> void:
 	_rng = rng
 
 func _ready() -> void:
-	# Do not build a starting deck automatically on boot.  The GameController
-	# will call build_starting_deck() when a new run begins.
 	pass
 
-# Build starting deck from array of card dictionaries
-func build_starting_deck(deck: Array[Dictionary]) -> void:
+# --- Core Pile Management ---
+
+func build_starting_deck(deck: Array[CardResource]) -> void:
 	draw_pile.clear()
 	discard_pile.clear()
 	hand.clear()
 	exhaust.clear()
 	
-	# Copy deck into draw pile
 	for card in deck:
-		if card is Dictionary:
-			draw_pile.append(card.duplicate(true))
+		# Ensure we are storing unique instances
+		draw_pile.append(card.duplicate())
 	
-	# Shuffle the draw pile
 	_shuffle_draw_pile()
-	
-	# Reset energy
 	energy = 0
 	hand_changed.emit(hand.duplicate())
 	energy_changed.emit(energy)
 
-# Reset the draw/discard/hand/exhaust piles from the given class's starting
-# deck.  This method calls into DataLayer to fetch a 30‑card starting deck.
+	energy_changed.emit(energy)
+
+func reset() -> void:
+	draw_pile.clear()
+	discard_pile.clear()
+	hand.clear()
+	exhaust.clear()
+	energy = 0
+	hand_changed.emit(hand.duplicate())
+	energy_changed.emit(energy)
+
 func reset_with_starting_deck(class_id: String) -> void:
+	# Clean slate
 	draw_pile.clear()
 	discard_pile.clear()
 	hand.clear()
 	exhaust.clear()
 
-	# Try to get starting deck from DataLayer
-	var deck_def: Array = []
-	var dl: Node = get_node_or_null("/root/DataLayer")
-	if dl != null and dl.has_method("load_all"):
-		dl.call("load_all")
+	var dl = get_node_or_null("/root/DataLayer")
+	if not dl:
+		print("DeckManager: DataLayer not found!")
+		return
+
+	# --- HARD ARCHETYPE LOCK: CONFIGURATION ---
+	# Rule: 8 Archetype Cards + 5 Filler (Neutral) Cards
+	var deck: Array[CardResource] = []
+	var archetype_count = 8
+	var neutral_count = 5
 	
-	# Obtain the starting deck definition; ensure it is an array
-	if dl != null and dl.has_method("get_starting_deck"):
-		var tmp: Variant = dl.call("get_starting_deck", class_id)
-		if tmp is Array:
-			deck_def = tmp as Array
+	print("DeckManager: Generating Deck for Archetype '%s' (8/5 Split)" % class_id)
 	
-	# If no starting deck found, create a minimal one
-	if deck_def.is_empty():
-		deck_def = _create_minimal_starting_deck()
+	# 1. Fetch Archetype Cards (Prefer Basic, Fallback Common)
+	var arch_pool = dl.get_cards_by_criteria(class_id, "basic")
+	if arch_pool.size() < archetype_count:
+		print("DeckManager: Not enough Basic cards for %s, falling back to Common" % class_id)
+		arch_pool.append_array(dl.get_cards_by_criteria(class_id, "common"))
+		
+	# 2. Fetch Neutral/Filler Cards
+	var neutral_pool = dl.get_cards_by_criteria("neutral", "basic")
+	if neutral_pool.size() < neutral_count:
+		neutral_pool.append_array(dl.get_cards_by_criteria("neutral", "common"))
 	
-	# Build the deck
-	build_starting_deck(deck_def)
+	# 3. Construct Deck
+	if arch_pool.is_empty() or neutral_pool.is_empty():
+		push_error("CRITICAL: Unable to generate valid deck for %s. Missing card definitions." % class_id)
+		deck = _create_minimal_starting_deck() # Emergency Fallback
+	else:
+		# Archetype Picks
+		for i in range(archetype_count):
+			deck.append(arch_pool.pick_random()) # Allow duplicates? Yes, basic decks have dupes.
+			
+		# Neutral Picks
+		for i in range(neutral_count):
+			deck.append(neutral_pool.pick_random())
 	
-	# Set max energy from economy config or default to 3
+	build_starting_deck(deck)
+	
+	# Economy / Energy
 	max_energy = 3
-	var eco: Dictionary = {}
-	if dl != null:
-		if dl.has_method("get_economy_config"):
-			eco = dl.call("get_economy_config") as Dictionary
-		elif dl.has("economy_config"):
-			var ecovar: Variant = dl.get("economy_config")
-			if ecovar is Dictionary:
-				eco = ecovar as Dictionary
-		if eco.has("base_energy"):
-			max_energy = int(eco["base_energy"])
+	var eco = dl.get_economy_config()
+	if eco.has("base_energy"):
+		max_energy = int(eco["base_energy"])
 
-	# Reset energy to zero; start_turn() will assign the correct value and
-	# notify listeners.
 	energy = 0
-	# Emit initial hand_changed to indicate the hand is empty
-	hand_changed.emit(hand.duplicate())
 	energy_changed.emit(energy)
 
-# Called by GameController at the start of each player turn.
-# Per TURN_LOOP.md: energy := max_energy, draw 5 cards
+# --- Turn Logic ---
+
+func get_max_hand_size() -> int:
+	var size = HAND_SIZE
+	var ss = get_node_or_null("/root/SigilSystem")
+	if ss and ss.has_method("get_hand_size_modifier"):
+		size += ss.get_hand_size_modifier()
+	return max(0, size)
+
 func start_turn() -> void:
-	# Set energy to max_energy
+	turn_draws = 0
+	turn_energy_gained = 0
 	energy = max_energy
-	
-	# Draw up to HAND_SIZE cards
-	_draw_up_to(HAND_SIZE)
-	
-	# Notify listeners of the updated state
+	_draw_up_to(get_max_hand_size())
+	hand_changed.emit(hand.duplicate())
+	_draw_up_to(get_max_hand_size())
 	hand_changed.emit(hand.duplicate())
 	energy_changed.emit(energy)
+	piles_changed.emit()
 
-# Discard all cards in hand to discard pile
 func discard_hand() -> void:
 	for card in hand:
 		discard_pile.append(card)
 	hand.clear()
 	hand_changed.emit(hand.duplicate())
+	piles_changed.emit()
 
-# End turn discard - alias for discard_hand
 func end_turn_discard() -> void:
 	discard_hand()
 
-func get_hand() -> Array[Dictionary]:
-	return hand
+func get_hand() -> Array[CardResource]:
+	return hand.duplicate()
 
-# Play card at index - returns the card dictionary
-func play_card(idx: int) -> Dictionary:
+func play_card(idx: int) -> CardResource:
 	if idx >= 0 and idx < hand.size():
-		var card: Dictionary = hand[idx]
+		var card = hand[idx]
 		hand.remove_at(idx)
-		# Move to discard pile
 		discard_pile.append(card)
-		# Notify listeners
+		
 		hand_changed.emit(hand.duplicate())
+		piles_changed.emit()
+		
+		# Audio Hook
+		var sm = get_node_or_null("/root/SoundManager")
+		if sm: sm.play_card_draw() # Using draw sound as placeholder or specific play sound
+		
 		return card
-	return {}
+	return null
+	return null
 
-func remove_from_hand(idx: int) -> Dictionary:
-	# Remove the card at the specified index from the hand.  Returns the
-	# removed card or an empty dictionary if the index is out of range.
+func remove_from_hand(idx: int) -> CardResource:
 	if idx >= 0 and idx < hand.size():
-		var c: Dictionary = hand[idx]
+		var c = hand[idx]
 		hand.remove_at(idx)
-		# Notify listeners
 		hand_changed.emit(hand.duplicate())
 		return c
-	return {}
+	return null
 
-func discard_card(card: Dictionary) -> void:
+func discard_card(card: CardResource) -> void:
 	discard_pile.append(card)
 
+# --- Energy ---
+
 func spend_energy(cost: int) -> bool:
-	# Spend the specified amount of energy if available.  Returns true on
-	# success; false if there is insufficient energy.  Always emits the
-	# energy_changed signal on a successful spend.
-	if energy < cost:
-		return false
+	if energy < cost: return false
 	energy -= cost
 	energy_changed.emit(energy)
 	return true
 
-# Draw a specified number of cards on demand.  This does not reset energy
-# or enforce hand size limits beyond those implicit in the draw logic.  After
-# drawing, the `hand_changed` signal is emitted.
-func draw_cards(n: int) -> void:
-	if n <= 0:
-		return
-	var target: int = hand.size() + n
-	_draw_up_to(target)
-	hand_changed.emit(hand.duplicate())
-
-# Gain a specified amount of energy.  Negative values reduce energy but will
-# not drop below zero.  Emits the `energy_changed` signal after updating.
 func gain_energy(amount: int) -> void:
-	energy = max(0, energy + amount)
+	if turn_energy_gained >= MAX_TURN_ENERGY_GAIN:
+		print("SafetyNet: Energy Gain Cap Reached")
+		return
+		
+	var allowed = amount
+	if turn_energy_gained + amount > MAX_TURN_ENERGY_GAIN:
+		allowed = MAX_TURN_ENERGY_GAIN - turn_energy_gained
+		
+	turn_energy_gained += allowed
+	energy = max(0, energy + allowed)
 	energy_changed.emit(energy)
 
-# Create a minimal starting deck for testing
-func _create_minimal_starting_deck() -> Array[Dictionary]:
-	var deck: Array[Dictionary] = []
+func draw_cards(n: int) -> void:
+	if n <= 0: return
 	
-	# Create 10 cards as specified in the requirements
-	# Growth strikes/tactics
-	for i in range(5):
-		deck.append({
-			"id": "growth_sap_shot",
-			"name": "Sap Shot",
-			"type": "attack",
-			"cost": 1,
-			"effects": [{"type": "deal_damage", "amount": 7}],
-			"art_id": "art_sap_shot"
-		})
-	
-	for i in range(5):
-		deck.append({
-			"id": "seed_shield",
-			"name": "Seed Shield", 
-			"type": "skill",
-			"cost": 1,
-			"effects": [{"type": "gain_block", "amount": 6}],
-			"art_id": "art_seed_shield"
-		})
-	
-	return deck
+	# SafetyNet Draw Cap
+	if turn_draws >= MAX_TURN_DRAWS:
+		print("SafetyNet: Draw Cap Reached")
+		return
+		
+	var allowed = n
+	if turn_draws + n > MAX_TURN_DRAWS:
+		allowed = MAX_TURN_DRAWS - turn_draws
+		
+	turn_draws += allowed
+	_draw_up_to(hand.size() + allowed)
+	hand_changed.emit(hand.duplicate())
 
-# ---------------- internal helpers ----------------
+# --- Mechanics ---
+
+func enrich_card(card: CardResource) -> bool:
+	# Implementation of upgrading a card.
+	# Since 'card' is an instance in our deck, we can modify it directly.
+	
+	# Logic: Usually enrichment via Anvil adds specialized stats.
+	# For simplicity reuse the 'enrichment' concept via logic_meta or just hardcode for now for robustness.
+	# Or check if card has an 'upgraded' tag?
+	
+	# Simple generic upgrade: +damage/block
+	if card.logic_meta.has("upgraded"):
+		return false
+		
+	card.display_name += "+"
+	if card.damage > 0: card.damage += 3
+	if card.block > 0: card.block += 3
+	
+	card.logic_meta["upgraded"] = true
+	
+	# If in hand, notify
+	if hand.has(card):
+		hand_changed.emit(hand.duplicate())
+		
+	return true
+
+func get_all_cards() -> Array[CardResource]:
+	var all: Array[CardResource] = []
+	all.append_array(draw_pile)
+	all.append_array(hand)
+	all.append_array(discard_pile)
+	all.append_array(exhaust)
+	return all
+
+func get_deck_list() -> Array:
+	var list = []
+	for c in get_all_cards():
+		list.append(c.id)
+	return list
+
+func remove_card(card: CardResource) -> bool:
+	if hand.has(card):
+		hand.erase(card)
+		hand_changed.emit(hand.duplicate())
+		return true
+	if discard_pile.has(card):
+		discard_pile.erase(card)
+		return true
+	if draw_pile.has(card):
+		draw_pile.erase(card)
+		return true
+	return false
+
+# --- Internals ---
 
 func _draw_up_to(n: int) -> void:
-	# Draw cards into the hand until it contains n cards or the draw pile is
-	# exhausted.  If the draw pile is empty but the discard pile contains
-	# cards, reshuffle the discard pile into the draw pile.
 	while hand.size() < n:
 		if draw_pile.is_empty():
 			_reshuffle()
-			if draw_pile.is_empty():
-				break
-		var c_any: Variant = draw_pile.pop_back()
-		if c_any is Dictionary:
-			hand.append((c_any as Dictionary))
+			if draw_pile.is_empty(): break
+		
+		var c = draw_pile.pop_back()
+		hand.append(c)
 
 func _reshuffle() -> void:
-	# Move all cards from the discard pile back into the draw pile and
-	# randomize their order.  This does nothing if the discard pile is empty.
-	if discard_pile.is_empty():
-		return
-	
-	# Move cards from discard to draw pile
-	for card in discard_pile:
-		draw_pile.append(card)
+	if discard_pile.is_empty(): return
+	for c in discard_pile:
+		draw_pile.append(c)
 	discard_pile.clear()
-	
-	# Shuffle the draw pile
 	_shuffle_draw_pile()
 
 func _shuffle_draw_pile() -> void:
-	# Simple Fisher–Yates shuffle on the draw pile
 	for i in range(draw_pile.size()):
-		var j: int = _rng.randi_range(0, draw_pile.size() - 1)
-		var tmp: Dictionary = draw_pile[i]
+		var j = _rng.randi_range(0, draw_pile.size() - 1)
+		var tmp = draw_pile[i]
 		draw_pile[i] = draw_pile[j]
 		draw_pile[j] = tmp
+
+func _create_minimal_starting_deck() -> Array[CardResource]:
+	var deck: Array[CardResource] = []
+	# Create some debug cards
+	for i in range(5):
+		var c = CardResource.new()
+		c.id = "debug_strike"
+		c.display_name = "Debug Strike"
+		c.type = "Strike"
+		c.damage = 6
+		c.cost = 1
+		deck.append(c)
+		
+	for i in range(5):
+		var c = CardResource.new()
+		c.id = "debug_defend"
+		c.display_name = "Debug Defend"
+		c.type = "Skill"
+		c.block = 5
+		c.cost = 1
+		deck.append(c)
+		
+	return deck
+
+func build_starting_deck_from_data(class_id: String) -> void:
+	# Legacy support wrapper?
+	reset_with_starting_deck(class_id)

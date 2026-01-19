@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_qkad0"]
+
+[resource]
+script = ExtResource("1_qkad0")
+id = "shockwave"
+display_name = "Shockwave"
+art_id = "shockwave"
+type = "Strike"
+cost = 2
+damage = 7
+block = 0
+effect_text = "Enemy has 20% chance to miss next turn due to Paralysis."
+rarity = "common"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {}

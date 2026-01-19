@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_cf5x5"]
+
+[resource]
+script = ExtResource("1_cf5x5")
+id = "sap_warden"
+display_name = "Sap Warden"
+texture_path = ""
+max_hp = 24
+defense = 0
+tier = "normal"
+pool = "growth"
+intents = Array[String](["Buff Ally (Heal 4)", "Attack 4", "Buff All Allies (+2 Block)", "Attack 4"])
+special_ability = "Heals 2 HP to a random ally on attack"
+logic_meta = {}

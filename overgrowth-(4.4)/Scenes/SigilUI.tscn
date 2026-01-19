@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://dk84v4qlay4vt"]
+
+[ext_resource type="Script" uid="uid://b3oi4nf36qypc" path="res://scripts/SigilUI.gd" id="1"]
+
+[node name="SigilUI" type="PanelContainer"]
+custom_minimum_size = Vector2(480, 300)
+script = ExtResource("1")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Sigils"
+
+[node name="Grid" type="GridContainer" parent="VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 8
+columns = 4

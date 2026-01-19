@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_gl48g"]
+
+[resource]
+script = ExtResource("1_gl48g")
+id = "d_rotten_shield"
+display_name = "Rotten Shield"
+art_id = "d_rotten_shield"
+type = "Strike"
+cost = 1
+damage = 0
+block = 0
+effect_text = ""
+rarity = "common"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 8.0,
+"type": "gain_block"
+}, {
+"effects": [{
+"amount": 1.0,
+"status": "poison",
+"type": "apply_status_to_attacker"
+}],
+"trigger": "on_player_hit_this_turn",
+"type": "set_trap"
+}]
+}

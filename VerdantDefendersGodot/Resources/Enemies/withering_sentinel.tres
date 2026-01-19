@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_86ox8"]
+
+[resource]
+script = ExtResource("1_86ox8")
+id = "withering_sentinel"
+display_name = "Withering Sentinel"
+texture_path = ""
+max_hp = 210
+defense = 0
+tier = "boss"
+pool = "growth"
+archetype_counter = ""
+intents = Array[String](["Attack 8", "Buff (+2 Strength)", "Attack 12"])
+special_ability = "Passive: Takes +1 damage per Seed you have. Phase 2: Applies Anti-Heal."
+logic_meta = {}

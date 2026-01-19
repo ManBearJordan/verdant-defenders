@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_qe7hu"]
+
+[resource]
+script = ExtResource("1_qe7hu")
+id = "g_vine_cleaver"
+display_name = "Vine Cleaver"
+art_id = "g_vine_cleaver"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "uncommon"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 7.0,
+"type": "deal_damage_all_enemies"
+}, {
+"min": 4.0,
+"then": [{
+"amount": 2.0,
+"type": "deal_damage_all_enemies"
+}],
+"type": "if_player_seed_at_least"
+}]
+}

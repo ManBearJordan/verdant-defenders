@@ -1,29 +1,66 @@
 extends Control
+
 signal rewards_done
-@onready var data = get_node("/root/DataLayer")
-@onready var gc = get_node("/root/GameController")
-@onready var rewards = get_node("/root/RewardSystem")
-var options: Array = []
-func _ready(): options = rewards.roll_card_rewards(3, gc.current_class); _build()
-func _build():
-	var root = $Panel/VBox
-	for c in root.get_children(): c.queue_free()
-	var lab = Label.new(); lab.text = "Choose a card to add to your deck:"; root.add_child(lab)
-	for i in range(options.size()):
-		var c: Dictionary = options[i]
-		var b = Button.new(); b.text = _card_title(c); b.tooltip_text = str(c); b.pressed.connect(_pick.bind(i)); root.add_child(b)
-	var skip = Button.new(); skip.text = "Skip"; skip.pressed.connect(_skip); root.add_child(skip)
+
+@onready var container = $Panel/VBox
+var _offers: Array = []
+
+func setup(offers: Array) -> void:
+	_offers = offers
+	_build()
+
+func _build() -> void:
+	if not container: return
+	for c in container.get_children(): c.queue_free()
+	
+	var lab = Label.new()
+	lab.text = "Choose a card to add to your deck:"
+	container.add_child(lab)
+	
+	for i in range(_offers.size()):
+		var c = _offers[i]
+		var b = Button.new()
+		b.text = _card_title(c)
+		# b.tooltip_text = str(c) # Debug string, redundant with text
+		b.pressed.connect(_pick.bind(i))
+		container.add_child(b)
+		
+	var skip = Button.new()
+	skip.text = "Skip"
+	skip.pressed.connect(_skip)
+	container.add_child(skip)
+
 func _card_title(c: Dictionary) -> String:
-	var title := "%s (Cost:%s)" % [str(c.get("name","?")), str(c.get("cost",0))]
-	if c.has("damage"): title += "  DMG:%s" % str(c.get("damage"))
-	if c.has("block"): title += "  BLK:%s" % str(c.get("block"))
-	if c.has("apply"): var ap: Dictionary = c["apply"]; if ap.has("poison"): title += "  PSN:%s" % str(ap["poison"])
+	# Handle Resource object or Dictionary
+	var name_str = c.get("name", "Unknown")
+	var cost = c.get("cost", 0)
+	var title := "%s (%s)" % [name_str, cost]
 	return title
-func _pick(i: int):
-	var c: Dictionary = options[i]
-	for k in data.cards.keys():
-		var d: Dictionary = data.cards[k]
-		if d == c: gc.current_deck.append(k); break
+
+func _pick(i: int) -> void:
+	var card = _offers[i]
+	var dm = get_node_or_null("/root/DeckManager")
+	if dm:
+		# Assume DeckManager handles adding. 
+		# If card is Resource, add_card works.
+		if dm.has_method("add_card_to_deck"):
+			dm.add_card_to_deck(card)
+		else:
+			print("RewardsUI: DeckManager missing add_card_to_deck")
+	
 	_close()
-func _skip(): _close()
-func _close(): emit_signal("rewards_done"); queue_free()
+
+func _skip() -> void:
+	_close()
+
+func _close() -> void:
+	emit_signal("rewards_done")
+	# We don't queue_free immediately if GameUI manages us, but usually we do.
+	# GameUI.show_rewards creates a new instance.
+	# But wait, GameUI logic uses a persistent instance variable?
+	# GameUI logic will likely expect to manage this.
+	# For now, queue_free is fine if we notify parent.
+	# Actually, GameUI should handle cleanup to avoid null refs.
+	# But standard pattern is queue_free self.
+	queue_free()
+

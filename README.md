@@ -1,6 +1,6 @@
-# Verdant Defenders
+# Overgrowth
 
-Verdant Defenders is a roguelike deckbuilder built with the Godot Engine. Players explore four themed layers, building a deck from Growth, Decay, and Elemental cards while battling bosses and collecting relics.
+Overgrowth is a roguelike deckbuilder built with the Godot Engine. Players explore four themed layers, building a deck from Growth, Decay, and Elemental cards while battling bosses and collecting relics.
 
 This repository contains an early prototype. The current Godot project lives in VerdantDefendersGodot/.
 The demo now supports basic turns with energy, card play, and an end-turn button.

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_awkqk"]
+
+[resource]
+script = ExtResource("1_awkqk")
+id = "gravebloom_behemoth"
+display_name = "Gravebloom Behemoth"
+texture_path = ""
+max_hp = 220
+defense = 0
+tier = "boss"
+pool = "decay"
+archetype_counter = ""
+intents = Array[String](["Attack 15", "Attack 5 + Apply Constrict/Slow", "Buff Self (Heal 20)"])
+special_ability = "Start of Turn: Gains +1 Str if you have ≥10 Block (+2 if ≥20). Phase 2: Ignores Block."
+logic_meta = {}

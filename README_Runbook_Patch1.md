@@ -1,4 +1,4 @@
-# Verdant Defenders – Patch 1 (Godot 4.4.1)
+# Overgrowth – Patch 1 (Godot 4.4.1)
 
 This patch supplies **complete, minimal** Data and core scripts to get a playable loop:
 Start Screen → Dungeon → Fight(s) → Floor clear or defeat.

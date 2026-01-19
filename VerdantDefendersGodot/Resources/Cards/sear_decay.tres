@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_22ekw"]
+
+[resource]
+script = ExtResource("1_22ekw")
+id = "sear_decay"
+display_name = "Sear Decay"
+art_id = "sear_decay"
+type = "Strike"
+cost = 2
+damage = 10
+block = 0
+effect_text = "Deal damage to all enemies with Poison."
+rarity = "common"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {}

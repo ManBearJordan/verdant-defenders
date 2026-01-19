@@ -1,0 +1,76 @@
+﻿godot.cmd : ERROR: 
+Error parsing 'C:/User
+s/jorda/verdant-defend
+ers/VerdantDefendersGo
+dot/project.godot' at 
+line 46: Expected 
+value, got 'ERROR' 
+File might be 
+corrupted.
+At line:1 char:1
++ & './godot.cmd' 
+--headless --script te
+sts/test_flow_complete
+.gd 2>&1  ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (ERROR: Err   
+ or pa...t be corr    
+upted.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+   at: 
+_load_settings_text (c
+ore/config/project_set
+tings.cpp:824)
+ERROR: Couldn't load 
+file 'C:/Users/jorda/v
+erdant-defenders/Verda
+ntDefendersGodot/proje
+ct.godot', error code 
+43.
+   at: _load_settings_
+text_or_binary (core/c
+onfig/project_settings
+.cpp:858)
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SCRIPT ERROR: Parse 
+Error: Function 
+"get_node()" not 
+found in base self.
+   at: 
+GDScript::reload (res:
+//tests/test_flow_comp
+lete.gd:33)
+SCRIPT ERROR: Parse 
+Error: Function 
+"get_node()" not 
+found in base self.
+   at: 
+GDScript::reload (res:
+//tests/test_flow_comp
+lete.gd:48)
+SCRIPT ERROR: Parse 
+Error: Function 
+"get_node()" not 
+found in base self.
+   at: 
+GDScript::reload (res:
+//tests/test_flow_comp
+lete.gd:69)
+ERROR: Failed to load 
+script "res://tests/te
+st_flow_complete.gd" 
+with error "Parse 
+error".
+   at: load (modules/g
+dscript/gdscript.cpp:3
+022)

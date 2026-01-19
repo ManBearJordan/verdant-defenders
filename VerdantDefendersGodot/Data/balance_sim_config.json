@@ -1,0 +1,143 @@
+{
+    "simulation_config": {
+        "runs_per_scenario": 5000,
+        "simulation_type": "card_weighted",
+        "acts": [
+            1,
+            2,
+            3
+        ],
+        "node_types": [
+            "normal",
+            "elite",
+            "miniboss",
+            "boss"
+        ],
+        "archetypes": [
+            "growth",
+            "decay",
+            "elemental"
+        ],
+        "ascension_levels": [
+            0,
+            5,
+            10
+        ],
+        "deck_profiles": {
+            "starter": {
+                "card_adds": 0,
+                "description": "Baseline starter deck"
+            },
+            "mid_run": {
+                "card_adds": 8,
+                "description": "After ~8 card adds"
+            },
+            "late_run": {
+                "card_adds": 16,
+                "description": "After ~16 card adds"
+            }
+        }
+    },
+    "acceptance_targets": {
+        "win_rate": {
+            "normal": {
+                "min": 0.92,
+                "max": 0.98
+            },
+            "elite": {
+                "min": 0.70,
+                "max": 0.85
+            },
+            "miniboss": {
+                "min": 0.60,
+                "max": 0.80
+            },
+            "boss": {
+                "min": 0.50,
+                "max": 0.70
+            }
+        },
+        "median_turns_to_win": {
+            "normal": {
+                "min": 3,
+                "max": 5
+            },
+            "elite": {
+                "min": 5,
+                "max": 8
+            },
+            "miniboss": {
+                "min": 7,
+                "max": 10
+            },
+            "boss_phase": {
+                "min": 8,
+                "max": 12
+            }
+        },
+        "median_damage_taken_pct_max_hp": {
+            "normal": {
+                "min": 0.00,
+                "max": 0.12
+            },
+            "elite": {
+                "min": 0.10,
+                "max": 0.25
+            },
+            "miniboss": {
+                "min": 0.15,
+                "max": 0.35
+            },
+            "boss": {
+                "min": 0.25,
+                "max": 0.55
+            }
+        }
+    },
+    "parameter_sweep": {
+        "elite_damage_multiplier": [
+            1.25,
+            1.30,
+            1.35,
+            1.40
+        ],
+        "elite_hp_multiplier_act2": [
+            1.6,
+            1.7,
+            1.8
+        ],
+        "poison_cap": [
+            25,
+            30,
+            35
+        ],
+        "static_threshold_act2": [
+            5,
+            6,
+            7
+        ],
+        "card_limit_act3": 5
+    },
+    "stop_conditions": {
+        "fail_boss_win_rate_below": 0.45,
+        "fail_elite_win_rate_above": 0.90,
+        "fail_normal_win_rate_below": 0.90,
+        "note": "All at A0 baseline"
+    },
+    "output_metrics": [
+        "win_rate",
+        "avg_turns_to_win",
+        "avg_damage_taken",
+        "poison_damage_contribution",
+        "burn_damage_contribution",
+        "block_per_turn",
+        "cards_played_per_turn",
+        "status_uptime_per_fight"
+    ],
+    "tuning_rules": {
+        "if_elites_unfair": "Reduce elite_damage_multiplier by 0.05 first (don't touch HP)",
+        "if_fights_drag": "Reduce normal HP band max by 5 OR reduce elite HP multiplier by 0.1 (not both)",
+        "if_decay_underperforms_arbiter": "Add 1-2 Decay cards that convert poison into immediate damage or block",
+        "if_elemental_underperforms_chronoshard": "Add 'big single card' payoffs (2-cost/3-cost strikes) rather than more 0-cost"
+    }
+}

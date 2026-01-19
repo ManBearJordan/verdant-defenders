@@ -1,0 +1,28 @@
+﻿Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+Test: Canonical Scene Flow
+TelemetrySystem V2 Ready. Logging DISABLED.
+Current Scene: MainMenu
+Action: Start Run
+GameController: Starting Run (growth, A0)
+DeckManager: Generating Deck for Archetype 'growth' (8/5 Split)
+DeckManager: Not enough Basic cards for growth, falling back to Common
+DungeonController: Generated map with 15 layers
+FlowController: Transitioning to MAP
+Current Scene: MapScreen
+SUCCESS: Map Loaded
+Action: Enter Combat Node
+FlowController: Resolving node type 'fight'
+FlowController: Transitioning to COMBAT
+Current Scene: CombatScreen
+SUCCESS: Combat Loaded
+Action: Win Combat
+FlowController: Transitioning to REWARD
+Current Scene: RewardScreen
+SUCCESS: Reward Loaded
+Action: Skip Reward
+DungeonController: Room finished, showing map
+FlowController: Transitioning to MAP
+Current Scene: MapScreen
+SUCCESS: Returned to Map
+TEST COMPLETE: Canonical Flow Verified

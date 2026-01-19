@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_50k2i"]
+
+[resource]
+script = ExtResource("1_50k2i")
+id = "g_seed_surge"
+display_name = "Seed Surge"
+art_id = "g_seed_surge"
+type = "Strike"
+cost = 3
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "sot_if_seeds_ge_3_gain_energy_1",
+"type": "set_ritual"
+}]
+}

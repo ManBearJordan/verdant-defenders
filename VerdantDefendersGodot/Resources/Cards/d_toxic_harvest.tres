@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_rlji6"]
+
+[resource]
+script = ExtResource("1_rlji6")
+id = "d_toxic_harvest"
+display_name = "Toxic Harvest"
+art_id = "d_toxic_harvest"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "uncommon"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 10.0,
+"type": "deal_damage"
+}, {
+"max": 4.0,
+"status": "poison",
+"then": [{
+"amount_per_stack": 3.0,
+"type": "deal_damage"
+}],
+"type": "consume_status"
+}]
+}

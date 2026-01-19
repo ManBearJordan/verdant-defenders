@@ -1,0 +1,187 @@
+{
+    "rules": {
+        "max_modifiers": 2,
+        "act_2_second_modifier_chance": 0.25,
+        "act_3_second_modifier_chance": 0.50,
+        "hp_tradeoffs_stack_multiplicatively": true,
+        "elite_hp_min_floor_pct": 0.60
+    },
+    "modifiers": [
+        {
+            "id": "aggressive",
+            "name": "Aggressive",
+            "tier": "A",
+            "theme": "damage_amp",
+            "desc": "Deals +20% damage.",
+            "hp_mult": 0.90,
+            "effects": [
+                {
+                    "type": "outgoing_damage_mult",
+                    "value": 1.20
+                }
+            ]
+        },
+        {
+            "id": "hardened",
+            "name": "Hardened",
+            "tier": "A",
+            "theme": "defense",
+            "desc": "Takes -25% damage from attacks.",
+            "hp_mult": 0.85,
+            "effects": [
+                {
+                    "type": "incoming_damage_mult",
+                    "value": 0.75
+                }
+            ]
+        },
+        {
+            "id": "swift",
+            "name": "Swift",
+            "tier": "A",
+            "theme": "tempo",
+            "desc": "First attack each turn deals +3 damage.",
+            "hp_mult": 1.0,
+            "effects": [
+                {
+                    "type": "flat_damage_bonus_first_strike",
+                    "value": 3
+                }
+            ]
+        },
+        {
+            "id": "bloodied",
+            "name": "Bloodied",
+            "tier": "A",
+            "theme": "comeback",
+            "desc": "When HP < 50%, gain +2 Strength.",
+            "hp_mult": 0.90,
+            "effects": [
+                {
+                    "type": "conditional_strength_low_hp",
+                    "value": 2,
+                    "threshold": 0.50
+                }
+            ]
+        },
+        {
+            "id": "toxic",
+            "name": "Toxic",
+            "tier": "B",
+            "theme": "attrition",
+            "desc": "On hit, apply 1 Poison.",
+            "hp_mult": 0.90,
+            "effects": [
+                {
+                    "type": "on_hit_apply_status",
+                    "status": "poison",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "id": "spiked",
+            "name": "Spiked",
+            "tier": "B",
+            "theme": "anti_spam",
+            "desc": "When hit by a Strike, deal 3 damage back.",
+            "hp_mult": 0.85,
+            "effects": [
+                {
+                    "type": "on_struck_reflect",
+                    "value": 3
+                }
+            ]
+        },
+        {
+            "id": "unstable",
+            "name": "Unstable",
+            "tier": "B",
+            "theme": "swing",
+            "desc": "Below 50% HP: Gain 10 Block and apply 1 Sap to ALL enemies (Player).",
+            "hp_mult": 0.80,
+            "effects": [
+                {
+                    "type": "trigger_below_hp_once",
+                    "threshold": 0.50,
+                    "block": 10,
+                    "apply_sap": 1
+                }
+            ]
+        },
+        {
+            "id": "vampiric",
+            "name": "Vampiric",
+            "tier": "B",
+            "theme": "sustain",
+            "desc": "Heal 30% of damage dealt.",
+            "hp_mult": 0.80,
+            "effects": [
+                {
+                    "type": "lifesteal_pct",
+                    "value": 0.30
+                }
+            ]
+        },
+        {
+            "id": "oppressive",
+            "name": "Oppressive",
+            "tier": "C",
+            "theme": "anti_spam",
+            "desc": "End of player turn: If player played 4+ cards, apply 1 Sap.",
+            "hp_mult": 0.85,
+            "effects": [
+                {
+                    "type": "eot_card_count_punish",
+                    "threshold": 4,
+                    "status": "sap",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "id": "entrenched",
+            "name": "Entrenched",
+            "tier": "C",
+            "theme": "burst_denial",
+            "desc": "First time damaged each turn: Reduce damage by 6.",
+            "hp_mult": 0.80,
+            "effects": [
+                {
+                    "type": "flat_reduction_first_hit",
+                    "value": 6
+                }
+            ]
+        },
+        {
+            "id": "malevolent",
+            "name": "Malevolent",
+            "tier": "C",
+            "theme": "alpha_strike",
+            "desc": "Start of Combat: Apply 2 Fragile to Player.",
+            "hp_mult": 0.90,
+            "effects": [
+                {
+                    "type": "start_combat_apply",
+                    "status": "fragile",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "id": "relentless",
+            "name": "Relentless",
+            "tier": "C",
+            "theme": "cleanup",
+            "desc": "If last enemy alive: Gain +25% damage and +10 Block start of turn.",
+            "hp_mult": 1.0,
+            "effects": [
+                {
+                    "type": "solo_buff",
+                    "dmg_mult": 1.25,
+                    "block": 10
+                }
+            ]
+        }
+    ]
+}

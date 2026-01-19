@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_mvaq8"]
+
+[resource]
+script = ExtResource("1_mvaq8")
+id = "mold_spitter"
+display_name = "Mold Spitter"
+texture_path = ""
+max_hp = 20
+defense = 0
+tier = "normal"
+pool = "decay"
+intents = Array[String](["Debuff (2 Weak)", "Attack 6", "Debuff (2 Vulnerable)", "Rest"])
+special_ability = "On turn 4, also applies 1 Chill"
+logic_meta = {}

@@ -1,0 +1,77 @@
+﻿Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+Debugging CombatSystem Syntax...
+godot.cmd : SCRIPT 
+ERROR: Parse Error: 
+Function 
+"_check_elite_hooks" 
+has the same name as 
+a previously declared 
+function.
+At line:1 char:1
++ & './godot.cmd' 
+--headless --script sc
+ripts/debug_syntax.gd 
+2>&1 | Ou ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (SCRIPT ERR   
+ OR: P...lared fun    
+ction.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+   at: 
+GDScript::reload (res:
+//scripts/CombatSystem
+.gd:1446)
+ERROR: Failed to load 
+script "res://scripts/
+CombatSystem.gd" with 
+error "Parse error".
+   at: load (modules/g
+dscript/gdscript.cpp:3
+022)
+Loaded Script Resource.
+Cannot instantiate (can_instantiate=false).
+Debugging GameController Syntax...
+SCRIPT ERROR: Parse 
+Error: There is 
+already a variable 
+named "combat_sys" 
+declared in this 
+scope.
+   at: 
+GDScript::reload (res:
+//scripts/GameControll
+er.gd:436)
+ERROR: Failed to load 
+script "res://scripts/
+GameController.gd" 
+with error "Parse 
+error".
+   at: load (modules/g
+dscript/gdscript.cpp:3
+022)
+ERROR: Failed to 
+instantiate an 
+autoload, script 'res:
+//scripts/GameControll
+er.gd' does not 
+inherit from 'Node'.
+   at: start 
+(main/main.cpp:4075)
+ERROR: Failed to 
+instantiate an 
+autoload, script 'res:
+//scripts/CombatSystem
+.gd' does not inherit 
+from 'Node'.
+   at: start 
+(main/main.cpp:4075)
+TelemetrySystem V2 Ready. Logging DISABLED.

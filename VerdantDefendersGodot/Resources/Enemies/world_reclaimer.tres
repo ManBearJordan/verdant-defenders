@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_f0gcd"]
+
+[resource]
+script = ExtResource("1_f0gcd")
+id = "world_reclaimer"
+display_name = "World Reclaimer"
+texture_path = ""
+max_hp = 225
+defense = 0
+tier = "boss"
+pool = "elemental"
+archetype_counter = ""
+intents = Array[String](["Attack 20", "Block 40 + Apply Constrict", "Attack 10 x 2"])
+special_ability = "Seed Harvest: End of Turn, if Seeds > 5, consumes excess. Heals 5 HP per seed + Gains Str."
+logic_meta = {}

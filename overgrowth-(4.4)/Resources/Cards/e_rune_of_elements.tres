@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_cdxsr"]
+
+[resource]
+script = ExtResource("1_cdxsr")
+id = "e_rune_of_elements"
+display_name = "Rune of Elements"
+art_id = "e_rune_of_elements"
+type = "Strike"
+cost = 3
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "once_per_turn_on_play_strike_or_tactic_apply_random_element_status_1_random_enemy",
+"type": "set_ritual"
+}]
+}

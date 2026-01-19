@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_7rfax"]
+
+[resource]
+script = ExtResource("1_7rfax")
+id = "storm_imp"
+display_name = "Storm Imp"
+texture_path = ""
+max_hp = 24
+defense = 0
+tier = "normal"
+pool = "elemental"
+intents = Array[String](["Attack 6 + Stun 1", "Rest", "Attack 6 + Stun 1", "Rest"])
+special_ability = "Stun skips your next card-play turn"
+logic_meta = {}

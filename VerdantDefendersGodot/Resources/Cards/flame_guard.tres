@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_0msss"]
+
+[resource]
+script = ExtResource("1_0msss")
+id = "flame_guard"
+display_name = "Flame Guard"
+art_id = "flame_guard"
+type = "Tactic"
+cost = 2
+damage = 0
+block = 10
+effect_text = "Apply 1 Burn."
+rarity = "uncommon"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {}

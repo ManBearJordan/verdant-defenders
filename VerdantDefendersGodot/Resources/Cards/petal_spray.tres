@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_h6wbu"]
+
+[resource]
+script = ExtResource("1_h6wbu")
+id = "petal_spray"
+display_name = "Petal Spray"
+art_id = "petal_spray"
+type = "Strike"
+cost = 1
+damage = 5
+block = 0
+effect_text = "Deal 5 damage to all enemies."
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

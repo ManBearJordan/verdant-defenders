@@ -1,0 +1,31 @@
+{
+  "fungus_rat": {
+    "name": "Fungus Rat",
+    "hp": 45,
+    "moves": [
+      { "type": "attack", "amount": 6, "text": "Bite (6 dmg)" },
+      { "type": "status", "status": "poison", "text": "Spit Poison" },
+      { "type": "attack", "amount": 4, "text": "Scratch (4 dmg)" }
+    ]
+  },
+
+  "shambling_seedling": {
+    "name": "Shambling Seedling",
+    "hp": 50,
+    "moves": [
+      { "type": "attack", "amount": 7, "text": "Thorn Jab (7 dmg)" },
+      { "type": "status", "status": "minor_growth", "text": "Emit Growth Spores" },
+      { "type": "block", "amount": 5, "text": "Tangle Roots (Block 5)" }
+    ]
+  },
+
+  "volatile_spark": {
+    "name": "Volatile Spark",
+    "hp": 40,
+    "moves": [
+      { "type": "status", "status": "shock", "text": "Chain Spark (Shock)" },
+      { "type": "attack", "amount": 5, "text": "Zap (5 dmg)" },
+      { "type": "block", "amount": 4, "text": "Crackling Shell (Block 4)" }
+    ]
+  }
+}

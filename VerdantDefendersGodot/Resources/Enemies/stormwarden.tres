@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_jy7at"]
+
+[resource]
+script = ExtResource("1_jy7at")
+id = "stormwarden"
+display_name = "Stormwarden"
+texture_path = ""
+max_hp = 210
+defense = 0
+tier = "boss"
+pool = "decay"
+archetype_counter = ""
+intents = Array[String](["Attack 12 + Apply Shock", "Block 30", "Attack 5 + Drain Energy"])
+special_ability = "Static Field: Cards give Static (Strike=1, Tactic=0, Ritual=2). At 5 Static: Take 10 Dmg + Reset."
+logic_meta = {}

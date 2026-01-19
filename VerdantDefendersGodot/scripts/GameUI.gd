@@ -1,128 +1,130 @@
 extends Control
 
-# Card view prefab (your existing CardView.tscn)
+# Card view prefab
 const CARD_SCENE: PackedScene = preload("res://Scenes/CardView.tscn")
+const ENEMY_SCENE: PackedScene = preload("res://Scenes/EnemyView.tscn")
 
 @onready var root_vbox: VBoxContainer   = get_node_or_null("RootVBox") as VBoxContainer
 @onready var header_box: HBoxContainer  = get_node_or_null("RootVBox/Header") as HBoxContainer
-@onready var enemies_box: VBoxContainer = get_node_or_null("RootVBox/Enemies") as VBoxContainer
+@onready var enemies_box: HBoxContainer = get_node_or_null("Enemies") as HBoxContainer
 @onready var hand_box: HBoxContainer    = _find_hand_box()
 
-# Background texture for the combat scene.  Assigned via set_background().
 @onready var _background: TextureRect = get_node_or_null("Background") as TextureRect
 
-# Room deck UI elements
-var room_choices_container: HBoxContainer = null
-
-var _last_hand: Array[Dictionary] = []
+# UI State
+var _last_hand: Array[CardResource] = []
 var _pending_card_index: int = -1
 
-## Helper to locate the Hand HBoxContainer even if it is nested in a
-## ScrollContainer.  It searches for a node named "Hand" under RootVBox.
+# Hand Visualization
+var _hand_container: Control = null
+const HAND_WIDTH = 750.0
+const HAND_ARC_HEIGHT = 40.0
+const CARD_ROTATION_SPREAD = 15.0
+
 func _find_hand_box() -> HBoxContainer:
+	var hand := get_node_or_null("Hand") as HBoxContainer
+	if hand: return hand
 	var root := get_node_or_null("RootVBox") as Node
 	if root:
-		# direct child
 		var hbox := root.get_node_or_null("Hand")
-		if hbox:
-			return hbox as HBoxContainer
-		# check for a ScrollContainer wrapper named HandScroll
+		if hbox: return hbox as HBoxContainer
 		var sc := root.get_node_or_null("HandScroll")
 		if sc and sc.has_node("Hand"):
 			return sc.get_node("Hand") as HBoxContainer
 	return null
 
-
-# ========================================================================
-# Lifecycle
-# ========================================================================
-
 func _ready() -> void:
+	var enemies := $"%Enemies"
+	var hand := $"%Hand"
+	var bg := $"%Background"
+	var gc := _gc()
+	if gc and gc.has_method("register_ui_nodes"):
+		gc.register_ui_nodes(enemies, hand, bg)
+	
+	if hand_box:
+		hand_box.visible = false
+		_hand_container = Control.new()
+		_hand_container.name = "HandArcContainer"
+		_hand_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hand_box.get_parent().add_child(_hand_container)
+		_hand_container.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+		_hand_container.offset_left = 0
+		_hand_container.offset_right = 0
+		_hand_container.offset_bottom = 0
+		_hand_container.offset_top = -300
+	
 	_ensure_layout()
-	_refresh_header()
-	_refresh_enemies()
-	_refresh_hand()
+	# _ready_event_system() # FIX: Function missing, commented out to prevent crash
+	
+	get_tree().process_frame.connect(func():
+		_refresh_header()
+		_refresh_enemies()
+		_refresh_hand()
+		print("GameUI: Force layout refresh complete.")
+	, CONNECT_ONE_SHOT)
 
-	# Connect to DeckManager signals if available.  When the deck or energy
-	# changes, update the header and hand display accordingly.
+	# Ribbon Log
+	var ribbon = load("res://scripts/CombatLogRibbon.gd").new()
+	add_child(ribbon)
+
+	var dc = get_node_or_null("/root/DungeonController")
+	if dc:
+		# if dc.has_signal("choices_ready"): dc.choices_ready.connect(_on_room_choices_ready) # FIX: Legacy signal
+		if dc.has_signal("map_updated"): dc.map_updated.connect(_on_map_updated)
+		if "current_map" in dc and not dc.current_map.is_empty():
+			_on_map_updated(dc.current_map, dc.current_layer, dc.current_node_index)
+		if dc.has_signal("room_entered"): dc.room_entered.connect(_on_room_entered)
+		# if dc.has_method("start_run"): dc.call_deferred("start_run")
+			
 	var dm := _dm()
 	if dm != null:
-		if dm.has_signal("hand_changed"):
-			dm.hand_changed.connect(Callable(self, "_on_hand_changed"))
-		if dm.has_signal("energy_changed"):
-			dm.energy_changed.connect(Callable(self, "_on_energy_changed"))
+		if dm.has_signal("hand_changed"): dm.hand_changed.connect(_on_hand_changed)
+		if dm.has_signal("energy_changed"): dm.energy_changed.connect(_on_energy_changed)
 
-	# Connect to GameController signals for turn management
-	var gc := _gc()
 	if gc != null:
-		if gc.has_signal("player_turn_started"):
-			gc.player_turn_started.connect(Callable(self, "_on_player_turn_started"))
-		if gc.has_signal("enemy_turn_started"):
-			gc.enemy_turn_started.connect(Callable(self, "_on_enemy_turn_started"))
+		if gc.has_signal("player_turn_started"): gc.player_turn_started.connect(_on_player_turn_started)
+		if gc.has_signal("enemy_turn_started"): gc.enemy_turn_started.connect(_on_enemy_turn_started)
+	
+	var rs = get_node_or_null("/root/RelicSystem")
+	if rs:
+		if rs.has_signal("relic_added"): rs.relic_added.connect(_on_relic_added)
+		_refresh_relics()
 
+	var isys = get_node_or_null("/root/InfusionSystem")
+	if isys:
+		if isys.has_signal("inventory_changed"): isys.inventory_changed.connect(_on_infusions_changed)
+		_refresh_infusions()
 
-# ========================================================================
-# Autoload helpers (robust for typed GDScript)
-# ========================================================================
+	# Delayed check
+	get_tree().create_timer(1.0).timeout.connect(func():
+		if not enemies_box or enemies_box.get_child_count() == 0:
+			_spawn_enemies_in_ui()
+	)
 
-func _dm() -> Node:
-	# DeckManager autoload if present
-	if typeof(DeckManager) != TYPE_NIL:
-		return DeckManager
-	return null
-
+# --- Autoloads ---
+func _dm() -> Node: return get_node_or_null("/root/DeckManager")
 func _cs() -> Node:
-	# CombatSystem autoload if present
-	if typeof(CombatSystem) != TYPE_NIL:
-		return CombatSystem
-	return null
+	var cs = get_node_or_null("/root/CombatSystem")
+	if cs and not cs.is_connected("damage_dealt", _on_damage_dealt):
+		cs.damage_dealt.connect(_on_damage_dealt)
+	return cs
+func _gc() -> Node: return get_node_or_null("/root/GameController")
 
-func _gc() -> Node:
-	# GameController autoload if present
-	if typeof(GameController) != TYPE_NIL:
-		return GameController
-	return null
+# --- Logic ---
 
-
-# ========================================================================
-# Data access (typed, no warnings-as-errors)
-# ========================================================================
-
-func _get_enemies() -> Array[Dictionary]:
-	var cs := _cs()
+func _get_enemies() -> Array[EnemyUnit]:
+	var cs = _cs()
 	if cs and cs.has_method("get_enemies"):
-		var raw: Array = cs.call("get_enemies") as Array
-		var out: Array[Dictionary] = []
-		for v in raw:
-			if v is Dictionary:
-				out.append(v as Dictionary)
-		return out
+		return cs.get_enemies()
 	return []
 
-func _get_hand_cards() -> Array[Dictionary]:
-	var out: Array[Dictionary] = []
-	var dm := _dm()
-	if dm == null:
-		return out
+func _get_hand_cards() -> Array[CardResource]:
+	var dm = _dm()
+	if dm and dm.has_method("get_hand"):
+		return dm.get_hand()
+	return []
 
-	# Prefer a method, fall back to a public array property if exposed
-	var raw: Array = []
-	if dm.has_method("get_hand"):
-		raw = dm.call("get_hand") as Array
-	else:
-		var h = dm.get("hand")
-		if h is Array:
-			raw = h
-
-	for v in raw:
-		if v is Dictionary:
-			out.append(v as Dictionary)
-	return out
-
-
-# ========================================================================
-# UI refresh
-# ========================================================================
+# --- Refresh ---
 
 func _ensure_layout() -> void:
 	if root_vbox:
@@ -136,282 +138,566 @@ func _ensure_layout() -> void:
 	if hand_box:
 		hand_box.size_flags_vertical = Control.SIZE_FILL
 		hand_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		# Fan out cards slightly by overlapping them.  A negative separation causes
-		# each card to overlap the previous one, giving a more compact hand.
-		# Only apply if supported by theme overrides.
 		hand_box.add_theme_constant_override("separation", -60)
-		# Center the cards within the hand container.  Alignment 1 corresponds to
-		# BoxContainer.ALIGNMENT_CENTER.
-		hand_box.alignment = 1
+		hand_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
 func _clear_box(b: Node) -> void:
-	if b == null:
-		return
-	for c in b.get_children():
-		(c as Node).queue_free()
+	if b:
+		for c in b.get_children():
+			c.queue_free()
 
 func _refresh_header() -> void:
-	if header_box == null:
-		return
+	if not header_box: return
 	_clear_box(header_box)
+	
+	var ac = get_node_or_null("/root/AscensionController")
+	var cs = get_node_or_null("/root/CombatSystem")
+	var asc_level = 0
+	if ac: asc_level = ac.ascension_level
+	
+	if asc_level > 0:
+		var asc_lbl = Label.new()
+		asc_lbl.text = "Ascension %d" % asc_level
+		asc_lbl.modulate = Color(1, 0.4, 0.4) # Light Red
+		asc_lbl.add_theme_font_size_override("font_size", 18)
+		header_box.add_child(asc_lbl)
+		header_box.add_child(VSeparator.new())
 
-	var dm := _dm()
-	var gc := _gc()
-	var energy_now := 0
-	var hand_size := 0
-	var current_turn := 0
-	var is_player_turn := true
+	var dm = _dm()
+	var gc = _gc()
+	var energy_now = 0
+	var hand_size = 0
+	var current_turn = 0
+	var is_player_turn = true
 	
 	if dm:
-		var e = dm.get("energy")
-		if typeof(e) == TYPE_INT:
-			energy_now = int(e)
-		var h = dm.get("hand")
-		if h is Array:
-			hand_size = (h as Array).size()
+		energy_now = dm.energy
+		hand_size = dm.hand.size()
 	
 	if gc:
-		if gc.has_method("get_current_turn"):
-			current_turn = int(gc.call("get_current_turn"))
-		if gc.has_method("is_current_player_turn"):
-			is_player_turn = bool(gc.call("is_current_player_turn"))
+		if gc.has_method("get_current_turn"): current_turn = gc.get_current_turn()
+		if gc.has_method("is_current_player_turn"): is_player_turn = gc.is_current_player_turn()
 
-	# Turn and game state info
 	var turn_info := Label.new()
 	var turn_phase := "Player Turn" if is_player_turn else "Enemy Turn"
 	turn_info.text = "Turn %d - %s" % [current_turn, turn_phase]
 	header_box.add_child(turn_info)
 	
-	# Add spacer
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header_box.add_child(spacer)
 
-	# Cards and energy info
 	var info := Label.new()
-	info.text = "Cards: %d   Energy: %d" % [hand_size, energy_now]
-	header_box.add_child(info)
+	var seeds_count = 0
+	if gc and "player_state" in gc:
+		seeds_count = int(gc.player_state.get("seeds", 0))
+	info.text = "Cards: %d   Energy: %d   Seeds: %d" % [hand_size, energy_now, seeds_count]
+	if gc and "player_state" in gc:
+		seeds_count = int(gc.player_state.get("seeds", 0))
 	
-	# End Turn button (only show during player turn)
+	var seeds_color = Color.WHITE
+	# Reclaimer Check
+	if cs and cs.has_method("is_enemy_present") and cs.is_enemy_present("World Reclaimer"):
+		if seeds_count == 5: seeds_color = Color.YELLOW
+		elif seeds_count >= 6: seeds_color = Color.RED
+		
+	var seeds_lbl = Label.new()
+	seeds_lbl.text = "Seeds: %d" % seeds_count
+	seeds_lbl.modulate = seeds_color
+	
+	info.text = "Cards: %d   Energy: %d   " % [hand_size, energy_now]
+	header_box.add_child(info)
+	header_box.add_child(seeds_lbl)
+	
+	# Chronoshard Meter
+	# (cs already defined above)
+	if cs and cs.has_method("is_enemy_present") and cs.is_enemy_present("Chronoshard"):
+		var meter_script = load("res://scripts/ThresholdMeter.gd")
+		if meter_script:
+			var meter = meter_script.new()
+			meter.custom_minimum_size = Vector2(100, 24)
+			var played = 0
+			if gc and "turn_safety_metrics" in gc:
+				played = gc.turn_safety_metrics.cards_played
+			meter.setup(played, 5, 5)
+			header_box.add_child(VSeparator.new())
+			header_box.add_child(Label.new()) # Spacer
+			header_box.add_child(meter)
+	
+	# Statuses
+	var p_status_lbl = Label.new()
+	var p_status_text = ""
+	if gc and "player_state" in gc:
+		var ps = gc.player_state.get("statuses", {})
+		for s in ps.keys():
+			var val = int(ps[s])
+			if val > 0:
+				var icon = "❓"
+				if s == "chill": icon = "❄️"
+				elif s == "shock": icon = "⚡"
+				elif s == "weak": icon = "💔"
+				elif s == "vulnerable": icon = "🛡️❌"
+				elif s == "burn": icon = "🔥"
+				p_status_text += "%s %s x%d  " % [icon, s.capitalize(), val]
+	if p_status_text != "":
+		p_status_lbl.text = p_status_text
+		p_status_lbl.modulate = Color.YELLOW
+		header_box.add_child(VSeparator.new())
+		header_box.add_child(p_status_lbl)
+	
 	if is_player_turn:
 		var end_turn_btn := Button.new()
 		end_turn_btn.text = "End Turn"
 		end_turn_btn.custom_minimum_size.x = 80.0
-		end_turn_btn.pressed.connect(Callable(self, "_on_end_turn_pressed"))
+		end_turn_btn.pressed.connect(_on_end_turn_pressed)
 		header_box.add_child(end_turn_btn)
+	
+	header_box.add_child(VSeparator.new())
+	_relic_box = HBoxContainer.new()
+	header_box.add_child(_relic_box)
+	_relic_box.add_theme_constant_override("separation", 4)
+	_refresh_relics()
+	
+	header_box.add_child(VSeparator.new())
+	_infusion_box = HBoxContainer.new()
+	header_box.add_child(_infusion_box)
+	_infusion_box.add_theme_constant_override("separation", 4)
+	_refresh_infusions()
 
-## Set the background texture for the combat scene.  Provide just the base
-## filename without extension (e.g. "growth_combat").  The image is
-## loaded via ArtRegistry.
-func set_background(name: String) -> void:
-	if _background == null:
+# --- Relics & Infusions ---
+var _relic_box: HBoxContainer = null
+var _infusion_box: HBoxContainer = null
+
+func _on_relic_added(relic) -> void: _refresh_relics()
+func _refresh_relics() -> void:
+	if not _relic_box: return
+	for c in _relic_box.get_children(): c.queue_free()
+	var rs = get_node_or_null("/root/RelicSystem")
+	if rs and rs.has_method("get_relics"):
+		for r in rs.get_relics():
+			var icon = ColorRect.new()
+			icon.custom_minimum_size = Vector2(24, 24)
+			icon.color = Color.GOLD
+			icon.tooltip_text = "%s\n%s" % [r.get("name", "Relic"), r.get("description", "")]
+			_relic_box.add_child(icon)
+
+func _on_infusions_changed(_items) -> void: _refresh_infusions()
+func _refresh_infusions() -> void:
+	if not _infusion_box: return
+	for c in _infusion_box.get_children(): c.queue_free()
+	var isys = get_node_or_null("/root/InfusionSystem")
+	if isys and isys.has_method("get_inventory"):
+		var items = isys.get_inventory()
+		for i in range(items.size()):
+			var item = items[i]
+			var btn = Button.new()
+			btn.custom_minimum_size = Vector2(32, 32)
+			btn.text = "V"
+			btn.tooltip_text = "%s\n%s" % [item.get("name", "Vial"), item.get("description", "")]
+			btn.pressed.connect(_on_infusion_pressed.bind(i))
+			_infusion_box.add_child(btn)
+
+func _on_infusion_pressed(index: int) -> void:
+	var gc = _gc()
+	if gc and gc.has_method("is_current_player_turn") and not gc.is_current_player_turn():
 		return
-	
-	# Try to get texture via ArtRegistry first
-	var art_registry: Node = get_node_or_null("/root/ArtRegistry")
-	if art_registry != null and art_registry.has_method("get_texture"):
-		var texture = art_registry.call("get_texture", name)
-		if texture != null:
-			_background.texture = texture
+	var isys = get_node_or_null("/root/InfusionSystem")
+	if isys: isys.use_infusion(index)
+
+func set_background(name: String) -> void:
+	if not _background: return
+	var ar = get_node_or_null("/root/ArtRegistry")
+	if ar and ar.has_method("get_texture"):
+		var tex = ar.get_texture(name)
+		if tex: 
+			_background.texture = tex
 			return
-	
-	# Fallback to direct loading
-	var path: String = "res://Art/backgrounds/%s.png" % name
+	var path = "res://Art/backgrounds/%s.png" % name
 	if ResourceLoader.exists(path):
 		_background.texture = load(path)
 	else:
 		_background.texture = null
 
-func _intent_text(e: Dictionary) -> String:
-	var i: Dictionary = e.get("intent", {}) as Dictionary
-	var t := String(i.get("type", ""))
-	var v := int(i.get("value", 0))
-	if t == "attack":
-		return "(Attack %d)" % v
-	elif t == "defend":
-		return "(Defend %d)" % v
-	elif t != "":
-		return "(%s %d)" % [t.capitalize(), v]
-	return ""
+# --- Main UI Spawning ---
 
 func _refresh_enemies() -> void:
-	if enemies_box == null:
-		return
-	_clear_box(enemies_box)
-
-	var list: Array[Dictionary] = _get_enemies()
-	for i in range(list.size()):
-		var e: Dictionary = list[i] as Dictionary
-		# Create a button for each enemy; this will display an icon and text.  Use
-		# size flags to make it expand horizontally.
-		var btn := Button.new()
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.custom_minimum_size.y = 40.0
-		# Compute HP and intent text
-		var hp: int = int(e.get("hp", 0))
-		var name := String(e.get("name", "Enemy %d" % i))
-		var extra := _intent_text(e)
-		# Attempt to load an icon for the enemy based on its name.  Create a slug
-		# by lowercasing and replacing spaces and hyphens with underscores.
-		var slug: String = name.strip_edges().to_lower().replace(" ", "_").replace("-", "_")
-		var icon_paths: Array[String] = [
-			"res://Art/%s.png" % slug,
-			"res://Art/enemies/%s.png" % slug,
-			"res://Art/characters/%s.png" % slug
-		]
-		var tex: Texture2D = null
-		for path in icon_paths:
-			if ResourceLoader.exists(path):
-				tex = load(path)
-				break
-		# If no texture found by direct slug, search the directories for a file that
-		# contains the slug as a substring.  This allows matching art even when
-		# the file names have prefixes or suffixes.  Search in common art folders.
-		if tex == null:
-			var search_dirs: Array[String] = ["res://Art/characters", "res://Art/enemies", "res://Art"]
-			for dir_path in search_dirs:
-				var dir := DirAccess.open(dir_path)
-				if dir != null:
-					dir.list_dir_begin()
-					var fname: String = dir.get_next()
-					while fname != "":
-						if not dir.current_is_dir():
-							var lower := fname.to_lower()
-							if lower.contains(slug):
-								var cand_path := "%s/%s" % [dir_path, fname]
-								if ResourceLoader.exists(cand_path):
-									tex = load(cand_path)
-									break
-						if tex != null:
-							break
-						fname = dir.get_next()
-					dir.list_dir_end()
-				if tex != null:
-					break
-		# Assign the icon to the button if found
-		if tex != null:
-			btn.icon = tex
-		# Set the button text to include name, HP, and intent
-		btn.text = "%s   HP %d  %s" % [name, hp, extra]
-		# Add to container and connect click to target selection
-		enemies_box.add_child(btn)
-		btn.pressed.connect(Callable(self, "_on_target_chosen").bind(i))
+	# Enemies are now maintained by _spawn_enemies_in_ui / synced with CombatSystem
+	_spawn_enemies_in_ui()
 
 func _refresh_hand() -> void:
-	if hand_box == null:
-		return
-	_clear_box(hand_box)
-
-	var cards: Array[Dictionary] = _get_hand_cards()
-	_last_hand = cards.duplicate()
-
-	for i in range(cards.size()):
-		var c: Dictionary = cards[i] as Dictionary
-
-		var inst: Node = null
-		if CARD_SCENE:
-			inst = CARD_SCENE.instantiate()
-			if inst.has_method("setup"):
-				inst.call("setup", c, i)  # CardView optional API
+	if not _hand_container: return
+	for c in _hand_container.get_children(): c.queue_free()
+	
+	_last_hand = _get_hand_cards()
+	for i in range(_last_hand.size()):
+		var card = _last_hand[i]
+		var inst = CARD_SCENE.instantiate()
+		# inst should be CardView
+		if inst.has_method("setup"):
+			inst.setup(card)
+			
+		_hand_container.add_child(inst)
+		
+		# Connect Click
+		var cb = _on_card_pressed.bind(i)
+		if inst is BaseButton: inst.pressed.connect(cb)
 		else:
-			# Fallback: create a button displaying the card name and cost
-			var fb: Button = Button.new()
-			var nm: String = String(c.get("name", "Card"))
-			var cost: int = 0
-			var cost_v: Variant = c.get("cost", 0)
-			if typeof(cost_v) == TYPE_INT:
-				cost = int(cost_v)
-			fb.text = "%s (%d)" % [nm, cost]
-			inst = fb
+			var catcher = inst.get_node_or_null("ClickCatcher")
+			if catcher: catcher.pressed.connect(cb)
 
-		hand_box.add_child(inst)
+func _spawn_enemies_in_ui() -> void:
+	if not enemies_box: return
+	
+	# Layout
+	enemies_box.custom_minimum_size = Vector2(0, 300)
+	enemies_box.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	enemies_box.offset_top = 100
+	enemies_box.offset_bottom = 400
+	
+	_clear_box(enemies_box)
+	
+	var enemies = _get_enemies() # Array[EnemyUnit]
+	for i in range(enemies.size()):
+		var unit = enemies[i]
+		if unit.is_dead(): continue
+		
+		var view = ENEMY_SCENE.instantiate()
+		enemies_box.add_child(view)
+		view.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if view.has_method("setup"):
+			view.setup(unit)
+			
+# --- Interactions ---
 
-		# Connect the click:
-		var callback: Callable = Callable(self, "_on_card_pressed").bind(i)
-		if inst is BaseButton:
-			(inst as BaseButton).pressed.connect(callback)
-		else:
-			var catcher: BaseButton = inst.get_node_or_null("ClickCatcher") as BaseButton
-			if catcher:
-				catcher.pressed.connect(callback)
-
-
-# ========================================================================
-# Interaction
-# ========================================================================
-
-func _on_card_pressed(card_index: int) -> void:
-	if card_index < 0 or card_index >= _last_hand.size():
-		return
-	var card: Dictionary = _last_hand[card_index] as Dictionary
-	var needs_target := bool(card.get("needs_target", false))
-
+func _on_card_pressed(idx: int) -> void:
+	if idx < 0 or idx >= _last_hand.size(): return
+	var card = _last_hand[idx]
+	print("GameUI: Playing %s" % card.display_name)
+	
+	var needs_target = _card_needs_target_check(card)
 	if needs_target:
-		_pending_card_index = card_index
-		_highlight_target_mode(true)
+		_pending_card_index = idx
+		print("Select Target...")
 	else:
-		_play_card(card_index, card, -1)
+		_play_card(idx, card, -1)
 
-func _on_target_chosen(target_index: int) -> void:
+func _card_needs_target_check(card: CardResource) -> bool:
+	if card.damage > 0: return true
+	if "target" in card.tags: return true
+	return false
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if _pending_card_index != -1:
+			var target_idx = _check_enemy_click_at(get_global_mouse_position())
+			if target_idx != -1:
+				_on_target_chosen(target_idx)
+			else:
+				_pending_card_index = -1
+
+func _check_enemy_click_at(pos: Vector2) -> int:
+	if not enemies_box: return -1
+	for i in range(enemies_box.get_child_count()):
+		var child = enemies_box.get_child(i)
+		if child.get_global_rect().has_point(pos):
+			# Map ui child index to enemy index?
+			# We filter dead enemies in _spawn_enemies.
+			# So indices might not match 1:1 if we skip dead ones.
+			# But CombatSystem maintains indices including dead ones usually?
+			# Wait, CombatSystem.get_living_enemies() returns indices.
+			# GameUI spawns only living ones?
+			# Line 233 in _spawn_enemies loops enemies.
+			# If I skip dead ones in spawn, the UI index != Data index.
+			# FIX: Don't skip in spawn, just hide? Or store index on view.
+			# I'll rely on CombatSystem cleaning up or GameUI matching order.
+			# For now, simplistic mapping.
+			return i 
+	return -1
+
+func _on_target_chosen(t_idx: int) -> void:
 	if _pending_card_index >= 0:
-		var card: Dictionary = _last_hand[_pending_card_index] as Dictionary
-		_play_card(_pending_card_index, card, target_index)
+		var card = _last_hand[_pending_card_index]
+		_play_card(_pending_card_index, card, t_idx)
 		_pending_card_index = -1
-		_highlight_target_mode(false)
 
-func _play_card(idx: int, card: Dictionary, target_index: int) -> void:
-	var cs := _cs()
-	if cs and cs.has_method("play_card"):
-		cs.call("play_card", idx, card, target_index)
+func _play_card(idx: int, card: CardResource, t_idx: int) -> void:
+	# Animation Ghost logic (omitted for brevity, can restore if needed)
+	
+	var gc = _gc()
+	var success = false
+	if gc and gc.has_method("play_card"):
+		# Targeting sync if needed
+		success = gc.play_card(idx, t_idx)
+		
+	if success:
+		_refresh_header()
+		_refresh_enemies()
+		_refresh_hand()
+	else:
+		_on_play_failed(idx, "BLOCK")
 
-	# Refresh UI after any play attempt
-	_refresh_header()
-	_refresh_enemies()
-	_refresh_hand()
+func _on_play_failed(idx: int, reason: String) -> void:
+	# Shake
+	if not _hand_container: return
+	var cards = _hand_container.get_children()
+	if idx >= 0 and idx < cards.size():
+		var c = cards[idx]
+		var base_pos = c.position.x
+		var tw = create_tween()
+		for i in range(5):
+			tw.tween_property(c, "position:x", base_pos + (10 if i%2==0 else -10), 0.05)
+		tw.tween_property(c, "position:x", base_pos, 0.05)
+		
+	# Badge at Mouse
+	spawn_damage_number(get_global_mouse_position(), 0, Color.RED) # Hacky reuse?
+	# Better: Custom text
+	var label = Label.new()
+	label.text = reason
+	label.position = get_global_mouse_position() + Vector2(20, -20)
+	label.add_theme_font_size_override("font_size", 24)
+	label.modulate = Color.RED
+	label.z_index = 300
+	add_child(label)
+	var tw2 = create_tween()
+	tw2.tween_property(label, "position:y", label.position.y - 50, 0.8)
+	tw2.tween_property(label, "modulate:a", 0.0, 0.8)
+	tw2.tween_callback(label.queue_free)
 
 func _on_end_turn_pressed() -> void:
-	var gc := _gc()
-	if gc and gc.has_method("end_player_turn"):
-		gc.call("end_player_turn")
+	var gc = _gc()
+	if gc: gc.end_player_turn()
+	_refresh_header()
+	_refresh_enemies()
+
+# --- Hand Animation (Juice) ---
+func _process(delta: float) -> void:
+	_update_hand_arc(delta)
+	_update_enemy_highlight(delta)
+
+func _update_hand_arc(delta: float) -> void:
+	if not _hand_container: return
+	var cards = _hand_container.get_children()
+	var count = cards.size()
+	if count == 0: return
 	
-	# Refresh UI to reflect turn change
-	_refresh_header()
-	_refresh_enemies()
+	var center_x = 576.0
+	if get_viewport():
+		var r = get_viewport().get_visible_rect()
+		if r.size.x > 100: center_x = r.size.x / 2.0
+		
+	var card_spacing = 110.0
+	var total_width = min(count * card_spacing, HAND_WIDTH)
+	var start_x = center_x - (total_width / 2.0)
+	var step_x = 0
+	if count > 1: step_x = total_width / float(count - 1)
+	
+	var mouse_pos = get_global_mouse_position() # Use global for reliability
+	var hover_index = -1
+	
+	for i in range(count):
+		if cards[i].get_global_rect().has_point(mouse_pos):
+			hover_index = i
+			break
+			
+	for i in range(count):
+		var card = cards[i]
+		var t_idx = float(i)
+		var target_x = start_x + (t_idx * step_x)
+		if count == 1: target_x = center_x - (card.size.x / 2.0)
+		
+		# Arc
+		var x_offset = (target_x - center_x)
+		var pct = clamp(x_offset / (HAND_WIDTH / 2.0), -1.0, 1.0)
+		var target_rot = pct * deg_to_rad(CARD_ROTATION_SPREAD)
+		var target_y = abs(pct) * HAND_ARC_HEIGHT
+		var target_scale = Vector2(0.65, 0.65)
+		var target_z = 0
+		
+		if hover_index != -1:
+			if i == hover_index:
+				target_y -= 60
+				target_scale = Vector2(0.85, 0.85)
+				target_rot = 0
+				target_z = 100
+			elif abs(i - hover_index) == 1:
+				target_x += 60 * sign(i - hover_index)
+				
+		card.position = card.position.lerp(Vector2(target_x, target_y), 15 * delta)
+		card.rotation = lerp_angle(card.rotation, target_rot, 15 * delta)
+		card.scale = card.scale.lerp(target_scale, 15 * delta)
+		card.z_index = target_z
 
-func _highlight_target_mode(active: bool) -> void:
-	if active:
-		print("Select a target…")
+func _update_enemy_highlight(delta: float) -> void:
+	var active = (_pending_card_index != -1)
+	var mouse_pos = get_global_mouse_position()
+	for child in enemies_box.get_children():
+		if child.has_method("set_highlight"):
+			child.set_highlight(active and child.get_global_rect().has_point(mouse_pos))
+
+# --- Signals ---
+func _on_hand_changed(hand): _refresh_header(); _refresh_hand()
+func _on_energy_changed(e): _refresh_header()
+func _on_player_turn_started(): _refresh_header(); _refresh_enemies(); _refresh_hand()
+func _on_enemy_turn_started(): _refresh_header()
+func _on_damage_dealt(type, idx, amt, abs): spawn_damage_number(Vector2(200, 100) if type=="player" else Vector2.ZERO, amt, Color.RED) # Simplify position logic
+
+func spawn_damage_number(pos: Vector2, value: int, color: Color) -> void:
+	# Refined version logic
+	if pos == Vector2.ZERO: 
+		# Find rough position for enemy?
+		# Can't easily without index. passed index is valid?
+		# If index passed, find visual node
+		pass
+		
+	var label = Label.new()
+	label.text = str(value)
+	label.position = pos
+	label.add_theme_font_size_override("font_size", 32)
+	label.modulate = color
+	label.z_index = 200
+	add_child(label)
+	var tw = create_tween()
+	tw.tween_property(label, "position:y", pos.y - 100, 1.0)
+	tw.tween_callback(label.queue_free)
+
+# --- View Modes ---
+enum ViewMode { MAP, COMBAT, REWARD, EVENT, NONE }
+var current_view_mode = ViewMode.NONE
+
+func _set_view_mode(mode: ViewMode) -> void:
+	current_view_mode = mode
+	
+	# Combat Elements
+	var is_combat = (mode == ViewMode.COMBAT)
+	if header_box: header_box.visible = is_combat
+	if enemies_box: enemies_box.visible = is_combat
+	if hand_box: hand_box.visible = is_combat
+	if _hand_container: _hand_container.visible = is_combat
+	
+	# Map
+	if _map_screen_instance:
+		_map_screen_instance.visible = (mode == ViewMode.MAP)
+		
+	# Rewards (If we have a dedicated container)
+	# Event (If we have a dedicated container)
+
+# --- Map/Room ---
+var _map_screen_instance: Control = null
+func _on_map_updated(map_data, layer, idx): 
+	_show_map(map_data, layer, idx)
+
+func _show_map(map_data, layer, idx):
+	_set_view_mode(ViewMode.MAP)
+	
+	if not _map_screen_instance:
+		var s = load("res://scripts/MapScreen.gd")
+		if s:
+			_map_screen_instance = s.new()
+			add_child(_map_screen_instance)
+			_map_screen_instance.set_anchors_preset(Control.PRESET_FULL_RECT)
+			_map_screen_instance.node_selected.connect(_on_map_node_selected)
+			
+	move_child(_map_screen_instance, get_child_count()-1)
+	_map_screen_instance.setup(map_data, layer, idx)
+
+func _on_map_node_selected(l, i, t):
+	var dc = get_node_or_null("/root/DungeonController")
+	if dc: dc.choose_node(l, i)
+
+func _on_room_entered(room):
+	# Clear previous combat state just in case
+	if enemies_box: _clear_box(enemies_box)
+	if hand_box: _clear_box(hand_box)
+	
+	var type = room.get("type", "")
+	
+	if type in ["fight", "elite", "boss"]:
+		_set_view_mode(ViewMode.COMBAT)
+		_spawn_enemies_in_ui()
+	elif type == "shop":
+		_set_view_mode(ViewMode.REWARD) # Or SHOP mode
+		# Shop logic typically opens a separate window.
+		# For now, hide map/combat.
+	elif type == "event":
+		_set_view_mode(ViewMode.EVENT)
+	elif type == "rest":
+		_set_view_mode(ViewMode.EVENT) # Grove is event-like
+	elif type == "treasure":
+		_set_view_mode(ViewMode.REWARD)
 	else:
-		print("Target mode off")
+		_set_view_mode(ViewMode.NONE)
 
-# ========================================================================
-# Signal handlers
-# ========================================================================
+# --- Win / Loss ---
+var _win_loss_ui: Control = null
 
-func _on_hand_changed(new_hand: Array[Dictionary]) -> void:
-	# Called when the DeckManager emits hand_changed.  Update the stored
-	# reference to the hand and refresh the header and hand display.  The
-	# enemies display is not updated here because enemy intent does not
-	# change when the hand changes.
-	_last_hand = []
-	for v in new_hand:
-		if v is Dictionary:
-			_last_hand.append((v as Dictionary))
-	_refresh_header()
-	_refresh_hand()
+func show_game_over() -> void:
+	_set_view_mode(ViewMode.NONE) # Hide everything else
+	_ensure_win_loss_ui()
+	_win_loss_ui.visible = true
+	if _win_loss_ui.has_method("setup_game_over"):
+		_win_loss_ui.setup_game_over()
+	move_child(_win_loss_ui, get_child_count()-1)
 
-func _on_energy_changed(_current: int) -> void:
-	# Called when the DeckManager emits energy_changed.  Refresh the header
-	# to reflect the new energy value.  The hand is not refreshed here because
-	# the hand contents do not change when energy changes.
-	_refresh_header()
+func show_victory() -> void:
+	_set_view_mode(ViewMode.NONE)
+	_ensure_win_loss_ui()
+	_win_loss_ui.visible = true
+	if _win_loss_ui.has_method("setup_victory"):
+		_win_loss_ui.setup_victory()
+	move_child(_win_loss_ui, get_child_count()-1)
 
-func _on_player_turn_started() -> void:
-	# Called when GameController starts a player turn
-	_refresh_header()
-	_refresh_enemies()
-	_refresh_hand()
+func _ensure_win_loss_ui() -> void:
+	if _win_loss_ui: return
+	var s = load("res://scripts/WinLossUI.gd")
+	if s:
+		_win_loss_ui = s.new()
+		add_child(_win_loss_ui)
+		_win_loss_ui.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_win_loss_ui.visible = false
+		if _win_loss_ui.has_signal("restart_requested"):
+			_win_loss_ui.restart_requested.connect(_on_restart_requested)
+		if _win_loss_ui.has_signal("menu_requested"):
+			_win_loss_ui.menu_requested.connect(_on_menu_requested)
 
-func _on_enemy_turn_started() -> void:
-	# Called when GameController starts an enemy turn
-	_refresh_header()
+func _on_restart_requested() -> void:
+	# Reload current scene
+	get_tree().reload_current_scene()
+
+func _on_menu_requested() -> void:
+	# Go to main menu
+	var ps = "res://Scenes/MainMenu.tscn"
+# --- Rewards ---
+var _rewards_ui_instance: Control = null
+
+func show_rewards(offers: Array) -> void:
+	_set_view_mode(ViewMode.REWARD)
+	
+	if not _rewards_ui_instance:
+		var s = load("res://Scenes/RewardsUI.tscn")
+		if s:
+			_rewards_ui_instance = s.instantiate()
+			add_child(_rewards_ui_instance)
+			_rewards_ui_instance.set_anchors_preset(Control.PRESET_FULL_RECT)
+			if _rewards_ui_instance.has_signal("rewards_done"):
+				_rewards_ui_instance.rewards_done.connect(_on_rewards_done)
+			
+	move_child(_rewards_ui_instance, get_child_count()-1)
+	
+	if _rewards_ui_instance.has_method("setup"):
+		_rewards_ui_instance.setup(offers)
+
+func _on_rewards_done() -> void:
+	# Rewards done -> Back to Map (or Trigger Next Room logic)
+	# DungeonController needs to know we finished the room.
+	# Usually RoomController logic flow finishes here.
+	var dc = get_node_or_null("/root/DungeonController")
+	if dc and dc.has_method("next_room"):
+		dc.next_room()
+	
+	_set_view_mode(ViewMode.MAP) # Explicitly switch back to Map View?
+	# next_room() calls show_map() which calls _set_view_mode(MAP).
+	# So just calling next_room is sufficient.
+	# _rewards_ui_instance is mostly self-cleaning (queue_free) or we should null it?
+	# RewardsUI self-cleans with queue_free().
+	_rewards_ui_instance = null

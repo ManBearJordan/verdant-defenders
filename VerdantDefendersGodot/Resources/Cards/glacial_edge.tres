@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_mmfw5"]
+
+[resource]
+script = ExtResource("1_mmfw5")
+id = "glacial_edge"
+display_name = "Glacial Edge"
+art_id = "glacial_edge"
+type = "Strike"
+cost = 1
+damage = 4
+block = 0
+effect_text = "Apply Chill and draw 1."
+rarity = "common"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {}

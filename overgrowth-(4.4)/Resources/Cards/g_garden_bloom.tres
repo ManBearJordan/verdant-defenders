@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_bo4al"]
+
+[resource]
+script = ExtResource("1_bo4al")
+id = "g_garden_bloom"
+display_name = "Garden Bloom"
+art_id = "g_garden_bloom"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "eot_gain_seed_1",
+"type": "set_ritual"
+}]
+}

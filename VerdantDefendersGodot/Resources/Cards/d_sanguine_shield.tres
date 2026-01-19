@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_1ft64"]
+
+[resource]
+script = ExtResource("1_1ft64")
+id = "d_sanguine_shield"
+display_name = "Sanguine Shield"
+art_id = "d_sanguine_shield"
+type = "Strike"
+cost = 1
+damage = 0
+block = 0
+effect_text = ""
+rarity = "common"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 7.0,
+"type": "gain_block"
+}, {
+"effects": [{
+"amount": 3.0,
+"type": "heal"
+}],
+"trigger": "on_block_break_this_turn",
+"type": "set_trap"
+}]
+}

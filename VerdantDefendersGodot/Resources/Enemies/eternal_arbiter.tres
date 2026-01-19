@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_aci0b"]
+
+[resource]
+script = ExtResource("1_aci0b")
+id = "eternal_arbiter"
+display_name = "Eternal Arbiter"
+texture_path = ""
+max_hp = 235
+defense = 0
+tier = "boss"
+pool = "elemental"
+archetype_counter = ""
+intents = Array[String](["Attack 15 + Apply Frail", "Attack (Missing HP as Dmg)", "Buff (+2 Strength, Purge Buffs)"])
+special_ability = "Equilibrium: Poison Damage has diminishing returns (>20: 50%, >30: 20%)."
+logic_meta = {}

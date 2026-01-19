@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_mhx6t"]
+
+[resource]
+script = ExtResource("1_mhx6t")
+id = "ichor_of_life"
+display_name = "Ichor of Life"
+art_id = "ichor_of_life"
+type = "Ritual"
+cost = 3
+damage = 0
+block = 0
+effect_text = "At end of combat, heal 5 HP per Poison applied."
+rarity = "rare"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {}

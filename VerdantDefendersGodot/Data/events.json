@@ -1,0 +1,105 @@
+{
+  "mysterious_shrine": {
+    "title": "Mysterious Shrine",
+    "text": "You come across an ancient shrine covered in moss. A faint hum emanates from within.",
+    "choices": [
+      {
+        "text": "Pray (Heal 10 HP)",
+        "outcome": {
+          "type": "heal",
+          "amount": 10
+        }
+      },
+      {
+        "text": "Steal Offering (Gain 50 Gold, Lose 5 HP)",
+        "outcome": {
+          "type": "resource",
+          "resource": "gold",
+          "amount": 50,
+          "cost_hp": 5
+        }
+      },
+      {
+        "text": "Ignore",
+        "outcome": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  "cursed_book": {
+    "title": "The Cursed Book",
+    "text": "A leather-bound book lies in the middle of the path. It pulses with a dark energy.",
+    "choices": [
+      {
+        "text": "Read it (Gain Rare Card, Lose 10 HP)",
+        "outcome": {
+          "type": "card",
+          "rarity": "rare",
+          "cost_hp": 10
+        }
+      },
+      {
+        "text": "Burn it (Remove a Card)",
+        "outcome": {
+          "type": "remove_card"
+        }
+      },
+      {
+        "text": "Leave",
+        "outcome": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  "lost_adventurer": {
+    "title": "Lost Adventurer",
+    "text": "A ragged traveler stumbles out of the bush. 'Please,' he gasps, 'I need help... or perhaps a trade?'",
+    "choices": [
+      {
+        "text": "Give Potion (Heal him - Gain Rare Relic/Card)",
+        "outcome": {
+          "type": "card",
+          "rarity": "rare",
+          "cost_hp": 0
+        }
+      },
+      {
+        "text": "Rob him (Gain 30 Gold)",
+        "outcome": {
+          "type": "resource",
+          "resource": "gold",
+          "amount": 30
+        }
+      },
+      {
+        "text": "Leave",
+        "outcome": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  "whispering_roots": {
+    "title": "Whispering Roots",
+    "text": "Roots curl around your ankles, not trapping you, but guiding you towards a glowing pool purely made of mana.",
+    "choices": [
+      {
+        "text": "Drink (Heal 20 HP)",
+        "outcome": {
+          "type": "heal",
+          "amount": 20
+        }
+      },
+      {
+        "text": "Bottle it (Gain Energy Potion - placeholder: Gain Gold)",
+        "outcome": {
+          "type": "resource",
+          "resource": "gold",
+          "amount": 15
+        }
+      }
+    ]
+  }
+}

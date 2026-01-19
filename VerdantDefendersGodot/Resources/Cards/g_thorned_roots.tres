@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_6d6fu"]
+
+[resource]
+script = ExtResource("1_6d6fu")
+id = "g_thorned_roots"
+display_name = "Thorned Roots"
+art_id = "g_thorned_roots"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "first_block_each_turn_apply_sap_1_random_enemy",
+"type": "set_ritual"
+}]
+}

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_lbb55"]
+
+[resource]
+script = ExtResource("1_lbb55")
+id = "e_permafrost"
+display_name = "Permafrost"
+art_id = "e_permafrost"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "enemies_with_chill_deal_minus_1_damage",
+"type": "set_ritual"
+}]
+}

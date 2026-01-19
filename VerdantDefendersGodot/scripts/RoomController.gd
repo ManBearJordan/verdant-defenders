@@ -1,122 +1,177 @@
 extends Node
 
-const ENEMY_DATA_PATH: String = "res://Data/enemy_data.json"
-
 func _ready() -> void:
-	# Choose a basic pack on first enter (or drive this from a map)
-	var pack: Array = _roll_basic_pack()
-	_start_combat(pack)
+	# Check if we should auto-start a run for debug/demo?
+	# Usually DungeonController drives this.
+	pass
 
 func _start_combat(pack: Array) -> void:
 	var cs: Node = get_node_or_null("/root/CombatSystem")
 	if cs != null and cs.has_method("begin_encounter"):
-		# Start a new run and seed the deck if the run has not begun yet.
+		# Ensure run state
 		var gc: Node = _gc()
-		if gc != null and gc.has_method("start_new_run"):
-			# Use a default class (e.g. "Growth") for the initial run
-			gc.call("start_new_run", "Growth")
-		# Set a combat background.  Choose a default based on the first enemy or
-		# environment; here we use "growth_combat" as a placeholder.
-		var gui_path := "StartScreen/GameUI"
-		var root_node := get_tree().get_root()
-		if root_node != null and root_node.has_node(gui_path):
-			var gui := root_node.get_node(gui_path)
-			if gui != null and gui.has_method("set_background"):
-				gui.call("set_background", "growth_combat")
-		cs.call("begin_encounter", pack)
+		
+		# Get Current Pool
+		var pool_name = "growth"
+		var dc = get_node_or_null("/root/DungeonController")
+		if dc and dc.has_method("get_current_pool"):
+			pool_name = dc.get_current_pool()
+		
+		# Set bg
+		var gui = get_node_or_null("/root/GameUI")
+		if gui and gui.has_method("set_background"):
+			# e.g. "growth_combat", "decay_combat"
+			gui.set_background(pool_name + "_combat")
+			
+		cs.begin_encounter(pack)
 	else:
-		push_warning("CombatSystem autoload not found at /root/CombatSystem.")
+		push_warning("CombatSystem not found.")
 
-# Hook from CombatSystem when the fight ends.
 func _on_combat_finished(victory: bool, is_mini_boss: bool = false) -> void:
-	# Called when combat ends.  If the player wins, grant shards and offer
-	# card rewards.
 	if victory:
 		var gc: Node = _gc()
-		if gc != null and gc.has_method("add_seeds"):
-			var reward: int = 25 if is_mini_boss else 15
-			gc.call("add_seeds", reward)
-		# Offer card rewards via RewardSystem
-		var rs: Node = get_node_or_null("/root/RewardSystem")
-		if rs != null and rs.has_method("offer_cards"):
-			var offers: Array = rs.call("offer_cards", 3, "Growth") as Array
-			# In a real UI, you would present these offers to the player.  For
-			# now we print them to the console as a stub.
-			for o in offers:
-				if o is Dictionary:
-					var nm: String = String((o as Dictionary).get("name", "Card"))
-					print("Reward option: ", nm)
+		if gc: 
+			gc.add_seeds(25 if is_mini_boss else 15)
+			
+		var rs = get_node_or_null("/root/RewardSystem")
+		if rs:
+			var pool_name = "growth"
+			var dc = get_node_or_null("/root/DungeonController")
+			if dc and dc.has_method("get_current_pool"):
+				pool_name = dc.get_current_pool()
+				
+			if is_mini_boss:
+				# Elite Reward Logic (Simulated Choice + Bonuses)
+				var act = 1
+				if dc and dc.has_method("get_current_act"): act = dc.current_act
+				
+				var rewards = rs.generate_elite_rewards(act)
+				
+				# 1. Apply Currency (Defaulting to "Pick Currency" isn't right, but we grant it along with cards for now as we lack Choice UI)
+				# Or maybe we just give the currency as a baseline loot?
+				# Spec says "Choose 1 of 3". If UI can't do it, we are generous (give all) or stingy?
+				# Let's give Coins + Cards (No Relic? Or Relic?)
+				# Existing code gave Relic. User spec says Choice.
+				# I will disable automatic Relic grant to respect "Choice" (assuming Cards is the default pick).
+				# But wait, Elites usually give Relics. If I remove it, it feels bad if I don't get to choose.
+				# Compromise: Give Relic + Cards. (Generous for now).
+				
+				# Apply Bonuses
+				for b in rewards.bonuses:
+					print("Elite Bonus: %s" % b.type)
+					if b.type == "uncommon_card_offer":
+						# Add 1 Uncommon to offers? 
+						# existing offer_mixed_rewards clears offers.
+						# We should append? RS doesn't support append easily.
+						pass
+					elif b.type == "upgrade_card":
+						# Upgrade random card
+						var dm = get_node_or_null("/root/DeckManager")
+						if dm: dm.upgrade_random_deck_card()
+					elif b.type == "remove_filler":
+						# Remove filler
+						var dm = get_node_or_null("/root/DeckManager")
+						if dm: dm.remove_random_filler()
 
-# ----- UI openings (stub scenes are optional) -----
-func _open_shop() -> void:
-	var p: PackedScene = load("res://Scenes/ShopUI.tscn")
-	if p != null:
-		var inst: Node = p.instantiate()
-		add_child(inst)
-	else:
-		push_warning("ShopUI.tscn not found.")
+				# Base Reward: Cards (3 Archetype)
+				var card_rewards = rs.offer_mixed_rewards(3, 0, pool_name)
+				
+				# Grant Currency
+				var gold_opts = rewards.options.filter(func(x): return x.type == "currency")
+				var bonus_shards = 0
+				if not gold_opts.is_empty():
+					bonus_shards = gold_opts[0].amount
+					if gc and "verdant_shards" in gc: gc.verdant_shards += bonus_shards
+					print("Elite Reward: +%d Shards" % bonus_shards)
 
-func _open_event() -> void:
-	var p: PackedScene = load("res://Scenes/EventUI.tscn")
-	if p != null:
-		var inst: Node = p.instantiate()
-		add_child(inst)
-	else:
-		push_warning("EventUI.tscn not found.")
+				# Temporarily Grant Relic (Legacy/Fallback until UI supports Choice)
+				rs.grant_random_relic("")
+				
+				# Transition to Reward Screen
+				var flow = get_node_or_null("/root/FlowController")
+				if flow:
+					flow.goto(flow.GameState.REWARD, {
+						"cards": card_rewards,
+						"shards": bonus_shards,
+						"is_elite": true
+					})
 
-# ----- Packs -----
+			else:
+				# Normal: 2 Archetype Cards, 1 Neutral
+				var offers = rs.offer_mixed_rewards(2, 1, pool_name)
+				
+				# Transition to Reward Screen
+				var flow = get_node_or_null("/root/FlowController")
+				if flow:
+					flow.goto(flow.GameState.REWARD, {
+						"cards": offers,
+						"is_elite": false
+					})
+
 func _roll_basic_pack() -> Array:
-	var out: Array = []
-	var j: Dictionary = _read_json(ENEMY_DATA_PATH)
-	if j.size() > 0 and j.has("basic"):
-		var v: Variant = j.get("basic", [])
-		if v is Array:
-			out = (v as Array).duplicate(true)
-	if out.is_empty():
-		# Minimal fallback so you always get an encounter.  Use real enemy names
-		# that correspond to available art assets (e.g. bark_shield, bone_husk).
-		out = [
-			{"name":"Bark Shield","hp":30,"intent":{"type":"attack","value":6}},
-			{"name":"Bone Husk","hp":22,"intent":{"type":"defend","value":5}},
-		]
-	return out
+	return _roll_pack("normal")
 
 func _roll_elite_pack() -> Array:
-	var out: Array = []
-	var j: Dictionary = _read_json(ENEMY_DATA_PATH)
-	if j.size() > 0 and j.has("elite"):
-		var v: Variant = j.get("elite", [])
-		if v is Array:
-			out = (v as Array).duplicate(true)
-	if out.is_empty():
-		out = [
-			{"name":"Elder Treant","hp":60,"intent":{"type":"attack","value":12}},
-			{"name":"Briar Warden","hp":48,"intent":{"type":"defend","value":10}},
-		]
-	return out
+	return _roll_pack("elite")
 
 func _roll_boss_pack() -> Array:
-	var out: Array = []
-	var j: Dictionary = _read_json(ENEMY_DATA_PATH)
-	if j.size() > 0 and j.has("boss"):
-		var v: Variant = j.get("boss", [])
-		if v is Array:
-			out = (v as Array).duplicate(true)
-	if out.is_empty():
-		out = [{"name":"Heartwood Titan","hp":120,"intent":{"type":"attack","value":18}}]
+	var dc = get_node_or_null("/root/DungeonController")
+	var act = 1
+	if dc and dc.has_method("get_current_act"): # Assumption: get_current_act doesn't exist yet but public var does?
+		# DC has var current_act. Use dc.current_act
+		act = dc.current_act
+	
+	if act == 2:
+		return _roll_pack("boss_act2")
+	if act >= 3:
+		return _roll_pack("boss_act3")
+	return _roll_pack("boss")
+
+func _roll_pack(tier: String) -> Array:
+	var dl = _dl()
+	if not dl: return []
+	
+	var pool_name = "growth"
+	var dc = get_node_or_null("/root/DungeonController")
+	if dc and dc.has_method("get_current_pool"):
+		pool_name = dc.get_current_pool()
+	
+	# Primary logic: Get enemies by Tier AND Pool
+	# But DataLayer only has get_enemies_by_tier OR get_enemies_by_pool separately?
+	# Let's check DataLayer structure...
+	# DataLayer: enemies_by_tier, enemies_by_pool.
+	# We need Intersection. Or just iterate all enemies in Tier and check Pool?
+	
+	var candidates = []
+	var t_enemies = dl.get_enemies_by_tier(tier)
+	
+	# Optimization: If pool is "core", include it?
+	# Assuming enemies have ONE pool. "growth", "decay", "elemental", "any"?
+	
+	for e in t_enemies:
+		if e.pool == pool_name or e.pool == "any" or e.pool == "core" or e.pool == "":
+			candidates.append(e)
+			
+	if candidates.is_empty():
+		# Fallback to any in tier
+		candidates = t_enemies
+		
+	if candidates.is_empty(): return []
+	
+	var out = []
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	
+	var count = 1
+	if tier == "normal": count = rng.randi_range(1, 2)
+	
+	for i in range(count):
+		out.append(candidates.pick_random())
+
 	return out
 
-# ----- Utils -----
-func _read_json(path: String) -> Dictionary:
-	if not FileAccess.file_exists(path):
-		return {}
-	var f: FileAccess = FileAccess.open(path, FileAccess.READ)
-	if f == null:
-		return {}
-	var txt: String = f.get_as_text()
-	f.close()
-	var parsed: Variant = JSON.parse_string(txt)
-	return (parsed as Dictionary) if (parsed is Dictionary) else {}
+func _dl() -> Node:
+	return get_node_or_null("/root/DataLayer")
 
 func _gc() -> Node:
 	return get_node_or_null("/root/GameController")

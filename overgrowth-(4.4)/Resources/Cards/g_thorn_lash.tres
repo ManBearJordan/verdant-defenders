@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_vbt4y"]
+
+[resource]
+script = ExtResource("1_vbt4y")
+id = "g_thorn_lash"
+display_name = "Thorn Lash"
+art_id = "g_thorn_lash"
+type = "Strike"
+cost = 1
+damage = 0
+block = 0
+effect_text = ""
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 6.0,
+"type": "deal_damage"
+}, {
+"min": 1.0,
+"status": "seed_mark",
+"then": [{
+"amount": 3.0,
+"type": "deal_damage"
+}],
+"type": "if_target_has_status"
+}]
+}

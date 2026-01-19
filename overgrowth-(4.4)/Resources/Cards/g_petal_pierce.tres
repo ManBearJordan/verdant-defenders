@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_fc7ls"]
+
+[resource]
+script = ExtResource("1_fc7ls")
+id = "g_petal_pierce"
+display_name = "Petal Pierce"
+art_id = "g_petal_pierce"
+type = "Strike"
+cost = 1
+damage = 0
+block = 0
+effect_text = ""
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 6.0,
+"type": "deal_damage"
+}, {
+"min": 1.0,
+"status": "poison",
+"then": [{
+"amount": 1.0,
+"type": "gain_seed"
+}],
+"type": "if_target_has_status"
+}]
+}

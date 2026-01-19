@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_0hr2y"]
+
+[resource]
+script = ExtResource("1_0hr2y")
+id = "storm_fang"
+display_name = "Storm Fang"
+art_id = "storm_fang"
+type = "Strike"
+cost = 1
+damage = 4
+block = 0
+effect_text = "If enemy has Chill, +2 damage."
+rarity = "common"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {}

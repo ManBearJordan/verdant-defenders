@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_f8l03"]
+
+[resource]
+script = ExtResource("1_f8l03")
+id = "pestilent_bond"
+display_name = "Pestilent Bond"
+art_id = "pestilent_bond"
+type = "Ritual"
+cost = 2
+damage = 0
+block = 0
+effect_text = "Whenever you play a Ritual, draw 1 card."
+rarity = "rare"
+pool = "decay"
+tags = Array[String]([])
+logic_meta = {}

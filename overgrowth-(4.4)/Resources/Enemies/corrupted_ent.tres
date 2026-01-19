@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_1r3pm"]
+
+[resource]
+script = ExtResource("1_1r3pm")
+id = "corrupted_ent"
+display_name = "Corrupted Ent"
+texture_path = ""
+max_hp = 80
+defense = 0
+tier = "elite"
+pool = "any"
+intents = Array[String](["Attack 10", "Buff (+5 Block, Thorns 2)", "Attack 15 + Apply Weak"])
+special_ability = "Thorns damage increases by 1 each turn"
+logic_meta = {}

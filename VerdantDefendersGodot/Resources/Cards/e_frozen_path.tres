@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_gj1aw"]
+
+[resource]
+script = ExtResource("1_gj1aw")
+id = "e_frozen_path"
+display_name = "Frozen Path"
+art_id = "e_frozen_path"
+type = "Strike"
+cost = 4
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "next_turn_tactics_cost_0_up_to_2",
+"type": "set_ritual"
+}]
+}

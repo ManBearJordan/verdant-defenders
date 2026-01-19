@@ -1,0 +1,11 @@
+Starting Art Audit...
+
+--- Checking ArtRegistry Paths ---
+Found 209 valid assets.
+All registered art paths are VALID.
+
+--- Checking Map Assets ---
+- MISSING: res://Art/map/decor/vine_path.png
+- MISSING: res://Art/map/decor/parallax_front.png
+- MISSING: res://Art/map/decor/parallax_back.png
+- MISSING: res://Art/ui/panel_runestone.png

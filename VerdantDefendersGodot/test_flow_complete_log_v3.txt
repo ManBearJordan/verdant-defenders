@@ -1,0 +1,57 @@
+﻿Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+Test: Canonical Scene Flow
+TelemetrySystem V2 Ready. Logging DISABLED.
+Current Scene: MainMenu
+Action: Start Run
+GameController: Starting Run (growth, A0)
+DeckManager: Generating Deck for Archetype 'growth' (8/5 Split)
+DeckManager: Not enough Basic cards for growth, falling back to Common
+DungeonController: Generated map with 15 layers
+FlowController: Transitioning to MAP
+godot.cmd : SCRIPT 
+ERROR: Parse Error: 
+Function "setup()" 
+not found in base 
+self.
+At line:1 char:1
++ & './godot.cmd' 
+--headless --script te
+sts/test_flow_complete
+.gd 2>&1  ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (SCRIPT ERR   
+ OR: P...d in base    
+ self.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+   at: 
+GDScript::reload (res:
+//scripts/MapScreen.gd
+:115)
+ERROR: Failed to load 
+script "res://scripts/
+MapScreen.gd" with 
+error "Parse error".
+   at: load (modules/g
+dscript/gdscript.cpp:3
+022)
+Current Scene: MapScreen
+SUCCESS: Map Loaded
+Action: Enter Combat Node
+FlowController: Resolving node type 'fight'
+FlowController: Transitioning to COMBAT
+Current Scene: CombatScreen
+SUCCESS: Combat Loaded
+Action: Win Combat
+FlowController: Transitioning to REWARD
+Current Scene: RewardsUI
+FAIL: Expected RewardScreen, got RewardsUI

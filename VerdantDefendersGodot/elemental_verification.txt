@@ -1,0 +1,22 @@
+--- Elemental Card Verification ---
+[Flame Lash]
+  Cost: 1
+  Damage: 6
+  Text: Deal 6. Apply 2 Burn.
+[Ember Shot]
+  Cost: 1
+  Damage: 5
+  Text: Deal 5. If the target has Burn, draw 1.
+[Sunbeam]
+  Cost: 2
+  Damage: 11
+  Text: Deal 11. Apply 1 Burn.
+[Spark Jab]
+  Cost: 1
+  Damage: 3
+  Text: Deal 3 twice. Apply 1 Shock.
+[Arc Bolt]
+  Cost: 2
+  Damage: 9
+  Text: Deal 9. If the target has Shock, deal +4.
+--- DONE ---

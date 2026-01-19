@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_0rr63"]
+
+[resource]
+script = ExtResource("1_0rr63")
+id = "rot_knight"
+display_name = "Rot Knight"
+texture_path = ""
+max_hp = 85
+defense = 0
+tier = "elite"
+pool = "any"
+archetype_counter = ""
+intents = Array[String](["Attack 12", "Block 15", "Attack 8 + Apply Decay 2"])
+special_ability = "Start combat with 2 Artifact"
+logic_meta = {}

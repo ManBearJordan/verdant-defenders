@@ -1,0 +1,71 @@
+﻿Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+Debug: Initialising Autoloads...
+Loaded DataLayer
+Loaded DeckManager
+Loaded CombatSystem
+Loaded RelicSystem
+Loaded SigilSystem
+Loaded AscensionController
+Loaded GameController
+Loaded SoundManager
+Debug: Calling GameController.start_run...
+GameController: Starting Run (ironclad, A0)
+godot.cmd : ERROR: 
+Parameter "data.tree" 
+is null.
+At line:1 char:1
++ & './godot.cmd' 
+--headless --script sc
+ripts/debug_start_run.
+gd 2>&1 | ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (ERROR: Par   
+ ameter "data.tree    
+" is null.:String    
+) [], RemoteExcep    
+tion
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+   at: get_tree (scene
+/main/node.h:485)
+SCRIPT ERROR: Cannot 
+call method 'get_first
+_node_in_group' on a 
+null value.
+   at: _get_game_ui (r
+es://scripts/GameContr
+oller.gd:671)
+ERROR: Can't use 
+get_node() with 
+absolute paths from 
+outside the active 
+scene tree.
+   at: 
+get_node_or_null (scen
+e/main/node.cpp:1812)
+ERROR: Can't use 
+get_node() with 
+absolute paths from 
+outside the active 
+scene tree.
+   at: 
+get_node_or_null (scen
+e/main/node.cpp:1812)
+ERROR: Can't use 
+get_node() with 
+absolute paths from 
+outside the active 
+scene tree.
+   at: 
+get_node_or_null (scen
+e/main/node.cpp:1812)
+Debug: start_run returned successfully (Logic OK).
+TelemetrySystem V2 Ready. Logging DISABLED.

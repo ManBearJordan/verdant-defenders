@@ -1,6 +1,6 @@
-# Verdant Defenders Design Reference
+# Overgrowth Design Reference
 
-Below is the complete design reference for our roguelike card game **"Verdant Defenders"**, covering card pools and every core system. Use this as the single source of truth when prototyping, balancing, and implementing features.
+Below is the complete design reference for our roguelike card game **"Overgrowth"**, covering card pools and every core system. Use this as the single source of truth when prototyping, balancing, and implementing features.
 
 ## 1. Card Pools (45 per Archetype)
 

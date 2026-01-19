@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_bl0ou"]
+
+[resource]
+script = ExtResource("1_bl0ou")
+id = "glacial_surge"
+display_name = "Glacial Surge"
+art_id = "glacial_surge"
+type = "Ritual"
+cost = 3
+damage = 0
+block = 0
+effect_text = "At start of turn, apply 1 Chill to all enemies."
+rarity = "rare"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {}

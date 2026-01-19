@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_4pwfy"]
+
+[resource]
+script = ExtResource("1_4pwfy")
+id = "bulwark_colossus"
+display_name = "Bulwark Colossus"
+texture_path = ""
+max_hp = 230
+defense = 0
+tier = "boss"
+pool = "growth"
+archetype_counter = ""
+intents = Array[String](["Block 20", "Attack 15", "Rest"])
+special_ability = "Shield refreshes if hit >3 times/turn. Weak once broken."
+logic_meta = {}

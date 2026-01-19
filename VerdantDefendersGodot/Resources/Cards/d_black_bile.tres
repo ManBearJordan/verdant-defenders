@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_lgl1q"]
+
+[resource]
+script = ExtResource("1_lgl1q")
+id = "d_black_bile"
+display_name = "Black Bile"
+art_id = "d_black_bile"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "once_per_turn_on_poison_tick_gain_block_4_and_energy_1",
+"type": "set_ritual"
+}]
+}

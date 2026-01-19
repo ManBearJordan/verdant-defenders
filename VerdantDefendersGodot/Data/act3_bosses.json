@@ -1,0 +1,455 @@
+{
+    "act3_bosses": [
+        {
+            "id": "world_reclaimer",
+            "name": "World Reclaimer",
+            "archetype_mastery": "growth",
+            "phases": [
+                {
+                    "id": 1,
+                    "hp": 460,
+                    "from_hp_pct": 100,
+                    "to_hp_pct": 0,
+                    "mechanics": [
+                        {
+                            "name": "Seed Harvest",
+                            "timing": "end_of_player_turn",
+                            "logic": {
+                                "type": "seed_threshold",
+                                "threshold": 6,
+                                "consume": 5,
+                                "effects": [
+                                    {
+                                        "type": "heal_self",
+                                        "amount": 50
+                                    },
+                                    {
+                                        "type": "apply_self",
+                                        "status": "strength",
+                                        "amount": 1,
+                                        "max_stacks": 3
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Verdant Retaliation",
+                            "timing": "start_of_boss_turn",
+                            "logic": {
+                                "type": "player_block_check",
+                                "threshold": 18,
+                                "effects": [
+                                    {
+                                        "type": "apply_player",
+                                        "status": "fragile",
+                                        "amount": 1
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "moves": [
+                        {
+                            "id": "reclaim",
+                            "intent": "attack",
+                            "damage": 18,
+                            "weight": 30
+                        },
+                        {
+                            "id": "root_rend",
+                            "intent": "attack",
+                            "damage": 14,
+                            "effects": [
+                                {
+                                    "type": "remove_player_block",
+                                    "amount": 10
+                                }
+                            ],
+                            "weight": 25
+                        },
+                        {
+                            "id": "bloomguard",
+                            "intent": "defend",
+                            "block": 20,
+                            "apply": [
+                                {
+                                    "status": "sap",
+                                    "amount": 2,
+                                    "target": "player"
+                                }
+                            ],
+                            "weight": 25
+                        },
+                        {
+                            "id": "harvest_prep",
+                            "intent": "debuff",
+                            "apply": [
+                                {
+                                    "status": "sap",
+                                    "amount": 2,
+                                    "target": "player"
+                                },
+                                {
+                                    "status": "fragile",
+                                    "amount": 1,
+                                    "target": "player"
+                                }
+                            ],
+                            "weight": 20
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "hp": 380,
+                    "from_hp_pct": 100,
+                    "to_hp_pct": 0,
+                    "on_transition": [
+                        {
+                            "type": "cleanse_debuffs"
+                        }
+                    ],
+                    "mechanics": [
+                        {
+                            "name": "Seed Harvest (Intensified)",
+                            "timing": "end_of_player_turn",
+                            "logic": {
+                                "type": "seed_threshold",
+                                "threshold": 5,
+                                "consume": 5,
+                                "effects": [
+                                    {
+                                        "type": "heal_self",
+                                        "amount": 50
+                                    },
+                                    {
+                                        "type": "apply_self",
+                                        "status": "strength",
+                                        "amount": 1,
+                                        "max_stacks": 4
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "moves": [
+                        {
+                            "id": "cataclysm_vine",
+                            "intent": "attack",
+                            "damage": 15,
+                            "hits": 2,
+                            "weight": 40
+                        },
+                        {
+                            "id": "worldbind",
+                            "intent": "attack",
+                            "damage": 20,
+                            "apply": [
+                                {
+                                    "status": "sap",
+                                    "amount": 2,
+                                    "target": "player"
+                                }
+                            ],
+                            "weight": 35
+                        },
+                        {
+                            "id": "reclaimer_shield",
+                            "intent": "defend",
+                            "block": 24,
+                            "effects": [
+                                {
+                                    "type": "buff_next_attack",
+                                    "bonus": 6
+                                }
+                            ],
+                            "weight": 25
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "eternal_arbiter",
+            "name": "Eternal Arbiter",
+            "archetype_mastery": "decay",
+            "phases": [
+                {
+                    "id": 1,
+                    "hp": 480,
+                    "from_hp_pct": 100,
+                    "to_hp_pct": 0,
+                    "mechanics": [
+                        {
+                            "name": "Poison Damage Cap",
+                            "timing": "passive",
+                            "logic": {
+                                "type": "poison_cap",
+                                "cap": 30,
+                                "desc": "Poison tick damage taken per turn is capped at 30."
+                            }
+                        },
+                        {
+                            "name": "Equilibrium",
+                            "timing": "end_of_boss_turn",
+                            "logic": {
+                                "type": "if_poisoned_self",
+                                "effects": [
+                                    {
+                                        "type": "gain_block",
+                                        "amount": 8
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "moves": [
+                        {
+                            "id": "verdict",
+                            "intent": "attack",
+                            "damage": 20,
+                            "weight": 30
+                        },
+                        {
+                            "id": "nullify",
+                            "intent": "defend",
+                            "effects": [
+                                {
+                                    "type": "remove_poison_self",
+                                    "amount": 4
+                                }
+                            ],
+                            "block": 14,
+                            "weight": 25
+                        },
+                        {
+                            "id": "judgment_seal",
+                            "intent": "debuff",
+                            "apply": [
+                                {
+                                    "status": "sap",
+                                    "amount": 2,
+                                    "target": "player"
+                                },
+                                {
+                                    "status": "fragile",
+                                    "amount": 2,
+                                    "target": "player"
+                                }
+                            ],
+                            "weight": 20
+                        },
+                        {
+                            "id": "balance_strike",
+                            "intent": "attack",
+                            "damage": 14,
+                            "bonus_if_player_poisoned": 8,
+                            "weight": 25
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "hp": 400,
+                    "from_hp_pct": 100,
+                    "to_hp_pct": 0,
+                    "on_transition": [
+                        {
+                            "type": "cleanse_debuffs"
+                        }
+                    ],
+                    "mechanics": [
+                        {
+                            "name": "Ward of Balance",
+                            "timing": "on_player_poison_apply",
+                            "logic": {
+                                "type": "gain_ward",
+                                "amount": 1,
+                                "max": 6,
+                                "ward_reduces_hit_by": 2,
+                                "ward_consumed_on_hit": true
+                            }
+                        }
+                    ],
+                    "moves": [
+                        {
+                            "id": "arbiters_blade",
+                            "intent": "attack",
+                            "damage": 16,
+                            "hits": 2,
+                            "weight": 40
+                        },
+                        {
+                            "id": "ward_weave",
+                            "intent": "defend",
+                            "block": 18,
+                            "effects": [
+                                {
+                                    "type": "gain_ward",
+                                    "amount": 2
+                                }
+                            ],
+                            "weight": 30
+                        },
+                        {
+                            "id": "sentence",
+                            "intent": "attack",
+                            "damage": 28,
+                            "weight": 30
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "chronoshard",
+            "name": "Chronoshard",
+            "archetype_mastery": "elemental",
+            "phases": [
+                {
+                    "id": 1,
+                    "hp": 450,
+                    "from_hp_pct": 100,
+                    "to_hp_pct": 0,
+                    "mechanics": [
+                        {
+                            "name": "Temporal Lock",
+                            "timing": "passive",
+                            "logic": {
+                                "type": "card_limit_per_turn",
+                                "limit": 5,
+                                "on_exceed": "block_and_feedback",
+                                "desc": "Player can play max 5 cards per turn."
+                            }
+                        },
+                        {
+                            "name": "Time Fracture",
+                            "timing": "on_player_card_played",
+                            "logic": {
+                                "type": "zero_cost_counter",
+                                "threshold": 3,
+                                "effects": [
+                                    {
+                                        "type": "apply_player",
+                                        "status": "shock",
+                                        "amount": 1
+                                    }
+                                ],
+                                "desc": "If player plays 3 cards costing 0 in a single turn: apply 1 Shock."
+                            }
+                        }
+                    ],
+                    "moves": [
+                        {
+                            "id": "time_cut",
+                            "intent": "attack",
+                            "damage": 20,
+                            "weight": 30
+                        },
+                        {
+                            "id": "chrono_chill",
+                            "intent": "attack",
+                            "damage": 14,
+                            "apply": [
+                                {
+                                    "status": "chill",
+                                    "amount": 2,
+                                    "target": "player"
+                                }
+                            ],
+                            "weight": 25
+                        },
+                        {
+                            "id": "paradox_spark",
+                            "intent": "attack",
+                            "damage": 10,
+                            "hits": 2,
+                            "apply": [
+                                {
+                                    "status": "shock",
+                                    "amount": 1,
+                                    "target": "player"
+                                }
+                            ],
+                            "weight": 25
+                        },
+                        {
+                            "id": "rewind_guard",
+                            "intent": "defend",
+                            "block": 20,
+                            "effects": [
+                                {
+                                    "type": "buffer",
+                                    "amount": 10
+                                }
+                            ],
+                            "weight": 20
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "hp": 360,
+                    "from_hp_pct": 100,
+                    "to_hp_pct": 0,
+                    "on_transition": [
+                        {
+                            "type": "cleanse_debuffs"
+                        }
+                    ],
+                    "mechanics": [
+                        {
+                            "name": "Temporal Pressure",
+                            "timing": "end_of_player_turn",
+                            "logic": {
+                                "type": "cards_played_check",
+                                "exact": 5,
+                                "effects": [
+                                    {
+                                        "type": "boss_gain_energy_next_turn",
+                                        "amount": 1
+                                    }
+                                ],
+                                "desc": "If player played exactly 5 cards: boss gains +1 Energy next turn."
+                            }
+                        }
+                    ],
+                    "moves": [
+                        {
+                            "id": "shardstorm",
+                            "intent": "attack",
+                            "damage": 14,
+                            "hits": 3,
+                            "weight": 40
+                        },
+                        {
+                            "id": "collapse",
+                            "intent": "attack",
+                            "damage": 30,
+                            "weight": 35
+                        },
+                        {
+                            "id": "static_drift",
+                            "intent": "debuff",
+                            "apply": [
+                                {
+                                    "status": "shock",
+                                    "amount": 2,
+                                    "target": "player"
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "apply_if_shocked",
+                                    "status": "chill",
+                                    "amount": 2
+                                }
+                            ],
+                            "weight": 25
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

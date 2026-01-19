@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_qgdqt"]
+
+[resource]
+script = ExtResource("1_qgdqt")
+id = "rune_binder"
+display_name = "Rune Binder"
+texture_path = ""
+max_hp = 26
+defense = 0
+tier = "normal"
+pool = "elemental"
+archetype_counter = ""
+intents = Array[String](["Debuff (Random: Weak/Vulnerable/Burn)", "Buff Self (+3 Block)", "Attack 5", "Rest"])
+special_ability = "Picks a new debuff each cycle"
+logic_meta = {}

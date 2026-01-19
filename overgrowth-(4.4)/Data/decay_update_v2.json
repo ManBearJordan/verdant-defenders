@@ -1,0 +1,412 @@
+[
+    {
+        "id": "d_rotting_slash",
+        "name": "Rotting Slash",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 1,
+        "rarity": "common",
+        "text": "Deal 3 twice. If the target has Poison, remove up to 2 Poison and deal 2 damage per Poison removed.",
+        "effects": [
+            {
+                "type": "repeat",
+                "times": 2,
+                "effects": [
+                    {
+                        "type": "deal_damage",
+                        "amount": 3
+                    }
+                ]
+            },
+            {
+                "type": "if_target_has_status",
+                "status": "poison",
+                "min": 1,
+                "then": [
+                    {
+                        "type": "remove_status_up_to_then_deal_damage_per_removed",
+                        "status": "poison",
+                        "max": 2,
+                        "damage_per_removed": 2,
+                        "target": "enemy"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_contagion_strike",
+        "name": "Contagion Strike",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 2,
+        "rarity": "common",
+        "text": "Deal 9. Apply 2 Poison. If the target has 4+ Poison, remove up to 3 Poison and gain 1 Energy.",
+        "effects": [
+            {
+                "type": "deal_damage",
+                "amount": 9
+            },
+            {
+                "type": "apply_status",
+                "status": "poison",
+                "amount": 2
+            },
+            {
+                "type": "if_target_has_status",
+                "status": "poison",
+                "min": 4,
+                "then": [
+                    {
+                        "type": "remove_status_up_to",
+                        "status": "poison",
+                        "max": 3,
+                        "target": "enemy"
+                    },
+                    {
+                        "type": "gain_energy",
+                        "amount": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_sear_decay",
+        "name": "Sear Decay",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 2,
+        "rarity": "uncommon",
+        "text": "Deal 6 to ALL enemies. For each enemy with Poison, remove up to 2 Poison and deal 2 damage per Poison removed to that enemy.",
+        "effects": [
+            {
+                "type": "deal_damage_all_enemies",
+                "amount": 6
+            },
+            {
+                "type": "for_each_enemy_with_status",
+                "status": "poison",
+                "min": 1,
+                "do": [
+                    {
+                        "type": "remove_status_up_to_then_deal_damage_per_removed",
+                        "status": "poison",
+                        "max": 2,
+                        "damage_per_removed": 2,
+                        "target": "that_enemy"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_plague_burst",
+        "name": "Plague Burst",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 3,
+        "rarity": "uncommon",
+        "text": "Deal 12. Apply 4 Poison. Then remove up to 4 Poison and deal 3 damage per Poison removed.",
+        "effects": [
+            {
+                "type": "deal_damage",
+                "amount": 12
+            },
+            {
+                "type": "apply_status",
+                "status": "poison",
+                "amount": 4
+            },
+            {
+                "type": "remove_status_up_to_then_deal_damage_per_removed",
+                "status": "poison",
+                "max": 4,
+                "damage_per_removed": 3,
+                "target": "enemy"
+            }
+        ]
+    },
+    {
+        "id": "d_carrion_whip",
+        "name": "Carrion Whip",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 1,
+        "rarity": "common",
+        "text": "Deal 5. If the target has Poison, remove 1 Poison, heal 2, and draw 1.",
+        "effects": [
+            {
+                "type": "deal_damage",
+                "amount": 5
+            },
+            {
+                "type": "if_target_has_status",
+                "status": "poison",
+                "min": 1,
+                "then": [
+                    {
+                        "type": "remove_status",
+                        "status": "poison",
+                        "amount": 1,
+                        "target": "enemy"
+                    },
+                    {
+                        "type": "heal",
+                        "amount": 2
+                    },
+                    {
+                        "type": "draw_cards",
+                        "amount": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_noxious_rip",
+        "name": "Noxious Rip",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 2,
+        "rarity": "uncommon",
+        "text": "Deal 8. If the target is below 50% HP, remove up to 3 Poison, gain 3 Block per Poison removed, then apply 1 Sap.",
+        "effects": [
+            {
+                "type": "deal_damage",
+                "amount": 8
+            },
+            {
+                "type": "if_target_hp_below_pct",
+                "pct": 50,
+                "then": [
+                    {
+                        "type": "remove_status_up_to_then_gain_block_per_removed",
+                        "status": "poison",
+                        "max": 3,
+                        "block_per_removed": 3,
+                        "target": "enemy"
+                    },
+                    {
+                        "type": "apply_status",
+                        "status": "sap",
+                        "amount": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_virulent_fangs",
+        "name": "Virulent Fangs",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 2,
+        "rarity": "uncommon",
+        "text": "Deal 7. Apply 3 Poison. If the target has 5+ Poison, remove up to 2 Poison and draw 2.",
+        "effects": [
+            {
+                "type": "deal_damage",
+                "amount": 7
+            },
+            {
+                "type": "apply_status",
+                "status": "poison",
+                "amount": 3
+            },
+            {
+                "type": "if_target_has_status",
+                "status": "poison",
+                "min": 5,
+                "then": [
+                    {
+                        "type": "remove_status_up_to",
+                        "status": "poison",
+                        "max": 2,
+                        "target": "enemy"
+                    },
+                    {
+                        "type": "draw_cards",
+                        "amount": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_deaths_kiss",
+        "name": "Death’s Kiss",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 1,
+        "rarity": "uncommon",
+        "text": "Deal 6. Remove up to 2 Poison from the target. Gain 1 Energy if any Poison was removed.",
+        "effects": [
+            {
+                "type": "deal_damage",
+                "amount": 6
+            },
+            {
+                "type": "remove_status_up_to_then_gain_energy_if_removed_at_least",
+                "status": "poison",
+                "max": 2,
+                "min_removed": 1,
+                "energy": 1,
+                "target": "enemy"
+            }
+        ]
+    },
+    {
+        "id": "d_putrid_cleave",
+        "name": "Putrid Cleave",
+        "pool": "decay",
+        "kind": "strike",
+        "cost": 2,
+        "rarity": "common",
+        "text": "Deal 6 to ALL enemies. Apply 1 Poison to ALL enemies. If any enemy has 3+ Poison, remove 1 Poison from ALL enemies and gain 8 Block.",
+        "effects": [
+            {
+                "type": "deal_damage_all_enemies",
+                "amount": 6
+            },
+            {
+                "type": "apply_status_all_enemies",
+                "status": "poison",
+                "amount": 1
+            },
+            {
+                "type": "if_any_enemy_has_status",
+                "status": "poison",
+                "min": 3,
+                "then": [
+                    {
+                        "type": "remove_status_all_enemies_up_to",
+                        "status": "poison",
+                        "max_total": 999,
+                        "max_each": 1
+                    },
+                    {
+                        "type": "gain_block",
+                        "amount": 8
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_festering_aura",
+        "name": "Festering Aura",
+        "pool": "decay",
+        "kind": "tactic",
+        "cost": 2,
+        "rarity": "uncommon",
+        "text": "This combat: End of turn, if any enemy has Poison, remove 1 Poison from a random Poisoned enemy and deal 4 damage to it.",
+        "effects": [
+            {
+                "type": "set_aura",
+                "aura": "eot_if_any_enemy_poisoned_remove_poison_1_random_poisoned_then_deal_damage_4",
+                "duration": "this_combat"
+            }
+        ]
+    },
+    {
+        "id": "d_decay_bubble",
+        "name": "Decay Bubble",
+        "pool": "decay",
+        "kind": "tactic",
+        "cost": 1,
+        "rarity": "uncommon",
+        "text": "Gain 6 Block. If any enemy has Poison, remove up to 2 Poison from a random Poisoned enemy and gain 3 Block per Poison removed.",
+        "effects": [
+            {
+                "type": "gain_block",
+                "amount": 6
+            },
+            {
+                "type": "if_any_enemy_has_status",
+                "status": "poison",
+                "min": 1,
+                "then": [
+                    {
+                        "type": "remove_status_random_enemy_with_status_up_to_then_gain_block_per_removed",
+                        "status": "poison",
+                        "max": 2,
+                        "block_per_removed": 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_infectious_veil",
+        "name": "Infectious Veil",
+        "pool": "decay",
+        "kind": "tactic",
+        "cost": 1,
+        "rarity": "uncommon",
+        "text": "Gain 5 Block. Remove up to 2 Poison from the target. Draw 1 for each Poison removed (max 2).",
+        "effects": [
+            {
+                "type": "gain_block",
+                "amount": 5
+            },
+            {
+                "type": "remove_status_up_to_then_draw_per_removed",
+                "status": "poison",
+                "max": 2,
+                "draw_per_removed": 1,
+                "draw_cap": 2,
+                "target": "enemy"
+            }
+        ]
+    },
+    {
+        "id": "d_carcass_trap",
+        "name": "Carcass Trap",
+        "pool": "decay",
+        "kind": "tactic",
+        "cost": 1,
+        "rarity": "uncommon",
+        "text": "Trap: The first enemy that attacks next turn takes 6 damage. If it has Poison, remove up to 3 Poison and deal 2 damage per Poison removed.",
+        "effects": [
+            {
+                "type": "set_trap",
+                "trigger": "on_enemy_attack_next_turn_first",
+                "effects": [
+                    {
+                        "type": "deal_damage_to_attacker",
+                        "amount": 6
+                    },
+                    {
+                        "type": "if_attacker_has_status",
+                        "status": "poison",
+                        "min": 1,
+                        "then": [
+                            {
+                                "type": "remove_status_attacker_up_to_then_deal_damage_per_removed",
+                                "status": "poison",
+                                "max": 3,
+                                "damage_per_removed": 2
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d_decay_communion",
+        "name": "Decay Communion",
+        "pool": "decay",
+        "kind": "ritual",
+        "cost": 3,
+        "rarity": "rare",
+        "text": "Once per turn: When you remove Poison from an enemy, draw 1 and gain 2 Block.",
+        "effects": [
+            {
+                "type": "set_ritual",
+                "ritual": "once_per_turn_on_remove_poison_from_enemy_draw_1_gain_block_2"
+            }
+        ]
+    }
+]

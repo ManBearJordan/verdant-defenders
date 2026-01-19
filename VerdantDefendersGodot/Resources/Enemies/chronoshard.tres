@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_4bxmg"]
+
+[resource]
+script = ExtResource("1_4bxmg")
+id = "chronoshard"
+display_name = "Chronoshard"
+texture_path = ""
+max_hp = 235
+defense = 0
+tier = "boss"
+pool = "elemental"
+archetype_counter = ""
+intents = Array[String](["Attack 3 x 5", "Heal 30 (Rewind)", "Attack 10 + Stun"])
+special_ability = "Temporal Stress: Card plays gain Stress (Strike=1, Ritual=2). At 6: Take 12 Dmg + Reset."
+logic_meta = {}

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/EnemyResource.gd" id="1_3v8ks"]
+
+[resource]
+script = ExtResource("1_3v8ks")
+id = "rot_crawler"
+display_name = "Rot Crawler"
+texture_path = ""
+max_hp = 35
+defense = 0
+tier = "normal"
+pool = "decay"
+archetype_counter = ""
+intents = Array[String](["Attack 7 + Apply Decay 1", "Attack 7", "Rest"])
+special_ability = "Decay reduces Max HP by 1 per stack"
+logic_meta = {}

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_gmhvw"]
+
+[resource]
+script = ExtResource("1_gmhvw")
+id = "root_smash"
+display_name = "Root Smash"
+art_id = "root_smash"
+type = "Strike"
+cost = 2
+damage = 8
+block = 0
+effect_text = "Apply 2 Weak."
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

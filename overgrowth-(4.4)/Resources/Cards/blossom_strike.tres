@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_ggphx"]
+
+[resource]
+script = ExtResource("1_ggphx")
+id = "blossom_strike"
+display_name = "Blossom Strike"
+art_id = "blossom_strike"
+type = "Strike"
+cost = 1
+damage = 5
+block = 0
+effect_text = "Gain 1 Seed."
+rarity = "common"
+pool = "growth"
+tags = Array[String]([])
+logic_meta = {}

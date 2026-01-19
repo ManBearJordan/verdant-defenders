@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_y5qi5"]
+
+[resource]
+script = ExtResource("1_y5qi5")
+id = "filler_deflect"
+display_name = "Deflect"
+art_id = "filler_deflect"
+type = "Strike"
+cost = 0
+damage = 0
+block = 0
+effect_text = ""
+rarity = "common"
+pool = "neutral"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"amount": 3.0,
+"type": "gain_block"
+}]
+}

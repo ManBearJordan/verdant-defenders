@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Resources/CardResource.gd" id="1_1k3m7"]
+
+[resource]
+script = ExtResource("1_1k3m7")
+id = "e_storm_ritual"
+display_name = "Storm Ritual"
+art_id = "e_storm_ritual"
+type = "Strike"
+cost = 2
+damage = 0
+block = 0
+effect_text = ""
+rarity = "rare"
+pool = "elemental"
+tags = Array[String]([])
+logic_meta = {
+"effects": [{
+"ritual": "strikes_bonus_damage_2_this_turn",
+"type": "set_ritual"
+}]
+}
