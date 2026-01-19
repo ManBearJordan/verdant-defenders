@@ -54,7 +54,7 @@ func _ready() -> void:
 	call_deferred("_initialize_map")
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("debug_map_toggle") or (event is InputEventKey and event.pressed and event.keycode == KEY_F3):
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F3:
 		_toggle_debug()
 
 func _toggle_debug() -> void:
@@ -67,12 +67,11 @@ func _initialize_map() -> void:
 	if rc:
 		map_data = rc.map_data
 		current_node_id = rc.current_node_id
-		completed_nodes = rc.cleared_nodes
+		print("MapScreen: Loaded from RunController. Nodes: ", map_data.get("layers", []).size())
 	else:
-		# Fallback/Debug generation
+		print("MapScreen: RunController missing! Generating fallback.")
 		var gen = load("res://scripts/MapGenerator.gd").new()
 		map_data = gen.generate_map(1)
-		current_node_id = -1
 	
 	_draw_map()
 
@@ -82,7 +81,9 @@ func _draw_map() -> void:
 	node_instances.clear()
 	
 	var layers = map_data.get("layers", [])
-	if layers.is_empty(): return
+	if layers.is_empty():
+		push_error("MapScreen: No layers to draw!")
+		return
 	
 	var rng = RandomNumberGenerator.new()
 	rng.seed = 1337 

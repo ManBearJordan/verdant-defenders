@@ -25,18 +25,18 @@ const DEBUG_MAP = false
 
 # Icon Mapping
 const ICON_MAP = {
-	"START": "res://Art/map/node_combat.png",
-	"SKIRMISH": "res://Art/map/node_combat.png",
-	"FIGHT": "res://Art/map/node_combat.png",
-	"ELITE": "res://Art/map/node_elite.png",
-	"SHOP": "res://Art/map/node_shop.png",
-	"EVENT": "res://Art/map/node_event.png",
-	"SANCTUARY": "res://Art/map/node_event.png",
-	"CACHE": "res://Art/map/node_chest.png",
-	"MINIBOSS": "res://Art/map/node_elite.png",
-	"MINIBOSS_GATE": "res://Art/map/node_elite.png",
-	"MINIBOSS_OPT": "res://Art/map/node_elite.png",
-	"BOSS": "res://Art/map/node_boss.png"
+	"START": "res://Art/map/icons/node_combat.png",
+	"SKIRMISH": "res://Art/map/icons/node_combat.png",
+	"FIGHT": "res://Art/map/icons/node_combat.png",
+	"ELITE": "res://Art/map/icons/node_elite.png",
+	"SHOP": "res://Art/map/icons/node_shop.png",
+	"EVENT": "res://Art/map/icons/node_event.png",
+	"SANCTUARY": "res://Art/map/icons/node_event.png",
+	"CACHE": "res://Art/map/icons/node_chest.png",
+	"MINIBOSS": "res://Art/map/icons/node_elite.png",
+	"MINIBOSS_GATE": "res://Art/map/icons/node_elite.png",
+	"MINIBOSS_OPT": "res://Art/map/icons/node_elite.png",
+	"BOSS": "res://Art/map/icons/node_boss.png"
 }
 
 func _ready() -> void:
@@ -65,7 +65,7 @@ func set_state(locked: bool, completed: bool, current: bool) -> void:
 func _update_visuals() -> void:
 	# Icon
 	if icon_sprite:
-		var icon_path = ICON_MAP.get(node_type, "res://Art/map/node_combat.png")
+		var icon_path = ICON_MAP.get(node_type, "res://Art/map/icons/node_combat.png")
 		if ResourceLoader.exists(icon_path):
 			icon_sprite.texture = load(icon_path)
 		else:
