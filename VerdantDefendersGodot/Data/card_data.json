@@ -1,0 +1,1145 @@
+{
+  "growth": [
+    {
+      "name": "Thorn Lash",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 6,
+      "block": 0,
+      "effect": "If target has a Seed, deal 2 extra damage."
+    },
+    {
+      "name": "Blossom Strike",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "Gain 1 Seed."
+    },
+    {
+      "name": "Vine Whip",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 8,
+      "block": 0,
+      "effect": "Deal 4 damage twice."
+    },
+    {
+      "name": "Bud Burst",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 10,
+      "block": 0,
+      "effect": "If you have \u22653 Seeds, draw 1 card."
+    },
+    {
+      "name": "Petal Spray",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 3,
+      "block": 0,
+      "effect": "Deal 3 damage to all enemies."
+    },
+    {
+      "name": "Root Smash",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 8,
+      "block": 0,
+      "effect": "Apply 2 Weak."
+    },
+    {
+      "name": "Sap Shot",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 4,
+      "block": 0,
+      "effect": "Heal 2 HP."
+    },
+    {
+      "name": "Thorned Blade",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "If played consecutively, cost 0 next Strike."
+    },
+    {
+      "name": "Gilded Bud",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 7,
+      "block": 0,
+      "effect": "Gain 1 Growth Rune."
+    },
+    {
+      "name": "Blooming Edge",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 6,
+      "block": 0,
+      "effect": "Apply 1 Vulnerable."
+    },
+    {
+      "name": "Petal Pierce",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 4,
+      "block": 0,
+      "effect": "If enemy is Poisoned, gain 1 Seed."
+    },
+    {
+      "name": "Seeded Slash",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "Plant a Seed."
+    },
+    {
+      "name": "Thorn Barrage",
+      "type": "Strike",
+      "cost": 3,
+      "damage": 12,
+      "block": 0,
+      "effect": "Deal 4 damage 3 times."
+    },
+    {
+      "name": "Sappy Lunge",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "If no Seeds, gain 2 Seeds."
+    },
+    {
+      "name": "Vine Cleaver",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 9,
+      "block": 0,
+      "effect": "Deal 9 damage to all enemies if you have \u22654 Seeds."
+    },
+    {
+      "name": "Seed Shield",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 6,
+      "effect": "Plant a Seed."
+    },
+    {
+      "name": "Vine Trap",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Place a trap: first enemy to move takes 8 damage."
+    },
+    {
+      "name": "Sprout Heal",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Heal 5 HP. Draw 1 card."
+    },
+    {
+      "name": "Fertile Soil",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Next Growth Strike gains +3 damage."
+    },
+    {
+      "name": "Rooting Pulse",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Apply 2 Vulnerable to all enemies."
+    },
+    {
+      "name": "Seedlings",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 2 Seeds."
+    },
+    {
+      "name": "Thorn Wall",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 10,
+      "effect": "Deal 4 damage to attackers."
+    },
+    {
+      "name": "Petal Veil",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 8,
+      "effect": "Reduce next damage by 4."
+    },
+    {
+      "name": "Sap Shield",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 4,
+      "effect": "Next Ritual costs 1 less."
+    },
+    {
+      "name": "Bud Barrier",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 5,
+      "effect": "If you have \u22652 Seeds, gain an extra card."
+    },
+    {
+      "name": "Sprout Sentry",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Summon a Seedling: at end of turn, heal 2 HP."
+    },
+    {
+      "name": "Petal Step",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Dodge an attack this turn."
+    },
+    {
+      "name": "Growth Glyph",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Next two Strikes are free."
+    },
+    {
+      "name": "Mossy Guard",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 3,
+      "effect": "Gain 1 Growth Rune."
+    },
+    {
+      "name": "Petal Parade",
+      "type": "Tactic",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Strikes Hit All Enemies."
+    },
+    {
+      "name": "Growth Ritual",
+      "type": "Ritual",
+      "cost": 0,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 1 Energy next turn if you've played a Ritual this combat."
+    },
+    {
+      "name": "Garden Bloom",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of turn, draw 1 card and gain 1 Seed."
+    },
+    {
+      "name": "Growth Aura",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Strikes deal +2 damage."
+    },
+    {
+      "name": "Seed Surge",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "At start of each turn, gain 1 Energy."
+    },
+    {
+      "name": "Thorned Roots",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Whenever you gain Block, enemies lose 1 Strength."
+    },
+    {
+      "name": "Verdant Warding",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of combat, heal 5 HP."
+    },
+    {
+      "name": "Blooming Ward",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of turn, apply 1 Poison to all enemies."
+    },
+    {
+      "name": "Sprouting Might",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Strikes cost 0 if you played \u22653 Strikes last turn."
+    },
+    {
+      "name": "Fungal Fortress",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 2 Seeds at end of each turn."
+    },
+    {
+      "name": "Rooted Resolve",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "At start of combat, gain 5 Block."
+    },
+    {
+      "name": "Nature's Boon",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 2 Growth Runes."
+    },
+    {
+      "name": "Verdant Bond",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Whenever you play a Ritual, draw 1 card."
+    },
+    {
+      "name": "Seed of Renewal",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of turn, remove one negative status."
+    },
+    {
+      "name": "Overgrowth",
+      "type": "Ritual",
+      "cost": 4,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Strikes and Tactics gain +1 effect."
+    },
+    {
+      "name": "Eternal Blossom",
+      "type": "Ritual",
+      "cost": 5,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of combat, retain all unplayed cards."
+    }
+  ],
+  "decay": [
+    {
+      "name": "Pestilent Strike",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 6,
+      "block": 0,
+      "effect": "Apply 1 Poison."
+    },
+    {
+      "name": "Rotting Slash",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 4,
+      "block": 0,
+      "effect": "Deal twice; if target is Poisoned, +2 damage."
+    },
+    {
+      "name": "Contagion Strike",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 8,
+      "block": 0,
+      "effect": "Spread Poison to a random enemy."
+    },
+    {
+      "name": "Sear Decay",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 10,
+      "block": 0,
+      "effect": "Deal damage to all enemies with Poison."
+    },
+    {
+      "name": "Plague Burst",
+      "type": "Strike",
+      "cost": 3,
+      "damage": 12,
+      "block": 0,
+      "effect": "Apply 2 Poison."
+    },
+    {
+      "name": "Blight Jab",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "Gain 1 Decay Rune."
+    },
+    {
+      "name": "Corrosive Edge",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 7,
+      "block": 0,
+      "effect": "Enemy loses 1 Strength next turn."
+    },
+    {
+      "name": "Fungus Flail",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 6,
+      "block": 0,
+      "effect": "Deal twice; heal 3 HP."
+    },
+    {
+      "name": "Carrion Whip",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 4,
+      "block": 0,
+      "effect": "Draw a card if target has Poison."
+    },
+    {
+      "name": "Noxious Rip",
+      "type": "Strike",
+      "cost": 3,
+      "damage": 9,
+      "block": 0,
+      "effect": "If enemy HP <50%, apply 1 Weak."
+    },
+    {
+      "name": "Virulent Fangs",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 6,
+      "block": 0,
+      "effect": "Enemy receives 3 Poison."
+    },
+    {
+      "name": "Death\u2019s Kiss",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "Upgrade your next Strike."
+    },
+    {
+      "name": "Putrid Cleave",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 8,
+      "block": 0,
+      "effect": "Deal to all; apply 1 Poison."
+    },
+    {
+      "name": "Pestilence Storm",
+      "type": "Strike",
+      "cost": 3,
+      "damage": 4,
+      "block": 0,
+      "effect": "Deal 4\u00d7 damage."
+    },
+    {
+      "name": "Blighted Bolt",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 3,
+      "block": 0,
+      "effect": "Apply 1 Poison twice."
+    },
+    {
+      "name": "Rotten Shield",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 7,
+      "effect": "Apply 1 Poison to attacker."
+    },
+    {
+      "name": "Carrion Cage",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Trap: first enemy to attack takes 10 damage."
+    },
+    {
+      "name": "Putrid Renew",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Heal 4 HP. Remove 1 Poison from you."
+    },
+    {
+      "name": "Festering Aura",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of turn, apply 2 Poison to all enemies."
+    },
+    {
+      "name": "Decay Bubble",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 5,
+      "effect": "If you have >3 Poison, gain 1 Decay Rune."
+    },
+    {
+      "name": "Toxic Infusion",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Apply 3 Poison to a random enemy."
+    },
+    {
+      "name": "Blight Barrier",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 12,
+      "effect": "Enemies lose 1 Strength when attacking."
+    },
+    {
+      "name": "Infectious Veil",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 8,
+      "effect": "Next Ritual costs 1 less."
+    },
+    {
+      "name": "Sanguine Shield",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 4,
+      "effect": "Drain 2 HP from attacker when blocked."
+    },
+    {
+      "name": "Death Sentries",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Summon wraith that deals 3 damage each end of turn."
+    },
+    {
+      "name": "Rancid Step",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Dodge the next attack."
+    },
+    {
+      "name": "Decay Glyph",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Next two Strikes apply +2 Poison."
+    },
+    {
+      "name": "Putrid Ward",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 3,
+      "effect": "Apply 1 Weak to attacker."
+    },
+    {
+      "name": "Bone Graft",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 6,
+      "effect": "Gain 6 Block per Poison on you."
+    },
+    {
+      "name": "Carcass Trap",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Trap: first enemy to attack is poisoned & takes 5 damage."
+    },
+    {
+      "name": "Corruption Ritual",
+      "type": "Ritual",
+      "cost": 0,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 1 Energy next turn if you played a Ritual this combat."
+    },
+    {
+      "name": "Rotting Ritual",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of turn, apply 1 Poison to all enemies."
+    },
+    {
+      "name": "Malignant Flow",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Strikes cost 0 if target has Poison."
+    },
+    {
+      "name": "Necrotic Infusion",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "At the end of each turn, apply 1 Poison to yourself and gain 1 Decay Rune."
+    },
+    {
+      "name": "Decay Communion",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Whenever you apply Poison, draw 1 card."
+    },
+    {
+      "name": "Toxic Transfusion",
+      "type": "Ritual",
+      "cost": 4,
+      "damage": 0,
+      "block": 0,
+      "effect": "Convert 3 Poison from all enemies into 3 HP per enemy."
+    },
+    {
+      "name": "Decay Surge",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 1 Energy at the start of each turn."
+    },
+    {
+      "name": "Festering Roots",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Whenever you gain Block, apply 1 Poison to attacker."
+    },
+    {
+      "name": "Blight Shield",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 8 Block at the start of combat."
+    },
+    {
+      "name": "Poisonous Aura",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Enemies entering combat start with 2 Poison."
+    },
+    {
+      "name": "Death\u2019s Embrace",
+      "type": "Ritual",
+      "cost": 4,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Strikes heal you for damage dealt."
+    },
+    {
+      "name": "Pestilent Bond",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Whenever you play a Ritual, draw 1 card."
+    },
+    {
+      "name": "Blighted Path",
+      "type": "Ritual",
+      "cost": 4,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Tactics cost 0 next turn."
+    },
+    {
+      "name": "Ichor of Life",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of combat, heal 5 HP per Poison applied."
+    },
+    {
+      "name": "Eternal Decay",
+      "type": "Ritual",
+      "cost": 5,
+      "damage": 0,
+      "block": 0,
+      "effect": "Retain all unplayed cards at end of combat."
+    }
+  ],
+  "elemental": [
+    {
+      "name": "Flame Lash",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 6,
+      "block": 0,
+      "effect": "Apply 1 Burn."
+    },
+    {
+      "name": "Spark Jab",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 4,
+      "block": 0,
+      "effect": "Deal 4 damage twice."
+    },
+    {
+      "name": "Electro Surge",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 8,
+      "block": 0,
+      "effect": "Stun if enemy has Burn."
+    },
+    {
+      "name": "Gale Slash",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 10,
+      "block": 0,
+      "effect": "Draw 1 card."
+    },
+    {
+      "name": "Thunder Clap",
+      "type": "Strike",
+      "cost": 3,
+      "damage": 12,
+      "block": 0,
+      "effect": "Deal to all enemies."
+    },
+    {
+      "name": "Ice Shard",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "Apply 1 Chill."
+    },
+    {
+      "name": "Shockwave",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 7,
+      "block": 0,
+      "effect": "Enemy has 20% chance to miss next turn due to Paralysis."
+    },
+    {
+      "name": "Lava Burst",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 6,
+      "block": 0,
+      "effect": "Apply 2 Burn."
+    },
+    {
+      "name": "Storm Fang",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 4,
+      "block": 0,
+      "effect": "If enemy has Chill, +2 damage."
+    },
+    {
+      "name": "Frost Bite",
+      "type": "Strike",
+      "cost": 3,
+      "damage": 9,
+      "block": 0,
+      "effect": "Apply 2 Chill."
+    },
+    {
+      "name": "Arc Bolt",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 6,
+      "block": 0,
+      "effect": "Pierces Block."
+    },
+    {
+      "name": "Ember Shot",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 5,
+      "block": 0,
+      "effect": "Deal Burn next turn."
+    },
+    {
+      "name": "Wind Cleave",
+      "type": "Strike",
+      "cost": 2,
+      "damage": 8,
+      "block": 0,
+      "effect": "All enemies if you have \u22652 Chill."
+    },
+    {
+      "name": "Volt Barrage",
+      "type": "Strike",
+      "cost": 3,
+      "damage": 4,
+      "block": 0,
+      "effect": "Deal 4\u00d7 damage."
+    },
+    {
+      "name": "Glacial Edge",
+      "type": "Strike",
+      "cost": 1,
+      "damage": 4,
+      "block": 0,
+      "effect": "Apply Chill and draw 1."
+    },
+    {
+      "name": "Static Shield",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 7,
+      "effect": "Enemy takes 3 damage on attack."
+    },
+    {
+      "name": "Flame Guard",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 10,
+      "effect": "Apply 1 Burn."
+    },
+    {
+      "name": "Gust Barrier",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 5,
+      "effect": "Draw 1 if you have Chill."
+    },
+    {
+      "name": "Frost Wall",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 8,
+      "effect": "Apply 2 Chill."
+    },
+    {
+      "name": "Thunder Ward",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 6,
+      "effect": "Next Strike costs 0."
+    },
+    {
+      "name": "Magma Mantle",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 12,
+      "effect": "Apply Burn to all enemies."
+    },
+    {
+      "name": "Zephyr Veil",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 4,
+      "effect": "Dodge next attack."
+    },
+    {
+      "name": "Icy Embrace",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 8,
+      "effect": "Enemy loses 1 Strength when blocked."
+    },
+    {
+      "name": "Scorching Aura",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 5,
+      "effect": "Apply 1 Burn at end of turn."
+    },
+    {
+      "name": "Storm Sentinel",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Summon storm wisp: deals 2 damage each turn."
+    },
+    {
+      "name": "Frost Step",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 1 Chill and 1 Energy."
+    },
+    {
+      "name": "Electro Glyph",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Next two Strikes apply +1 Burn."
+    },
+    {
+      "name": "Molten Ward",
+      "type": "Tactic",
+      "cost": 1,
+      "damage": 0,
+      "block": 3,
+      "effect": "Gain Burn when blocked."
+    },
+    {
+      "name": "Elemental Ward",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 10,
+      "effect": "Gain 10 Block if you played a Ritual this turn."
+    },
+    {
+      "name": "Avalanche",
+      "type": "Tactic",
+      "cost": 2,
+      "damage": 0,
+      "block": 6,
+      "effect": "Apply 1 Chill to all enemies."
+    },
+    {
+      "name": "Elemental Ritual",
+      "type": "Ritual",
+      "cost": 0,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 1 Energy next turn if you played a Ritual."
+    },
+    {
+      "name": "Burning Ritual",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of turn, apply 1 Burn to all enemies."
+    },
+    {
+      "name": "Storm Ritual",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Strikes deal +2 damage this turn."
+    },
+    {
+      "name": "Glacial Surge",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "At start of turn, apply 1 Chill to all enemies."
+    },
+    {
+      "name": "Lava Flow",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Whenever you play a Strike, apply 1 Burn."
+    },
+    {
+      "name": "Zephyr Shield",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Gain 8 Block at start of combat."
+    },
+    {
+      "name": "Frost Armor",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Enemies lose 1 Energy when attacking."
+    },
+    {
+      "name": "Chain Lightning",
+      "type": "Ritual",
+      "cost": 4,
+      "damage": 0,
+      "block": 0,
+      "effect": "Deal 4 damage to 2 random enemies."
+    },
+    {
+      "name": "Ember Bond",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "Whenever you play a Ritual, draw 1 card."
+    },
+    {
+      "name": "Frozen Path",
+      "type": "Ritual",
+      "cost": 4,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Tactics cost 0 next turn."
+    },
+    {
+      "name": "Storm\u2019s Embrace",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "At end of combat, gain 5 Energy."
+    },
+    {
+      "name": "Eternal Elemental",
+      "type": "Ritual",
+      "cost": 5,
+      "damage": 0,
+      "block": 0,
+      "effect": "Retain all unplayed cards at end of combat."
+    },
+    {
+      "name": "Rune of Fury",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Strikes deal +2 damage."
+    },
+    {
+      "name": "Rune of Defense",
+      "type": "Ritual",
+      "cost": 2,
+      "damage": 0,
+      "block": 0,
+      "effect": "All Tactics cost 0 next turn."
+    },
+    {
+      "name": "Rune of Elements",
+      "type": "Ritual",
+      "cost": 3,
+      "damage": 0,
+      "block": 0,
+      "effect": "Strikes and Tactics apply one random elemental status."
+    }
+  ],
+  "filler": [
+  {
+    "id": "filler_quick_jab",
+    "name": "Quick Jab",
+    "type": "attack",
+    "cost": 0,
+    "pool": "neutral",
+    "rarity": "common",
+    "effects": [
+      { "type": "deal_damage", "amount": 3 }
+    ]
+  },
+  {
+    "id": "filler_deflect",
+    "name": "Deflect",
+    "type": "skill",
+    "cost": 0,
+    "pool": "neutral",
+    "rarity": "common",
+    "effects": [
+      { "type": "gain_block", "amount": 3 }
+    ]
+  },
+  {
+    "id": "filler_cantrip",
+    "name": "Cantrip",
+    "type": "skill",
+    "cost": 0,
+    "pool": "neutral",
+    "rarity": "common",
+    "effects": [
+      { "type": "draw_cards", "amount": 1 }
+    ]
+  },
+  {
+    "id": "filler_feint",
+    "name": "Feint",
+    "type": "skill",
+    "cost": 0,
+    "pool": "neutral",
+    "rarity": "common",
+    "effects": [
+      { "type": "apply_status", "status": "sap", "amount": 1 }
+    ]
+  },
+  {
+    "id": "filler_expose",
+    "name": "Expose",
+    "type": "skill",
+    "cost": 0,
+    "pool": "neutral",
+    "rarity": "common",
+    "effects": [
+      { "type": "apply_status", "status": "fragile", "amount": 1 }
+     ]
+    }
+  ]
+}

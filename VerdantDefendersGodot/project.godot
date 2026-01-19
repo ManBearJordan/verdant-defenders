@@ -1,0 +1,38 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="VerdantDefendersGodot"
+run/main_scene="res://Scenes/StartScreen.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+DataLayer="*res://scripts/DataLayer.gd"
+GameController="*res://scripts/GameController.gd"
+CombatSystem="*res://scripts/CombatSystem.gd"
+DungeonController="*res://scripts/DungeonController.gd"
+RoomController="*res://scripts/RoomController.gd"
+DeckManager="*res://scripts/DeckManager.gd"
+CardRules="*res://scripts/CardRules.gd"
+EnemyAI="*res://scripts/EnemyAI.gd"
+RewardSystem="*res://scripts/RewardSystem.gd"
+ShopSystem="*res://scripts/ShopSystem.gd"
+TargetingSystem="*res://scripts/TargetingSystem.gd"
+ArtRegistry="*res://scripts/ArtRegistry.gd"
+RoomDeck="*res://scripts/RoomDeck.gd"
+SigilSystem="*res://scripts/SigilSystem.gd"
+
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"

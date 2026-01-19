@@ -1,0 +1,10 @@
+{
+  "colorblind_mode": false,
+  "animation_speed": "normal",  // Options: "normal", "fast", "instant"
+  "show_enemy_intents": true,
+  "tooltip_enabled": true,
+  "volume": {
+    "music": 0.8,
+    "sfx": 0.8
+  }
+}

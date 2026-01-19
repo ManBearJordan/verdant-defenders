@@ -1,0 +1,169 @@
+{
+    "growth_layer": [
+        {
+            "name": "Sproutling",
+            "hp": 20,
+            "intents": [
+                "Attack 6",
+                "Attack 6",
+                "Buff (+2 Block, Gain Thorns 1)"
+            ],
+            "special": "Gains Thorns 1 when buffing"
+        },
+        {
+            "name": "Spore Puffer",
+            "hp": 18,
+            "intents": [
+                "Debuff (2 Poison)",
+                "Attack 4",
+                "Debuff (2 Poison)",
+                "Rest"
+            ],
+            "special": "On death, apply +1 Poison to all enemies"
+        },
+        {
+            "name": "Vine Shooter",
+            "hp": 22,
+            "intents": [
+                "Attack 5",
+                "Block 8",
+                "Attack 5 + Apply Weak"
+            ],
+            "special": "Every third Attack applies Weak 1 for 2 turns"
+        },
+        {
+            "name": "Barkshield",
+            "hp": 30,
+            "intents": [
+                "Block 12",
+                "Attack 8",
+                "Block 12",
+                "Attack 8"
+            ],
+            "special": "Gains +3 Block when taking unblocked damage"
+        },
+        {
+            "name": "Sap Warden",
+            "hp": 24,
+            "intents": [
+                "Buff Ally (Heal 4)",
+                "Attack 4",
+                "Buff All Allies (+2 Block)",
+                "Attack 4"
+            ],
+            "special": "Heals 2 HP to a random ally on attack"
+        }
+    ],
+    "decay_layer": [
+        {
+            "name": "Rot Crawler",
+            "hp": 26,
+            "intents": [
+                "Attack 7 + Apply Decay 1",
+                "Attack 7",
+                "Rest"
+            ],
+            "special": "Decay reduces Max HP by 1 per stack"
+        },
+        {
+            "name": "Mold Spitter",
+            "hp": 20,
+            "intents": [
+                "Debuff (2 Weak)",
+                "Attack 6",
+                "Debuff (2 Vulnerable)",
+                "Rest"
+            ],
+            "special": "On turn 4, also applies 1 Chill"
+        },
+        {
+            "name": "Bone Husk",
+            "hp": 36,
+            "intents": [
+                "Block 15",
+                "Taunt + Attack 10",
+                "Block 15",
+                "Attack 10"
+            ],
+            "special": "Immune to Stun and Poison; taunt forces targeting"
+        },
+        {
+            "name": "Sludge Fiend",
+            "hp": 22,
+            "intents": [
+                "Attack 5 + Apply Slow",
+                "Attack 5",
+                "Debuff (Apply 1 Weak to all)"
+            ],
+            "special": "Slow reduces card draw by 1 next turn"
+        },
+        {
+            "name": "Decay Caller",
+            "hp": 20,
+            "intents": [
+                "Buff Allies (+1 Decay on hits)",
+                "Rest",
+                "Buff Allies",
+                "Attack 4"
+            ],
+            "special": "Allies deal +1 Decay on hit while buff is active"
+        }
+    ],
+    "elemental_layer": [
+        {
+            "name": "Flame Wisp",
+            "hp": 22,
+            "intents": [
+                "Debuff (3 Burn)",
+                "Rest",
+                "Attack 7",
+                "Rest"
+            ],
+            "special": "Burn deals 2 damage at the start of your turn"
+        },
+        {
+            "name": "Water Sprite",
+            "hp": 20,
+            "intents": [
+                "Attack 4 + Heal 3",
+                "Rest",
+                "Attack 4 + Heal 3",
+                "Rest"
+            ],
+            "special": "Heals self when attacking"
+        },
+        {
+            "name": "Stone Golem",
+            "hp": 42,
+            "intents": [
+                "Block 20",
+                "Attack 12",
+                "Block 20",
+                "Attack 12"
+            ],
+            "special": "When it blocks, gains extra 5 Block next turn"
+        },
+        {
+            "name": "Storm Imp",
+            "hp": 24,
+            "intents": [
+                "Attack 6 + Stun 1",
+                "Rest",
+                "Attack 6 + Stun 1",
+                "Rest"
+            ],
+            "special": "Stun skips your next card-play turn"
+        },
+        {
+            "name": "Rune Binder",
+            "hp": 26,
+            "intents": [
+                "Debuff (Random: Weak/Vulnerable/Burn)",
+                "Buff Self (+3 Block)",
+                "Attack 5",
+                "Rest"
+            ],
+            "special": "Picks a new debuff each cycle"
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+extends Enemy
+class_name Boss
+
+signal boss_defeated
+
+# Phases data loaded from JSON
+var phases: Array = []
+var phase: int = 0
+var turn_counter: int = 0
+
+func _ready() -> void:
+    _load_phases()
+
+func _load_phases() -> void:
+    var file = FileAccess.open("res://Data/boss_phases.json", FileAccess.READ)
+    if file:
+        var parsed = JSON.parse_string(file.get_as_text())
+        if parsed.has(name):
+            phases = parsed[name]
+
+# Called by GameController or turn manager at start of each boss turn
+func _on_turn_start() -> void:
+    turn_counter += 1
+    if phase >= phases.size():
+        return
+    var current = phases[phase]
+    if turn_counter % int(current.turn_interval) == 0:
+        run_phase_ability(current.ability)
+    if hp <= int(current.threshold_hp):
+        _enter_phase(phase + 1)
+
+func run_phase_ability(ability: String) -> void:
+    print("Boss %s uses %s" % [name, ability])
+
+func _enter_phase(new_phase: int) -> void:
+    phase = new_phase
+    if phase >= phases.size():
+        emit_signal("boss_defeated", self)
+
+# Exposed for manual phase progression if needed
+func next_phase() -> void:
+    _enter_phase(phase + 1)
