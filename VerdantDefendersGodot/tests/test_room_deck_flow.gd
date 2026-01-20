@@ -90,9 +90,24 @@ func _init():
 		# Verify new choices drawn
 		if mc.active_choices.size() != 3:
 			_log("FAIL: Choices not refilled")
-		else:
 			_log("New Choices Ready")
 			
+	# 4b. Verify Elite Logic (Room 7-11)
+	_log("Action: Force Room 8 (Elite Range)")
+	mc.current_room_index = 8
+	mc.draw_choices()
+	
+	var found_elite = false
+	for c in mc.active_choices:
+		if c.type == "ELITE":
+			found_elite = true
+			break
+			
+	if found_elite:
+		_log("SUCCESS: Elite card found in choices at Room 8")
+	else:
+		_log("FAIL: No Elite card found in Room 8 choices")
+
 	# 5. Check Layer Pacing (Skip to Boss)
 	# Cheat: force index 14
 	mc.current_room_index = 14

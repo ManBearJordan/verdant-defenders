@@ -110,22 +110,8 @@ func _on_card_clicked(idx: int) -> void:
 		# Shake animation?
 
 func _on_remove_pressed() -> void:
-	# Opens deck view to pick card to remove.
-	# Simplification: Remove RANDOM filler for now?
-	# User wants "Remove Card". Usually implies selection.
-	# Implementing DeckSelectionScreen is separate task.
-	# FOR NOW: Random filler remove as fallback.
-	if shop_system:
-		var dm = get_node_or_null("/root/DeckManager")
-		if dm: 
-			# Hack: Purge first strike/defend found
-			var filler = dm.find_filler_card()
-			if filler:
-				if shop_system.remove_card_from_deck(filler):
-					print("Purged %s" % filler.id)
-					_update_ui()
-			else:
-				print("No filler to purge!")
+	if run_controller:
+		run_controller.goto_deck_view("remove", "shop")
 	
 func _on_heal_pressed() -> void:
 	if not shop_system: return

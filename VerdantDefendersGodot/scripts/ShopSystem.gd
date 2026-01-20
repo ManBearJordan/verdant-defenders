@@ -147,8 +147,7 @@ func heal_player(amount: int) -> bool:
 	gc.modify_hp(amount)
 	return true
 
-func remove_card_from_deck(card: Variant) -> bool:
-	# Card should be Resource
+func remove_card_by_id(card_id: String) -> bool:
 	var gc: Node = game_controller
 	if gc == null: return false
 	
@@ -156,12 +155,20 @@ func remove_card_from_deck(card: Variant) -> bool:
 	var shards = int(gc.get("shards"))
 	if shards < cost: return false
 	
-	var dm: Node = deck_manager
-	if dm and dm.has_method("remove_card"):
-		# DeckManager.remove_card expects CardResource
-		if dm.remove_card(card):
-			gc.modify_shards(-cost)
-			return true
+	# RunController (gc) holds the 'deck' Array of Strings.
+	# DeckManager usually holds logic, but if deck is in RunController, we iterate there?
+	# RunController.remove_card(id) exists.
+	if gc.has_method("remove_card"):
+		gc.remove_card(card_id)
+		gc.modify_shards(-cost)
+		return true
+		
+	return false
+
+func remove_card_from_deck(card: Variant) -> bool:
+	# Legacy wrapper? Or needed for verification?
+	if card is CardResource:
+		return remove_card_by_id(card.id) # Assuming id property
 	return false
 
 func _shop_cfg() -> Dictionary:

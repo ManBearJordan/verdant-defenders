@@ -43,6 +43,7 @@ const SCENE_BATTLE = "res://Scenes/UI/Combat/CombatScreen.tscn"
 const SCENE_REWARD = "res://Scenes/UI/Combat/RewardScreen.tscn"
 const SCENE_SHOP = "res://Scenes/UI/Shop/ShopScreen.tscn"
 const SCENE_EVENT = "res://Scenes/UI/Event/EventScreen.tscn"
+const SCENE_DECK = "res://Scenes/UI/Deck/DeckViewScreen.tscn"
 # const SCENE_START_MENU = "res://Scenes/UI/StartMenu.tscn" # If distinct
 
 # --- PUBLIC API ---
@@ -136,6 +137,41 @@ func goto_event() -> void:
 func goto_reward(context: String = "normal") -> void:
 	print("Navigating to REWARD (Context: ", context, ")")
 	_change_screen(SCENE_REWARD)
+
+func goto_deck_view(mode: String = "view", return_context: String = "map") -> void:
+	print("Navigating to DECK VIEW (Mode: ", mode, ")")
+	_change_screen(SCENE_DECK)
+	
+	# Pass params to screen
+	var root = get_tree().current_scene
+	var screen = root.find_child("ScreenLayer").get_child(0)
+	if screen and screen.has_method("setup"):
+		screen.setup(mode)
+		
+		# Connect signals for flow
+		if return_context == "shop":
+			if screen.has_signal("card_selected"):
+				screen.card_selected.connect(_on_deck_card_selected_for_shop)
+			if screen.has_signal("cancelled"):
+				screen.cancelled.connect(goto_shop)
+
+func _on_deck_card_selected_for_shop(card_id: String) -> void:
+	print("RunController: Card selected for removal: ", card_id)
+	
+	# Verify cost again? Or trust?
+	# We should ideally check shards, but assuming shop checked before entry.
+	# We deduct cost here or in shop?
+	# Better to call ShopSystem to process the logical transaction?
+	# ShopSystem is global.
+	
+	var shop = get_node_or_null("/root/ShopSystem")
+	if shop:
+		if shop.remove_card_by_id(card_id):
+			print("RunController: Card removed successfully")
+			goto_shop()
+		else:
+			print("RunController: Failed to remove card")
+			goto_shop() # Return anyway
 
 func return_to_map() -> void:
 	goto_map()

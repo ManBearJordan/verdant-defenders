@@ -31,6 +31,7 @@ var room_deck: Array[RoomCard] = []
 var discard_pile: Array[RoomCard] = []
 
 var active_layer_name: String = "Growth"
+var elite_defeated_in_layer: bool = false
 
 func _ready() -> void:
 	print("MapController: Initialized")
@@ -46,6 +47,7 @@ func _build_layer_deck(layer_idx: int) -> void:
 	active_layer_name = LAYERS[min(layer_idx, LAYERS.size()-1)]
 	print("MapController: Building deck for ", active_layer_name)
 	
+	elite_defeated_in_layer = false
 	room_deck.clear()
 	discard_pile.clear()
 	
@@ -163,14 +165,15 @@ func draw_choices() -> void:
 	
 	# Inject Optional Elite Logic (Rooms 7-11)
 	# "1 Mini-Boss... Only appears if player chooses it".
-	# If we are in range 7-11, loop through choices. If no Elite, maybe replace one?
-	# But spec says "Optional card...".
-	# Let's simplisticly replace slot 2 with Elite if in range and not yet defeated?
-	var elite_killed = false # Need state tracking
-	if current_room_index >= 7 and current_room_index <= 11 and not elite_killed:
-		# Has explicit check logic later.
-		# For now, let's keep it simple: Just draw from deck.
-		pass
+	# If we are in range 7-11 and haven't beaten one yet, make the 2nd card (index 1) an Elite.
+	if current_room_index >= 7 and current_room_index <= 11:
+		if not elite_defeated_in_layer:
+			# Ensure we have enough cards to replace, or just append?
+			# Replacing ensures 3 choices.
+			if active_choices.size() >= 2:
+				active_choices[1] = _create_card("ELITE")
+			elif active_choices.size() > 0:
+				active_choices[0] = _create_card("ELITE")
 		
 	emit_signal("choices_ready", active_choices)
 
@@ -195,6 +198,10 @@ func select_card(card: RoomCard) -> void:
 	
 	# Update index handled by next_room() which is called AFTER scene completion.
 	# But we emit signal to trigger scene now.
+	
+	if card.type == "ELITE":
+		elite_defeated_in_layer = true
+		
 	emit_signal("room_selected", card)
 
 func _reshuffle_discard() -> void:
