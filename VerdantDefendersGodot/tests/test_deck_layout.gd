@@ -31,31 +31,35 @@ func _init():
 	if deck.size() != 14:
 		_log("FAIL: Deck size is " + str(deck.size()) + ", expected 14")
 	else:
-		_log("Deck Size: OK")
+		_log("Deck Size: OK (14)")
 		
-	# Verify Indices
-	var mapping = {
-		3: "SHOP", 7: "SHOP", 11: "SHOP",
-		4: "EVENT", 10: "EVENT",
-		6: "TREASURE", 13: "TREASURE"
-	}
+	# Verify Rule 1: No Shop in first 3 cards (indices 0, 1, 2)
+	# Note: MapController pops front for choices. 
+	# room_deck[0], [1], [2] are the NEXT choices.
 	
-	var errors = 0
-	for i in range(14):
-		var expected = "COMBAT"
-		if mapping.has(i): expected = mapping[i]
+	var shop_error = false
+	for i in range(3):
+		if i < deck.size():
+			if deck[i].type == "SHOP":
+				_log("FAIL: Shop found at index " + str(i) + " (First Draw)")
+				shop_error = true
+	
+	if not shop_error:
+		_log("PASS: No Shops in first draw")
 		
-		var actual = deck[i].type
-		if actual != expected:
-			_log("FAIL at index %d: Expected %s, Got %s" % [i, expected, actual])
-			errors += 1
-		else:
-			# _log("Index %d: %s (OK)" % [i, actual])
-			pass
+	# Verify Rule 2: No Event adjacent to Treasure
+	var adjacency_error = false
+	for i in range(deck.size() - 1):
+		var c1 = deck[i]
+		var c2 = deck[i+1]
+		
+		# Event <-> Treasure
+		if (c1.type == "EVENT" and c2.type == "TREASURE") or \
+		   (c1.type == "TREASURE" and c2.type == "EVENT"):
+			_log("FAIL: Adjacency conflict at %d-%d: %s | %s" % [i, i+1, c1.type, c2.type])
+			adjacency_error = true
 			
-	if errors == 0:
-		_log("PASS: All indices match template")
-	else:
-		_log("FAIL: Layout mismatch")
+	if not adjacency_error:
+		_log("PASS: Adjacency Rules Respected")
 		
 	quit()

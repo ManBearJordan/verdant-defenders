@@ -109,28 +109,20 @@ func _init():
 		_log("FAIL: No Elite card found in Room 8 choices")
 
 	# 5. Check Layer Pacing (Skip to Boss)
-	# Cheat: force index 14
+	# Connect signal to verify emission
+	var boss_signal_emitted = false
+	mc.boss_reached.connect(func(): boss_signal_emitted = true)
+	
 	mc.current_room_index = 14
-	_log("Action: Force Room 14 (Boss Pre-req)")
+	_log("Action: Force Room 14 (Boss Reached Check)")
 	
-	# Trigger next step? next_room() increments index THEN checks.
-	# If we are AT 14, next draw should be Boss?
-	# Implementation: 
-	# draw_choices(): if current_room_index == 14 -> signal boss_reached
-	# So if we are currently at 14, calling draw_choices() triggers boss.
-	# But normally finish room 13 -> next_room() -> index=14 -> draw_choices() -> Boss.
+	# Calling draw_choices() at index 14 should emit boss_reached immediately
+	mc.draw_choices()
 	
-	# Let's simulate finish room 13
-	mc.current_room_index = 13
-	dc._return_to_map() # -> index=14 -> draw_choices
-	await create_timer(0.2).timeout
-	
-	if mc.current_room_index != 14:
-		_log("FAIL: Index mismatch for boss. Got %d" % mc.current_room_index)
-	
-	# Did we get BOSS signal?
-	# Hard to check signal emission in unit test this way without spy.
-	# But DungeonController should print "BOSS REACHED"
-	
+	if boss_signal_emitted:
+		_log("SUCCESS: 'boss_reached' signal verified")
+	else:
+		_log("FAIL: 'boss_reached' signal NOT emitted")
+
 	_log("TEST COMPLETE: Room Deck Navigation Verified")
 	quit()

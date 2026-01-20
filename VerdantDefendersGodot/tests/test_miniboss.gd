@@ -50,12 +50,15 @@ func _init():
 	# But we can try multiple times.
 	var injected = false
 	for i in range(20):
-		mc.active_choices = [
-			mc._create_card("COMBAT"),
-			mc._create_card("COMBAT"),
-			mc._create_card("COMBAT")
-		] 
+		# Populate room_deck with dummy combats so draw_choices has something to pull
+		mc.room_deck.clear()
+		mc.room_deck.append(mc._create_card("COMBAT"))
+		mc.room_deck.append(mc._create_card("COMBAT"))
+		mc.room_deck.append(mc._create_card("COMBAT"))
+		
+		mc.active_choices.clear() # Simulate clean state
 		mc.draw_choices()
+		
 		for c in mc.active_choices:
 			if c.type == "MINI_BOSS":
 				injected = true
