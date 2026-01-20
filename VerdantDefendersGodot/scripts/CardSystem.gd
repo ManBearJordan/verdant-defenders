@@ -17,7 +17,7 @@ func end_turn():
 
 func play_card(card_id: String, target: Node):
 	var card = DataLayer.get_card(card_id)
-	var cost = card.get("cost", 1)
+	var cost = card.cost if "cost" in card else 1
 
 	if cost > energy:
 		print("Not enough energy to play card: %s" % card_id)
@@ -25,12 +25,12 @@ func play_card(card_id: String, target: Node):
 
 	energy -= cost
 
-	var damage: int = int(card.get("damage", 0))
-	var block: int = int(card.get("block", 0))
-	var heal: int = int(card.get("heal", 0))
-	var status: String = String(card.get("status", ""))
-	var status_amount: int = int(card.get("status_amount", 1))
-	var target_mode: String = String(card.get("target", "single"))
+	var damage: int = int(card.damage) if "damage" in card else 0
+	var block: int = int(card.block) if "block" in card else 0
+	var heal: int = int(card.heal) if "heal" in card else 0
+	var status: String = String(card.status) if "status" in card else ""
+	var status_amount: int = int(card.status_amount) if "status_amount" in card else 1
+	var target_mode: String = String(card.target) if "target" in card else "single"
 
 	# Sigil system listens to card play
 	sigils.on_card_played(card)

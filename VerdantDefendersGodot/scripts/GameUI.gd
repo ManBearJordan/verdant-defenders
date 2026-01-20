@@ -70,11 +70,12 @@ func _ready() -> void:
 	var dc = get_node_or_null("/root/DungeonController")
 	if dc:
 		# if dc.has_signal("choices_ready"): dc.choices_ready.connect(_on_room_choices_ready) # FIX: Legacy signal
-		if dc.has_signal("map_updated"): dc.map_updated.connect(_on_map_updated)
-		if "current_map" in dc and not dc.current_map.is_empty():
-			_on_map_updated(dc.current_map, dc.current_layer, dc.current_node_index)
-		if dc.has_signal("room_entered"): dc.room_entered.connect(_on_room_entered)
+		# if dc.has_signal("map_updated"): dc.map_updated.connect(_on_map_updated)
+		# if "current_map" in dc and not dc.current_map.is_empty():
+		# 	_on_map_updated(dc.current_map, dc.current_layer, dc.current_node_index)
+		# if dc.has_signal("room_entered"): dc.room_entered.connect(_on_room_entered)
 		# if dc.has_method("start_run"): dc.call_deferred("start_run")
+		pass
 			
 	var dm := _dm()
 	if dm != null:
@@ -576,8 +577,8 @@ func _set_view_mode(mode: ViewMode) -> void:
 	if _hand_container: _hand_container.visible = is_combat
 	
 	# Map
-	if _map_screen_instance:
-		_map_screen_instance.visible = (mode == ViewMode.MAP)
+	# if _map_screen_instance:
+	# 	_map_screen_instance.visible = (mode == ViewMode.MAP)
 		
 	# Rewards (If we have a dedicated container)
 	# Event (If we have a dedicated container)

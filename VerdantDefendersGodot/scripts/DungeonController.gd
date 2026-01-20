@@ -18,7 +18,7 @@ const SCENE_BOSS = "res://Scenes/UI/Combat/CombatScreen.tscn" # Same combat scen
 @onready var run_controller = get_node("/root/RunController")
 
 func _ready() -> void:
-    # Connect to MapController
+	# Connect to MapController
 	if map_controller:
 		map_controller.room_selected.connect(_on_room_selected)
 		map_controller.boss_reached.connect(_on_boss_reached)

@@ -6,6 +6,7 @@ extends Control
 
 var current_context: String = "normal"
 var miniboss_options: Array = []
+var _offers: Array = []
 
 func setup(context: String) -> void:
 	current_context = context

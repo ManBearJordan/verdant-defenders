@@ -43,7 +43,8 @@ func _on_combat_finished(victory: bool, is_mini_boss: bool = false) -> void:
 			if is_mini_boss:
 				# Elite Reward Logic (Simulated Choice + Bonuses)
 				var act = 1
-				if dc and dc.has_method("get_current_act"): act = dc.current_act
+				var rc = get_node_or_null("/root/RunController")
+				if rc: act = rc.current_act
 				
 				var rewards = rs.generate_elite_rewards(act)
 				
@@ -136,8 +137,10 @@ func _roll_pack(tier: String) -> Array:
 	
 	var pool_name = "growth"
 	var dc = get_node_or_null("/root/DungeonController")
-	if dc and dc.has_method("get_current_pool"):
+	if dc and dc.has_method("get_current_pool"): 
 		pool_name = dc.get_current_pool()
+	elif dc and "current_pool" in dc:
+		pool_name = dc.current_pool
 	
 	# Primary logic: Get enemies by Tier AND Pool
 	# But DataLayer only has get_enemies_by_tier OR get_enemies_by_pool separately?

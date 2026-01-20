@@ -37,54 +37,6 @@ var mini_boss_defeated_in_layer: bool = false
 func _ready() -> void:
 	print("MapController: Initialized")
 
-func start_run() -> void:
-    # ... (existing)
-
-func _build_layer_deck(layer_idx: int) -> void:
-	active_layer_name = LAYERS[min(layer_idx, LAYERS.size()-1)]
-	print("MapController: Building deck for ", active_layer_name)
-	
-	elite_defeated_in_layer = false
-	mini_boss_defeated_in_layer = false
-	room_deck.clear()
-    # ... (rest of function)
-
-# ...
-
-func draw_choices() -> void:
-	# ... (Boss check)
-
-	# ... (Deck refill loop)
-	
-	# Inject Optional Elite/MiniBoss Logic (Rooms 7-11)
-	# "1 Mini-Boss or Elite... Only appears if player chooses it".
-	if current_room_index >= 7 and current_room_index <= 11:
-		if not elite_defeated_in_layer and not mini_boss_defeated_in_layer:
-			# Decide type: 70% Elite, 30% Mini-Boss
-			var type_to_inject = "ELITE"
-			if randf() > 0.7:
-				type_to_inject = "MINI_BOSS"
-				
-			# Replace choice
-			if active_choices.size() >= 2:
-				active_choices[1] = _create_card(type_to_inject)
-			elif active_choices.size() > 0:
-				active_choices[0] = _create_card(type_to_inject)
-		
-	emit_signal("choices_ready", active_choices)
-
-# ...
-
-func select_card(card: RoomCard) -> void:
-	# ...
-	# Update index handled by next_room()...
-	
-	if card.type == "ELITE":
-		elite_defeated_in_layer = true
-	elif card.type == "MINI_BOSS":
-		mini_boss_defeated_in_layer = true
-		
-	emit_signal("room_selected", card)
 
 func start_run() -> void:
 	current_layer_index = 0
@@ -289,6 +241,8 @@ func select_card(card: RoomCard) -> void:
 	
 	if card.type == "ELITE":
 		elite_defeated_in_layer = true
+	elif card.type == "MINI_BOSS":
+		mini_boss_defeated_in_layer = true
 		
 	emit_signal("room_selected", card)
 

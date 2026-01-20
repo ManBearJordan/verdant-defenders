@@ -48,20 +48,25 @@ func begin_encounter(pack: Array) -> void:
 			var unit = EnemyUnit.new(res)
 			
 			# Dynamic Scaling
-			var dc = get_node_or_null("/root/DungeonController")
-			if dc:
-				var act = dc.current_act
-				var depth = dc.current_layer
+			# Dynamic Scaling
+			var act = 1
+			var depth = 0
+			
+			var rc_chk = get_node_or_null("/root/RunController")
+			if rc_chk: act = rc_chk.current_act
+			
+			var mc_chk = get_node_or_null("/root/MapController")
+			if mc_chk: depth = mc_chk.current_room_index
 				
-				var act_mult = 1.0
-				if act == 2: act_mult = 1.35
-				elif act >= 3: act_mult = 1.70
-				
-				var depth_mult = 1.0 + 0.10 * floor(depth / 5.0)
-				var total_mult = act_mult * depth_mult
-				
-				if total_mult != 1.0:
-					unit.apply_scaling(total_mult)
+			var act_mult = 1.0
+			if act == 2: act_mult = 1.35
+			elif act >= 3: act_mult = 1.70
+			
+			var depth_mult = 1.0 + 0.10 * floor(depth / 5.0)
+			var total_mult = act_mult * depth_mult
+			
+			if total_mult != 1.0:
+				unit.apply_scaling(total_mult)
 			
 			unit.update_intent(0)
 			enemies.append(unit)
@@ -97,9 +102,9 @@ func begin_encounter(pack: Array) -> void:
 			_apply_elite_modifier(unit)
 			
 			# Elite HP Tuning (TASK 8: Config-based multipliers)
-			var dc_chk = get_node_or_null("/root/DungeonController")
-			if dc_chk:
-				var act = dc_chk.current_act
+			var rc_hp = get_node_or_null("/root/RunController")
+			if rc_hp:
+				var act = rc_hp.current_act
 				var base_hp = unit.max_hp
 				
 				# Get elite HP multiplier from config (1.6/1.7/1.8 per Act)

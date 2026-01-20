@@ -36,6 +36,7 @@ func _init():
 	var out_path = "res://telemetry_verification.txt"
 	var f = FileAccess.open(out_path, FileAccess.WRITE)
 	
+	var dir = DirAccess.open("user://run_logs")
 	if dir:
 		dir.list_dir_begin()
 		var file = dir.get_next()
