@@ -132,9 +132,13 @@ func _on_event_completed() -> void:
 
 func _return_to_map() -> void:
 	print("Returning to Map & Advancing")
-	_load_scene(SCENE_MAP)
-	if map_controller:
-		map_controller.next_room()
+	if run_controller and run_controller.has_method("return_to_map"):
+		run_controller.return_to_map()
+	else:
+		# Fallback
+		_load_scene(SCENE_MAP)
+		if map_controller:
+			map_controller.next_room()
 
 # --- Scene Loading ---
 

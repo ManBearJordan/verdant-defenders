@@ -44,6 +44,11 @@ theme_override_font_sizes/font_size = 48
 text = "Growth"
 horizontal_alignment = 1
 
+[node name="DeckButton" type="Button" parent="VBox/TopInfo"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "View Deck"
+
 [node name="ProgressLabel" type="Label" parent="VBox/TopInfo"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24

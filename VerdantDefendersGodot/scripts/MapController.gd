@@ -32,9 +32,59 @@ var discard_pile: Array[RoomCard] = []
 
 var active_layer_name: String = "Growth"
 var elite_defeated_in_layer: bool = false
+var mini_boss_defeated_in_layer: bool = false
 
 func _ready() -> void:
 	print("MapController: Initialized")
+
+func start_run() -> void:
+    # ... (existing)
+
+func _build_layer_deck(layer_idx: int) -> void:
+	active_layer_name = LAYERS[min(layer_idx, LAYERS.size()-1)]
+	print("MapController: Building deck for ", active_layer_name)
+	
+	elite_defeated_in_layer = false
+	mini_boss_defeated_in_layer = false
+	room_deck.clear()
+    # ... (rest of function)
+
+# ...
+
+func draw_choices() -> void:
+	# ... (Boss check)
+
+	# ... (Deck refill loop)
+	
+	# Inject Optional Elite/MiniBoss Logic (Rooms 7-11)
+	# "1 Mini-Boss or Elite... Only appears if player chooses it".
+	if current_room_index >= 7 and current_room_index <= 11:
+		if not elite_defeated_in_layer and not mini_boss_defeated_in_layer:
+			# Decide type: 70% Elite, 30% Mini-Boss
+			var type_to_inject = "ELITE"
+			if randf() > 0.7:
+				type_to_inject = "MINI_BOSS"
+				
+			# Replace choice
+			if active_choices.size() >= 2:
+				active_choices[1] = _create_card(type_to_inject)
+			elif active_choices.size() > 0:
+				active_choices[0] = _create_card(type_to_inject)
+		
+	emit_signal("choices_ready", active_choices)
+
+# ...
+
+func select_card(card: RoomCard) -> void:
+	# ...
+	# Update index handled by next_room()...
+	
+	if card.type == "ELITE":
+		elite_defeated_in_layer = true
+	elif card.type == "MINI_BOSS":
+		mini_boss_defeated_in_layer = true
+		
+	emit_signal("room_selected", card)
 
 func start_run() -> void:
 	current_layer_index = 0
@@ -51,62 +101,38 @@ func _build_layer_deck(layer_idx: int) -> void:
 	room_deck.clear()
 	discard_pile.clear()
 	
-	# 1. Create Pool
-	var pool = []
-	for type in DECK_COMPOSITION:
-		var count = DECK_COMPOSITION[type]
-		for i in range(count):
-			pool.append(_create_card(type))
-			
-	# 2. Shuffle
-	pool.shuffle()
+	# 1. Create Pool using Template (Fixed Spacing)
+	# User Spec: Shops [3, 7, 11], Events [4, 10], Treasures [6, 13], Combat [Rest]
+	# Total 14 rooms (Indices 0-13)
 	
-	# 3. Adjacency Validation (Simple swap fix)
-	# Rules: Shop not first (index 0). Event not adjacent to Treasure.
-	# Since deck is drawn 3 at a time, "adjacency" in the deck affects draw probability,
-	# but strictly the player sees 3 cards.
-	# User requirement: "Shops cannot appear as the first room".
-	# If Room Index 0, we draw 3 cards. If ALL 3 are Shops, we are forced to pick Shop.
-	# So we ensure the top 3 cards are NOT all Shops?
-	# Or just ensure Config prevents it. 3 Shops in 14 cards (21% chance).
-	# Probability of 3 shops in first 3 draws is low but non-zero.
-	# Implementation: Check first 3 cards. If count(Shop) == 3, swap with deep card.
+	# Initialize with Empty/Null
+	var temp_deck: Array = []
+	temp_deck.resize(14)
 	
-	# Check First 3
-	var shop_indices = []
-	for i in range(min(3, pool.size())):
-		if pool[i].type == "SHOP":
-			shop_indices.append(i)
-			
-	if shop_indices.size() == 3:
-		# Swap one out
-		var swap_target = pool.size() - 1
-		var temp = pool[shop_indices[0]]
-		pool[shop_indices[0]] = pool[swap_target]
-		pool[swap_target] = temp
+	# Fixed Assignments
+	var shops = [3, 7, 11]
+	var events = [4, 10]
+	var treasures = [6, 13]
+	
+	for idx in shops:
+		if idx < 14: temp_deck[idx] = _create_card("SHOP")
 		
-	# Event/Treasure adjacency rule: "Never adjacent".
-	# In a "draw 3" system, "adjacency" usually means "Sequential Choices".
-	# If deck is [Event, Treasure, ...], drawing 3 puts them in same hand?
-	# Or does it mean Room N is Event, Room N+1 cannot be Treasure?
-	# Since weRESHUFFLE, strict linear adjacency is hard to pre-calc unless we pre-generate the *entire sequence* of rooms chosen?
-	# But choices are player driven.
-	# Interpreting rule: "Event cards are not adjacent to Treasure cards in the DECK list?"
-	# Let's verify deck list stability.
-	# Actually, with Draw 3 -> Discard 1 -> Refill, the deck order matters.
-	# We will just proceed with random shuffle for now as per "Use randi() to shuffle".
-	# We will rely on randomness.
-	
-	room_deck.append_array(pool) 
-	
-	# Optional Elite? Spec says "7-11 only if player chooses".
-	# If we just add it to deck, it might obscure others.
-	# Spec: "1 Mini-Boss or Elite optional card... only appears if player chooses it".
-	# This implies it is added to the choices? 
-	# "Room-deck navigation -- Draw 3 face up... refill back to 3".
-	# To support "Only in rooms 7-11", we can inject it dynamically when drawing?
-	# Or add to deck but only valid to draw in that range?
-	# Let's inject on draw.
+	for idx in events:
+		if idx < 14: temp_deck[idx] = _create_card("EVENT")
+		
+	for idx in treasures:
+		if idx < 14: temp_deck[idx] = _create_card("TREASURE")
+		
+	# Fill Rest with Combat
+	for i in range(14):
+		if temp_deck[i] == null:
+			temp_deck[i] = _create_card("COMBAT")
+			
+	room_deck = [] # Type casting
+	for card in temp_deck:
+		room_deck.append(card)
+		
+	# Note: No shuffle needed for fixed template.
 
 func next_room() -> void:
 	current_room_index += 1
@@ -233,4 +259,8 @@ func _create_card(type: String) -> RoomCard:
 		"ELITE":
 			c.icon_path = "res://Art/map/icons/node_elite.png"
 			c.title = "Elite Enemy"
+		"MINI_BOSS":
+			# Use elite icon or specific if available. Re-using elite for now.
+			c.icon_path = "res://Art/map/icons/node_elite.png" 
+			c.title = "Mini-Boss"
 	return c

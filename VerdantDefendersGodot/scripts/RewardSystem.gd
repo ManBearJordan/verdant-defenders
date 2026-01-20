@@ -258,4 +258,29 @@ func claim_card(index: int) -> void:
 	if dm != null and dm.has_method("discard_card"):
 		dm.call("discard_card", card)
 	# Clear offers after claiming
+	# Clear offers after claiming
 	_offers.clear()
+
+func generate_miniboss_rewards(act: int) -> Dictionary:
+	# Mini-Boss Reward (Spec: Choice between Sigil, Card, or Shards)
+	# We return a dict structured for the UI to present options.
+	
+	# Shard Amount
+	var shard_base = {1: 80, 2: 110, 3: 150}
+	var shard_amt = shard_base.get(act, 150)
+	
+	return {
+		"context": "miniboss",
+		"options": [
+			{"type": "shards", "amount": shard_amt, "label": "Take %d Shards" % shard_amt},
+			{"type": "card_reward", "label": "Draft a Card"},
+			{"type": "sigil", "label": "Obtain a Sigil"}
+		]
+	}
+
+func generate_normal_rewards(act: int) -> Dictionary:
+	var shard_base = {1: 25, 2: 35, 3: 50}
+	return {
+		"shards": shard_base.get(act, 50),
+		"cards": offer_cards(3, "growth") # Default. Should get form DungeonController
+	}

@@ -4,118 +4,195 @@ extends Control
 @onready var flow = get_node("/root/FlowController")
 @onready var dm = get_node("/root/DeckManager")
 
-var _offers: Array = []
+var current_context: String = "normal"
+var miniboss_options: Array = []
+
+func setup(context: String) -> void:
+	current_context = context
+	_generate_rewards(context)
+
+func _generate_rewards(context: String) -> void:
+	var rs = get_node_or_null("/root/RewardSystem")
+	var rc = get_node_or_null("/root/RunController")
+	if not rs or not rc: return
+	
+	var act = rc.current_act
+	
+	if context == "elite":
+		var rewards = rs.generate_elite_rewards(act)
+		# Build Elite UI (Shards + Card + Bonus)
+		_build_elite_ui(rewards)
+	elif context == "miniboss":
+		var rewards = rs.generate_miniboss_rewards(act)
+		# Build Choice UI
+		_build_miniboss_ui(rewards)
+	elif context == "boss":
+		# Placeholder boss reward
+		_build_normal_ui(rs.generate_normal_rewards(act))
+	else:
+		_build_normal_ui(rs.generate_normal_rewards(act))
+
+func _build_miniboss_ui(data: Dictionary) -> void:
+	if not container: return
+	_clear_container()
+	
+	_add_header("MINI-BOSS DEFEATED!")
+	_add_label("Choose ONE Reward:")
+	
+	miniboss_options = data.get("options", [])
+	
+	for i in range(miniboss_options.size()):
+		var opt = miniboss_options[i]
+		var btn = Button.new()
+		btn.text = opt["label"]
+		btn.pressed.connect(_on_miniboss_option.bind(opt))
+		container.add_child(btn)
+
+func _on_miniboss_option(opt: Dictionary) -> void:
+	var type = opt.get("type")
+	match type:
+		"shards":
+			_collect_shards(opt.get("amount", 0), null)
+			_go_map()
+		"card_reward":
+			# Switch to card selection view?
+			# Simple: use normal card generation and show it
+			_clear_container()
+			_add_header("Draft a Card")
+			var rs = get_node_or_null("/root/RewardSystem")
+			_offers = rs.offer_cards(3, "growth") # Todo: proper class
+			_show_card_buttons()
+		"sigil":
+			# Grant random sigil
+			var rs = get_node_or_null("/root/RewardSystem")
+			if rs: rs.add_sigil_fragment(3) # Force sigil reward
+			_go_map()
+
+func _build_elite_ui(rewards: Dictionary) -> void:
+	if not container: return
+	_clear_container()
+	_add_header("ELITE VICTORY!")
+	
+	# Shards
+	if rewards.shards > 0:
+		_add_shard_btn(rewards.shards)
+		
+	# Bonus
+	if rewards.bonus:
+		var lbl = Label.new()
+		lbl.text = "Bonus: " + rewards.bonus.label
+		container.add_child(lbl)
+		if rewards.bonus.type == "shards":
+			_collect_shards(rewards.bonus.amount, null) # Auto or button? Auto for bonus maybe
+		elif rewards.bonus.type == "sigil_fragment":
+			var rs = get_node_or_null("/root/RewardSystem")
+			if rs: rs.add_sigil_fragment(rewards.bonus.amount)
+			
+	container.add_child(HSeparator.new())
+	
+	# Cards
+	_offers = rewards.cards
+	_show_card_buttons()
+
+func _build_normal_ui(rewards: Dictionary) -> void:
+	if not container: return
+	_clear_container()
+	_add_header("VICTORY!")
+	
+	if rewards.has("shards"):
+		_add_shard_btn(rewards.shards)
+		
+	container.add_child(HSeparator.new())
+	
+	if rewards.has("cards"):
+		_offers = rewards.cards
+		_show_card_buttons()
+	else:
+		_add_continue_btn()
+
+# --- UI Helpers ---
+
+func _clear_container() -> void:
+	for c in container.get_children(): c.queue_free()
+
+func _add_header(text: String) -> void:
+	var title = Label.new()
+	title.text = text
+	title.add_theme_font_size_override("font_size", 42)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	container.add_child(title)
+	container.add_child(HSeparator.new())
+
+func _add_label(text: String) -> void:
+	var l = Label.new()
+	l.text = text
+	container.add_child(l)
+
+func _add_shard_btn(amount: int) -> void:
+	var sl = Button.new()
+	sl.text = "Collect %d Verdant Shards" % amount
+	sl.pressed.connect(_collect_shards.bind(amount, sl))
+	container.add_child(sl)
+
+func _add_continue_btn() -> void:
+	var cont = Button.new()
+	cont.text = "Continue"
+	cont.pressed.connect(_go_map)
+	container.add_child(cont)
+
+func _show_card_buttons() -> void:
+	if _offers.is_empty():
+		_add_continue_btn()
+		return
+		
+	var lab = Label.new()
+	lab.text = "Choose a card:"
+	container.add_child(lab)
+	
+	for i in range(_offers.size()):
+		var c = _offers[i]
+		var b = Button.new()
+		b.text = _card_title(c)
+		b.pressed.connect(_pick.bind(i))
+		container.add_child(b)
+		
+	var skip = Button.new()
+	skip.text = "Skip Card Reward"
+	skip.pressed.connect(_skip)
+	container.add_child(skip)
+
+# --- Logic ---
 
 func _ready() -> void:
 	name = "RewardScreen"
-	if flow and "cards" in flow.transition_data:
-		_offers = flow.transition_data["cards"]
-		
-	var shards = 0
-	if flow and "shards" in flow.transition_data:
-		shards = flow.transition_data["shards"]
-		
-	_build(shards)
-
-func _build(bonus_shards: int) -> void:
-	if not container: return
-	for c in container.get_children(): c.queue_free()
-	
-	# Victory Header
-	var title = Label.new()
-	title.text = "VICTORY!"
-	title.add_theme_font_size_override("font_size", 42)
-	title.add_theme_color_override("font_color", Color("f0e68c"))
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	container.add_child(title)
-	
-	container.add_child(HSeparator.new())
-	
-	# Shards Reward
-	if bonus_shards > 0:
-		var sl = Button.new()
-		sl.text = "Collect %d Verdant Shards" % bonus_shards
-		sl.icon = preload("res://Art/ui/gold.png") # Optional if exists
-		sl.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		sl.pressed.connect(_collect_shards.bind(bonus_shards, sl))
-		container.add_child(sl)
-		
-	# Sigil Reward (from flow)
-	if flow and "sigil" in flow.transition_data:
-		var sigil_data = flow.transition_data["sigil"]
-		var sb = Button.new()
-		sb.text = "Take Sigil: %s" % sigil_data.get("name", "Unknown")
-		sb.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		sb.pressed.connect(_collect_sigil.bind(sigil_data, sb))
-		container.add_child(sb)
-	
-	container.add_child(HSeparator.new())
-	
-	# Card Rewards
-	if not _offers.is_empty():
-		var lab = Label.new()
-		lab.text = "Choose a card to add to your deck:"
-		container.add_child(lab)
-		
-		for i in range(_offers.size()):
-			var c = _offers[i]
-			var b = Button.new()
-			b.text = _card_title(c)
-			b.pressed.connect(_pick.bind(i))
-			container.add_child(b)
-			
-		var skip = Button.new()
-		skip.text = "Skip Card Reward"
-		skip.pressed.connect(_skip)
-		container.add_child(skip)
-	else:
-		var cont = Button.new()
-		cont.text = "Continue"
-		cont.pressed.connect(_go_map)
-		container.add_child(cont)
+	# Waith for setup() to be called by RunController
 
 func _collect_shards(amount: int, btn: Button) -> void:
-	btn.disabled = true
-	btn.text = "Collected %d Shards" % amount
-	var gc = get_node_or_null("/root/GameController")
+	if btn:
+		btn.disabled = true
+		btn.text = "Collected %d Shards" % amount
+	var gc = get_node_or_null("/root/RunController") # Use RunController
 	if gc:
-		var current = gc.get("verdant_shards")
-		gc.set("verdant_shards", current + amount)
-
-func _collect_sigil(data: Dictionary, btn: Button) -> void:
-	btn.disabled = true
-	btn.text = "Taken: %s" % data.get("name")
-	var ss = get_node_or_null("/root/SigilSystem")
-	if ss:
-		ss.add_sigil(data.get("id"))
-
-func _card_title(c: Dictionary) -> String:
-	var name_str = c.get("name", "Unknown")
-	var cost = c.get("cost", 0)
-	return "%s (%s e)" % [name_str, cost]
-
+		gc.modify_shards(amount)
+		
 func _pick(i: int) -> void:
+	# Add card to deck
 	var card = _offers[i]
-	if dm:
-		if dm.has_method("add_card_to_deck"):
-			dm.add_card_to_deck(card)
-	
+	var rc = get_node_or_null("/root/RunController")
+	if rc:
+		rc.add_card(card.id)
 	_go_map()
 
 func _skip() -> void:
 	_go_map()
 
 func _go_map() -> void:
-	if flow:
-		# DungeonController needs to trigger next_room?
-		# Previously RoomController finished, then GameUI showed rewards, then done -> next_room.
-		# Rewiring:
-		# Combat finishes -> RoomController -> Flow(REWARD)
-		# Reward finishes -> Flow(MAP).
-		# BUT DungeonController logic state needs to advance (current_node processing complete).
-		# We must call dc.next_room() BEFORE going to map? Or AFTER?
-		# dc.next_room() usually resets the view.
-		var dc = get_node_or_null("/root/DungeonController")
-		if dc: dc.next_room() # This unlocks movement
-		
-		flow.goto(flow.GameState.MAP)
+	var rc = get_node_or_null("/root/RunController")
+	if rc:
+		rc.return_to_map()
+
+func _card_title(c: Object) -> String:
+	# c is CardResource usually
+	if c.get("title"): return c.title
+	if c.get("id"): return c.id
+	return "Unknown Card"

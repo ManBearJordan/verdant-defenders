@@ -14,6 +14,11 @@ var map_controller: Node
 
 func _ready() -> void:
 	map_controller = get_node_or_null("/root/MapController")
+	
+	var deck_btn = find_child("DeckButton")
+	if deck_btn:
+		deck_btn.pressed.connect(_on_deck_pressed)
+
 	if map_controller:
 		map_controller.choices_ready.connect(_on_choices_ready)
 		map_controller.layer_changed.connect(_on_layer_changed)
@@ -60,5 +65,9 @@ func _render_choices(cards: Array) -> void:
 		btn.card_selected.connect(_on_card_selected)
 
 func _on_card_selected(card) -> void:
-	if map_controller:
 		map_controller.select_card(card)
+
+func _on_deck_pressed() -> void:
+	var rc = get_node_or_null("/root/RunController")
+	if rc:
+		rc.goto_deck_view("view", "map")

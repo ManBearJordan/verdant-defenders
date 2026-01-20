@@ -26,6 +26,9 @@ func setup(p_mode: String) -> void:
 	if mode == "remove":
 		title_lbl.text = "Select Card to Remove"
 		cancel_btn.visible = true
+	elif mode == "upgrade":
+		title_lbl.text = "Select Card to Upgrade"
+		cancel_btn.visible = true
 	else:
 		title_lbl.text = "Deck View"
 		cancel_btn.visible = true # Always allow back
@@ -47,60 +50,34 @@ func _populate() -> void:
 		var view = CARD_SCENE.instantiate()
 		grid.add_child(view)
 		
-		# Setup View
+		# Resource Binding
 		var card_res = null
 		if data_layer:
-			# Look up resource
-			# Assuming DataLayer has a method or we load from standard path
-			# RunController has loose IDs.
-			# Let's try loading from Resources/Cards if path convention exists?
-			# Or DeckManager?
-			# Let's try standard path "res://resources/Cards/class/name.tres"?
-			# Or iterate DataLayer registry?
-			# For now, placeholder or try load.
-			# Actually GameController had logic for this.
-			pass
+			card_res = data_layer.get_card(card_id)
 			
-		# Hack: Use DeckManager helpers if available or create dummy
-		# RunController keeps Strings. DeckManager keeps Resources?
-		# Let's verify how to get Card Data.
-		# `DataLayer.get_card_database()` returns Dict.
-		
-		# VIEW SETUP
-		# If we can't get resource, we can't show art.
-		# Assuming we can find it.
-		
-		_bind_card_visuals(view, card_id)
+		if card_res:
+			if view.has_method("setup"):
+				view.setup(card_res)
+		else:
+			# Fallback
+			if view.has_method("set_title"):
+				view.set_title(card_id.capitalize())
 		
 		# Connect Click
-		if mode == "remove":
+		if mode == "remove" or mode == "upgrade":
 			# Make it clickable
 			if view.has_signal("pressed"):
 				view.pressed.connect(_on_card_clicked.bind(card_id))
 			elif view.find_child("ClickCatcher"):
 				view.find_child("ClickCatcher").pressed.connect(_on_card_clicked.bind(card_id))
 				view.mouse_filter = Control.MOUSE_FILTER_PASS
-			
-			# Highlight hover? handled by CardView usually.
 
 func _bind_card_visuals(view, card_id: String) -> void:
-	# Try to find resource to call view.setup(res)
-	# This logic is duped from many places. Should be in DataLayer.
-	var res_path = "res://resources/Cards/%s.tres" % card_id
-	if not ResourceLoader.exists(res_path):
-		# Try looking in subfolders? Or Growth default.
-		res_path = "res://resources/Cards/growth/%s.tres" % card_id
-	
-	if ResourceLoader.exists(res_path):
-		var res = load(res_path)
-		view.setup(res)
-	else:
-		# Fallback text
-		if view.has_method("set_title"):
-			view.set_title(card_id.capitalize())
+	# Deprecated by _populate logic using DataLayer
+	pass
 
 func _on_card_clicked(card_id: String) -> void:
-	print("DeckView: Selected ", card_id)
+	print("DeckView: Selected (Mode: %s) %s" % [mode, card_id])
 	card_selected.emit(card_id)
 
 func _on_cancel() -> void:
