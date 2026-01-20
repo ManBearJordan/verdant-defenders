@@ -4,6 +4,7 @@ extends Node
 var cards_by_id: Dictionary = {}          # id -> CardResource
 var cards_by_tag: Dictionary = {}         # tag -> Array[CardResource]
 var cards_by_pool: Dictionary = {}        # pool -> Array[CardResource]
+var card_art_cache: Dictionary = {}       # id -> art_path
 var cards_all: Array[CardResource] = []
 
 var enemies_by_id: Dictionary = {}        # id -> EnemyResource
@@ -102,6 +103,8 @@ func _load_cards_from_resources() -> void:
 func _register_card(c: CardResource) -> void:
 	cards_by_id[c.id] = c
 	cards_all.append(c)
+	if c.art_path != "":
+		card_art_cache[c.id] = c.art_path
 	
 	var p = c.pool if c.pool != "" else "neutral"
 	if not cards_by_pool.has(p):

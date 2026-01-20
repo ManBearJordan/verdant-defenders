@@ -100,6 +100,148 @@
           "amount": 15
         }
       }
-    ]
+    },
+    "mysterious_fountain": {
+      "title": "Mysterious Fountain",
+      "text": "A crystal clear fountain stands in a sunlit glade. The water sparkles with vitality.",
+      "choices": [
+        {
+          "text": "Drink (Heal 10 HP)",
+          "outcome": {
+            "type": "heal",
+            "amount": 10
+          }
+        },
+        {
+          "text": "Bathe (Pay 30 Shards - Full Heal)",
+          "outcome": {
+            "type": "pay_shards_heal_full",
+            "cost_shards": 30
+          }
+        },
+        {
+          "text": "Leave",
+          "outcome": {
+            "type": "none"
+          }
+        }
+      ]
+    },
+    "forest_spirit": {
+      "title": "Forest Spirit",
+      "text": "An ethereal spirit manifests before you. 'Balance must be kept,' it whispers.",
+      "choices": [
+        {
+          "text": "Sacrifice (Remove Card -> Gain Sigil)",
+          "outcome": {
+            "type": "sacrifice_card_sigil"
+          }
+        },
+        {
+          "text": "Challenge (Fight Mini-Boss -> Gain Relic)",
+          "outcome": {
+            "type": "combat",
+            "enemy_type": "miniboss",
+            "reward_type": "relic"
+          }
+        },
+        {
+          "text": "Leave",
+          "outcome": {
+            "type": "none"
+          }
+        }
+      ]
+    },
+    "hidden_merchant": {
+      "title": "Hidden Merchant",
+      "text": "A cloaked figure beckons you from the shadows. 'Rare goods for sale... or purchase.'",
+      "choices": [
+        {
+          "text": "Sell Card (Remove Card -> Gain 50 Shards)",
+          "outcome": {
+            "type": "sell_card",
+            "amount": 50
+          }
+        },
+        {
+          "text": "Buy Surprise (Pay 60 Shards -> Random Card)",
+          "outcome": {
+            "type": "buy_random_card",
+            "cost_shards": 60
+          }
+        },
+        {
+          "text": "Ignore",
+          "outcome": {
+            "type": "none"
+          }
+        }
+      ]
+    },
+    "ancient_shrine": {
+      "title": "Ancient Shrine",
+      "text": "This shrine demands a price for its power. Blood or wealth?",
+      "choices": [
+        {
+          "text": "Empower (Upgrade Card, Lose 5 HP)",
+          "outcome": {
+            "type": "upgrade_card",
+            "cost_hp": 5
+          }
+        },
+        {
+          "text": "Purify (Pay 40 Shards -> Remove Card)",
+          "outcome": {
+            "type": "remove_card",
+            "cost_shards": 40
+          }
+        },
+        {
+          "text": "Leave",
+          "outcome": {
+            "type": "none"
+          }
+        }
+      ]
+    },
+    "gamble_den": {
+      "title": "Gambler's Den",
+      "text": "A satyr tosses coins into a hollow stump. 'Feeling lucky?'",
+      "choices": [
+        {
+          "text": "Wager (Risk 25 Shards for 75)",
+          "outcome": {
+            "type": "gamble",
+            "cost_shards": 25,
+            "win_shards": 75,
+            "chance": 0.5
+          }
+        },
+        {
+          "text": "Leave",
+          "outcome": {
+            "type": "none"
+          }
+        }
+      ]
+    },
+    "transformation_pool": {
+      "title": "Transformation Pool",
+      "text": "The water shifts colors rapidly. Anything dipping into it changes form.",
+      "choices": [
+        {
+          "text": "Dip (Transform random card to Rare)",
+          "outcome": {
+            "type": "transform_card_rare"
+          }
+        },
+        {
+          "text": "Leave",
+          "outcome": {
+            "type": "none"
+          }
+        }
+      ]
+    }
   }
-}

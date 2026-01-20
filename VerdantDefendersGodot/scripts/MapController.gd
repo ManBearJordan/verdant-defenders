@@ -98,6 +98,7 @@ func _build_layer_deck(layer_idx: int) -> void:
 	print("MapController: Building deck for ", active_layer_name)
 	
 	elite_defeated_in_layer = false
+	mini_boss_defeated_in_layer = false
 	room_deck.clear()
 	discard_pile.clear()
 	
@@ -240,17 +241,28 @@ func draw_choices() -> void:
 		active_choices.append(card)
 	
 	# Inject Optional Elite Logic (Rooms 7-11)
-	# "1 Mini-Boss... Only appears if player chooses it".
-	# If we are in range 7-11 and haven't beaten one yet, make the 2nd card (index 1) an Elite.
+	# "1 Mini-Boss or Elite... Only appears if player chooses it".
 	if current_room_index >= 7 and current_room_index <= 11:
+		# Check Elite
 		if not elite_defeated_in_layer:
-			# Ensure we have enough cards to replace, or just append?
-			# Replacing ensures 3 choices.
+			# Ensure we have enough cards to replace
 			if active_choices.size() >= 2:
 				active_choices[1] = _create_card("ELITE")
-			elif active_choices.size() > 0:
-				active_choices[0] = _create_card("ELITE")
-		
+				
+		# Check Mini-Boss (Independent check, can have both Elite and MB in choices? Maybe overload?)
+		# User said "in place of one combat card".
+		# If we replaced [1] with Elite, let's use [0] or [2] for Mini-Boss?
+		# Or just overwrite Elite if RNG says so?
+		# Better: Inject in slot 0 if not elite injected there.
+		if not mini_boss_defeated_in_layer:
+			if randf() < 0.4: # 40% Chance appearance per step in range
+				if active_choices.size() > 0:
+					# Avoid overwriting Elite at [1] if possible, or overwrite Combat at [0]
+					if active_choices[0].type == "COMBAT":
+						active_choices[0] = _create_card("MINI_BOSS")
+					elif active_choices.size() > 2 and active_choices[2].type == "COMBAT":
+						active_choices[2] = _create_card("MINI_BOSS")
+	
 	emit_signal("choices_ready", active_choices)
 
 var active_choices: Array[RoomCard] = []

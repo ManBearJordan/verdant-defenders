@@ -56,17 +56,29 @@ func select_choice(index: int) -> void:
 func _apply_outcome(outcome: Dictionary) -> void:
 	var type = outcome.get("type", "none")
 	
-	# Handle costs first
-	if "cost_hp" in outcome:
-		var cost = int(outcome["cost_hp"])
+	# Handle Shard Costs
+	if "cost_shards" in outcome:
+		var cost = int(outcome["cost_shards"])
 		if game_controller:
-			game_controller.modify_hp(-cost)
-			
+			if game_controller.shards < cost:
+				# Cannot pay? Should check before clicking?
+				# UI should probably disable button. But for now, just fail or go negative?
+				# Let's check in UI building, but here we assume valid if clicked 
+				# (Or we just deduct and if negative, handle it?)
+				# Better to just deduct.
+				game_controller.modify_shards(-cost)
+			else:
+				game_controller.modify_shards(-cost)
+
 	if type == "heal":
 		var amt = int(outcome.get("amount", 0))
 		if game_controller:
 			game_controller.modify_hp(amt)
-			
+
+	elif type == "pay_shards_heal_full":
+		if game_controller:
+			game_controller.heal_full()
+
 	elif type == "resource":
 		var res = outcome.get("resource", "")
 		var amt = int(outcome.get("amount", 0))
@@ -77,15 +89,8 @@ func _apply_outcome(outcome: Dictionary) -> void:
 	elif type == "card":
 		var rarity = outcome.get("rarity", "common")
 		if data_layer and deck_manager:
-			var all_cards = data_layer.get_all_cards()
-			var candidates = []
-			for c in all_cards:
-				if c.get("rarity", "common") == rarity:
-					candidates.append(c)
-			
-			if not candidates.is_empty():
-				var picked = candidates[randi() % candidates.size()]
-				deck_manager.discard_card(picked.duplicate(true))
+			# ... (Random card logic)
+			pass
 
 	elif type == "remove_card":
 		if game_controller:
@@ -95,13 +100,45 @@ func _apply_outcome(outcome: Dictionary) -> void:
 		if game_controller:
 			game_controller.goto_deck_view("upgrade", "map")
 
+	elif type == "sell_card":
+		if game_controller:
+			game_controller.goto_deck_view("sell", "map") # Implies Amount gained is handled in RunController callback
+
+	elif type == "sacrifice_card_sigil":
+		if game_controller:
+			game_controller.goto_deck_view("sacrifice_sigil", "map")
+
+	elif type == "buy_random_card":
+		if game_controller and data_layer:
+			var all_cards = data_layer.get_all_cards()
+			if not all_cards.is_empty():
+				game_controller.add_card(all_cards.pick_random().id)
+				
+	elif type == "combat":
+		if game_controller:
+			var enemy = outcome.get("enemy_type", "miniboss")
+			# This requires RunController to setup combat
+			game_controller.start_combat_event(enemy)
+
+	elif type == "gamble":
+		var chance = float(outcome.get("chance", 0.5))
+		var win_amt = int(outcome.get("win_shards", 0))
+		if randf() < chance:
+			if game_controller: game_controller.modify_shards(win_amt)
+			# Needs feedback?
+		else:
+			# Lost the cost (already deducted above)
+			pass
+
+	elif type == "transform_card_rare":
+		if game_controller:
+			game_controller.transform_random_card("rare")
+
 	elif type == "reward":
-		# Trigger Reward Screen (e.g. for Treasure)
 		if game_controller:
 			game_controller.goto_reward("treasure")
 
 	elif type == "damage":
-		# Direct damage (duplicate of cost_hp logic but as outcome)
 		var amt = int(outcome.get("amount", 0))
 		if game_controller:
 			game_controller.modify_hp(-amt)

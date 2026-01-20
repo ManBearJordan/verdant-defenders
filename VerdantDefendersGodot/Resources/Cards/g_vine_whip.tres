@@ -7,6 +7,7 @@ script = ExtResource("1_ltswb")
 id = "g_vine_whip"
 display_name = "Vine Whip"
 art_id = "g_vine_whip"
+art_path = "res://Art/cards/Growth Cards/art_vine_whip.png"
 type = "Strike"
 cost = 1
 damage = 0

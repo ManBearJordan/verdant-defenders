@@ -138,10 +138,32 @@ func goto_deck_view(mode: String = "view", return_context: String = "map") -> vo
 		elif return_context == "map":
 			if screen.has_signal("cancelled"):
 				screen.cancelled.connect(return_to_map_view)
+			# Event-handling modes that return to map after completion
+			if mode in ["remove", "sell", "sacrifice_sigil"]:
+				if screen.has_signal("card_selected"):
+					screen.card_selected.connect(_on_deck_card_selected_for_event.bind(mode))
 
 func return_to_map_view() -> void:
 	# Just go back to map, DO NOT Advance room
 	goto_map()
+
+func _on_deck_card_selected_for_event(card_id: String, mode: String) -> void:
+	print("RunController: Event Card Selection: %s (Mode: %s)" % [card_id, mode])
+	
+	if mode == "remove":
+		remove_card(card_id)
+		return_to_map()
+	elif mode == "sell":
+		remove_card(card_id)
+		modify_shards(50)
+		return_to_map()
+	elif mode == "sacrifice_sigil":
+		remove_card(card_id)
+		# Grant Sigil
+		var rs = get_node_or_null("/root/RewardSystem")
+		if rs:
+			rs.add_sigil_fragment(3) # Force sigil
+		return_to_map()
 
 func _on_deck_card_selected_for_shop(card_id: String) -> void:
 	print("RunController: Card selected for removal: ", card_id)
@@ -288,24 +310,63 @@ func battle_victory() -> void:
 	
 	# Optional: Notify UI or just let DeckView refresh
 
+signal sigil_added(sigil_data: Dictionary)
+
 func add_sigil(sigil_id: String) -> void:
 	if not sigil_id in sigils_owned:
 		sigils_owned.append(sigil_id)
 		print("Added sigil: ", sigil_id)
 		
-		# Sync to SigilSystem
+		# Sync to SigilSystem (Logic)
 		var ss = get_node_or_null("/root/SigilSystem")
 		var dl = get_node_or_null("/root/DataLayer")
 		if ss and dl:
 			var sigil_data = dl.get_sigil(sigil_id)
 			if sigil_data:
 				ss.add_sigil(sigil_data)
+				emit_signal("sigil_added", sigil_data)
 			else:
 				push_warning("RunController: Sigil data not found for " + sigil_id)
 		
 func modify_shards(amount: int) -> void:
 	shards += amount
 	emit_signal("currency_changed", "shards", shards)
+
+func heal_full() -> void:
+	modify_hp(max_hp) # clamp handles it
+
+func start_combat_event(enemy_type: String) -> void:
+	_start_battle(enemy_type)
+
+func transform_random_card(target_rarity: String) -> void:
+	if deck.is_empty(): return
+	var idx = randi() % deck.size()
+	var old_id = deck[idx]
+	
+	# Get random rare
+	var dl = get_node_or_null("/root/DataLayer")
+	if dl:
+		var pool = dl.get_cards_by_criteria("any", target_rarity)
+		if not pool.is_empty():
+			var new_card = pool.pick_random()
+			deck[idx] = new_card.id
+			print("RunController: Transformed %s -> %s" % [old_id, new_card.id])
+
+func upgrade_random_card() -> void:
+	# Find upgradable cards
+	var upgradable_indices = []
+	var dl = get_node_or_null("/root/DataLayer")
+	if not dl: return
+	
+	for i in range(deck.size()):
+		var id = deck[i]
+		var c = dl.get_card(id)
+		if c and c.upgrade_id != "":
+			upgradable_indices.append(i)
+			
+	if not upgradable_indices.is_empty():
+		var idx = upgradable_indices.pick_random()
+		upgrade_card(deck[idx])
 
 func modify_hp(amount: int) -> void:
 	player_hp = clamp(player_hp + amount, 0, max_hp)
@@ -341,6 +402,7 @@ func _start_battle(type: String) -> void:
 		match type:
 			"normal": pack = rc._roll_basic_pack()
 			"elite": pack = rc._roll_elite_pack()
+			"miniboss", "mini_boss": pack = rc._roll_miniboss_pack()
 			"boss": pack = rc._roll_boss_pack()
 			_: pack = rc._roll_basic_pack()
 			

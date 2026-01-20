@@ -3,6 +3,7 @@
     {
       "id": "ember_shard",
       "name": "Ember Shard",
+      "icon": "res://Art/sigils/ember_shard.png",
       "rarity": "rare",
       "tier": 2,
       "text": "The first card you play each turn is played twice. Max Hand Size -2.",
@@ -15,6 +16,7 @@
     {
       "id": "focused_lens",
       "name": "Focused Lens",
+      "icon": "res://Art/sigils/focused_lens.png",
       "rarity": "common",
       "tier": 1,
       "text": "Draw 1 extra card the turn you play 3 Skills.",
@@ -32,6 +34,7 @@
     {
       "id": "quickstep_emblem",
       "name": "Quickstep Emblem",
+      "icon": "res://Art/sigils/quickstep_emblem.png",
       "rarity": "common",
       "tier": 1,
       "text": "The first time you play a Skill each turn, gain 3 Block.",
@@ -48,6 +51,7 @@
     {
       "id": "vital_coil",
       "name": "Vital Coil",
+      "icon": "res://Art/sigils/vital_coil.png",
       "rarity": "common",
       "tier": 1,
       "text": "Whenever you gain Block, heal 2 HP.",
@@ -60,6 +64,7 @@
     {
       "id": "ancient_spark",
       "name": "Ancient Spark",
+      "icon": "res://Art/sigils/ancient_spark.png",
       "rarity": "rare",
       "tier": 2,
       "text": "Whenever you apply Poison, apply +2 Bonus Poison. Start combat with 5 Poison.",
@@ -73,6 +78,7 @@
     {
       "id": "resonant_heart",
       "name": "Resonant Heart",
+      "icon": "res://Art/sigils/resonant_heart.png",
       "rarity": "uncommon",
       "tier": 2,
       "text": "At the end of your turn, if you played no Attacks, gain 1 Strength.",
@@ -88,6 +94,7 @@
     {
       "id": "ironbound_sigil",
       "name": "Ironbound Sigil",
+      "icon": "res://Art/sigils/ironbound_sigil.png",
       "rarity": "uncommon",
       "tier": 2,
       "text": "At the start of each combat, gain 5 Block.",
@@ -100,6 +107,7 @@
     {
       "id": "shard_of_insight",
       "name": "Shard of Insight",
+      "icon": "res://Art/sigils/shard_of_insight.png",
       "rarity": "uncommon",
       "tier": 2,
       "text": "If you draw zero cards during your draw phase, draw 1 additional card.",
@@ -115,6 +123,7 @@
     {
       "id": "greeds_edge",
       "name": "Greed’s Edge",
+      "icon": "res://Art/sigils/greeds_edge.png",
       "rarity": "uncommon",
       "tier": 2,
       "text": "When you end a turn having spent no Energy, gain 5 Gold.",
@@ -130,6 +139,7 @@
     {
       "id": "mana_tap",
       "name": "Mana Tap",
+      "icon": "res://Art/sigils/mana_tap.png",
       "rarity": "uncommon",
       "tier": 2,
       "text": "Whenever you spend Energy, gain 1 Gold per Energy spent.",
@@ -142,6 +152,7 @@
     {
       "id": "catalyst_of_wrath",
       "name": "Catalyst of Wrath",
+      "icon": "res://Art/sigils/catalyst_of_wrath.png",
       "rarity": "rare",
       "tier": 3,
       "text": "Once per combat, upgrade a random card in your hand.",
@@ -158,6 +169,7 @@
     {
       "id": "aegis_of_the_ancients",
       "name": "Aegis of the Ancients",
+      "icon": "res://Art/sigils/aegis_of_the_ancients.png",
       "rarity": "rare",
       "tier": 3,
       "text": "Whenever you lose Block, gain 2 Strength.",
@@ -170,6 +182,7 @@
     {
       "id": "echo_of_fortune",
       "name": "Echo of Fortune",
+      "icon": "res://Art/sigils/echo_of_fortune.png",
       "rarity": "rare",
       "tier": 3,
       "text": "After any combat victory, remove one card from your deck and add a new card of the same rarity.",
@@ -181,6 +194,7 @@
     {
       "id": "reverberating_echo",
       "name": "Reverberating Echo",
+      "icon": "res://Art/sigils/reverberating_echo.png",
       "rarity": "rare",
       "tier": 3,
       "text": "Whenever you play an upgraded card, gain 1 Energy.",
@@ -196,6 +210,7 @@
     {
       "id": "battleforged_crest",
       "name": "Battleforged Crest",
+      "icon": "res://Art/sigils/battleforged_crest.png",
       "rarity": "rare",
       "tier": 3,
       "text": "At the start of each combat, upgrade a random card in your draw pile.",
@@ -209,6 +224,7 @@
     {
       "id": "avatars_core",
       "name": "Avatar’s Core",
+      "icon": "res://Art/sigils/avatars_core.png",
       "rarity": "legendary",
       "tier": 4,
       "text": "Start each combat with 2 additional Energy.",
@@ -221,6 +237,7 @@
     {
       "id": "worldbreaker_glyph",
       "name": "Worldbreaker Glyph",
+      "icon": "res://Art/sigils/worldbreaker_glyph.png",
       "rarity": "legendary",
       "tier": 4,
       "text": "Whenever you play your tenth card in a combat, immediately gain 3 Energy.",
@@ -237,6 +254,7 @@
     {
       "id": "chronomancers_pendant",
       "name": "Chronomancer’s Pendant",
+      "icon": "res://Art/sigils/chronomancers_pendant.png",
       "rarity": "legendary",
       "tier": 4,
       "text": "Once per combat, when you play your last card for the turn, refill your Energy to full.",
@@ -255,6 +273,7 @@
     {
       "id": "soul_nexus",
       "name": "Soul Nexus",
+      "icon": "res://Art/sigils/soul_nexus.png",
       "rarity": "legendary",
       "tier": 4,
       "text": "Whenever you play a Skill, gain 1 temporary HP.",
@@ -270,6 +289,7 @@
     {
       "id": "sigil_of_renewal",
       "name": "Sigil of Renewal",
+      "icon": "res://Art/sigils/sigil_of_renewal.png",
       "rarity": "legendary",
       "tier": 4,
       "text": "At the start of each combat, heal 15% of your maximum HP.",

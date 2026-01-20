@@ -29,6 +29,12 @@ func setup(p_mode: String) -> void:
 	elif mode == "upgrade":
 		title_lbl.text = "Select Card to Upgrade"
 		cancel_btn.visible = true
+	elif mode == "sell":
+		title_lbl.text = "Select Card to Sell (+50 Shards)"
+		cancel_btn.visible = true
+	elif mode == "sacrifice_sigil":
+		title_lbl.text = "Sacrifice Card for Sigil"
+		cancel_btn.visible = true
 	else:
 		title_lbl.text = "Deck View"
 		cancel_btn.visible = true # Always allow back
@@ -56,8 +62,20 @@ func _populate() -> void:
 			card_res = data_layer.get_card(card_id)
 			
 		if card_res:
+			var art_texture: Texture2D = null
+			if card_res.art_path != "":
+				if ResourceLoader.exists(card_res.art_path):
+					art_texture = load(card_res.art_path)
+				else:
+					push_error("DeckView: Art path not found: " + card_res.art_path)
+			
+			# User requirement: If art_texture is null (failed load or empty path), print error if we expected it? 
+			# Or just default behavior.
+			# "If art_texture is null, display a placeholder and print an error to the console."
+			# I'll rely on CardView's fallback for placeholder, but logs here.
+			
 			if view.has_method("setup"):
-				view.setup(card_res)
+				view.setup(card_res, art_texture)
 		else:
 			push_error("DeckView: Failed to resolve card resource for ID: " + card_id)
 			# Fallback or Skip? User says "log error; do not silently fall back".
@@ -67,7 +85,7 @@ func _populate() -> void:
 				view.set_title("MISSING: " + card_id)
 		
 		# Connect Click
-		if mode == "remove" or mode == "upgrade":
+		if mode in ["remove", "upgrade", "sell", "sacrifice_sigil"]:
 			# Make it clickable
 			if view.has_signal("pressed"):
 				view.pressed.connect(_on_card_clicked.bind(card_id))
@@ -78,7 +96,7 @@ func _populate() -> void:
 func _on_card_clicked(card_id: String) -> void:
 	print("DeckView: Selected (Mode: %s) %s" % [mode, card_id])
 	
-	if mode == "remove":
+	if mode == "remove" or mode == "sell" or mode == "sacrifice_sigil":
 		card_selected.emit(card_id)
 	elif mode == "upgrade":
 		if run_controller and run_controller.has_method("upgrade_card"):

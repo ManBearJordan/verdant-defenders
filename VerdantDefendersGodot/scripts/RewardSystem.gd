@@ -261,6 +261,39 @@ func claim_card(index: int) -> void:
 	# Clear offers after claiming
 	_offers.clear()
 
+func generate_treasure_rewards(act: int) -> Dictionary:
+	# Treasure Types: Relic Chest, Card Pack, Shard Stash, Upgrade Stone
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	var roll = rng.randf()
+	
+	var options = []
+	var title = "TREASURE"
+	
+	if roll < 0.25:
+		# Relic Chest
+		title = "Relic Chest"
+		options.append({"type": "relic", "label": "Open Chest (Gain Random Relic/Sigil)"})
+	elif roll < 0.50:
+		# Card Pack
+		title = "Card Pack"
+		options.append({"type": "card_pack", "label": "Open Card Pack (Choose 1 of 3 Rares)"})
+	elif roll < 0.75:
+		# Shard Stash
+		var amt = rng.randi_range(75, 100)
+		title = "Shard Stash"
+		options.append({"type": "shards", "amount": amt, "label": "Take %d Shards" % amt})
+	else:
+		# Upgrade Stone
+		title = "Upgrade Stone"
+		options.append({"type": "upgrade_random", "label": "Touch Stone (Upgrade Random Card)"})
+		
+	return {
+		"context": "treasure",
+		"options": options,
+		"title_override": title
+	}
+
 func generate_miniboss_rewards(act: int) -> Dictionary:
 	# Mini-Boss Reward (Spec: Choice between Sigil, Card, or Shards)
 	# We return a dict structured for the UI to present options.
@@ -273,7 +306,7 @@ func generate_miniboss_rewards(act: int) -> Dictionary:
 		"context": "miniboss",
 		"options": [
 			{"type": "shards", "amount": shard_amt, "label": "Take %d Shards" % shard_amt},
-			{"type": "card_reward", "label": "Draft a Card"},
+			{"type": "rare_card_reward", "label": "Draft a Rare Card"},
 			{"type": "sigil", "label": "Obtain a Sigil"}
 		]
 	}

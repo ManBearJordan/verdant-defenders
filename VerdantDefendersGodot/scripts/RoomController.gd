@@ -127,6 +127,9 @@ func _roll_boss_pack() -> Array:
 		return _roll_pack("boss_act3")
 	return _roll_pack("boss")
 
+func _roll_miniboss_pack() -> Array:
+	return _roll_pack("miniboss")
+
 func _roll_pack(tier: String) -> Array:
 	var dl = _dl()
 	if not dl: return []

@@ -20,9 +20,9 @@ const COLOR_NEUTRAL= Color(1, 1, 1)
 func _ready() -> void:
 	pass
 
-func setup(card: CardResource) -> void:
+func setup(card: CardResource, art_texture: Texture2D = null) -> void:
 	resource = card
-	_update_view()
+	_update_view(art_texture)
 
 func set_card(card: CardResource) -> void:
 	setup(card)
@@ -36,7 +36,7 @@ func set_disabled(disabled: bool, reason: String = "") -> void:
 		modulate = Color.WHITE
 		tooltip_text = ""
 
-func _update_view() -> void:
+func _update_view(override_tex: Texture2D = null) -> void:
 	if not resource: return
 	
 	# Basic Info
@@ -63,10 +63,14 @@ func _update_view() -> void:
 		_cost_orb.modulate = tint
 		
 	# Art Resolution
-	_resolve_art()
+	_resolve_art(override_tex)
 
-func _resolve_art() -> void:
+func _resolve_art(override_tex: Texture2D = null) -> void:
 	if not _art_node: return
+	
+	if override_tex:
+		_art_node.texture = override_tex
+		return
 	
 	# Use new ArtRegistry dynamic resolution
 	var tex = ArtRegistry.get_card_texture(resource.id, resource.pool)

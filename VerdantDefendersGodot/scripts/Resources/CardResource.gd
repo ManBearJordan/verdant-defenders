@@ -5,6 +5,7 @@ class_name CardResource
 @export var id: String = ""
 @export var display_name: String = ""
 @export var art_id: String = ""
+@export var art_path: String = "" # Path to texture asset
 
 @export_group("Gameplay")
 @export var type: String = "Strike" # Strike, Skill, Power, Tactic

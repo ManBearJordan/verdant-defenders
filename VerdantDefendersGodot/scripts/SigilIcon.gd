@@ -1,19 +1,23 @@
-extends Control
+extends TextureRect
+class_name SigilIcon
 
-@onready var tex: TextureRect = %Icon
-@onready var name_lab: Label = %Name
-@onready var desc_lab: Label = %Desc
+var sigil_id: String = ""
+var description: String = ""
 
-var _id: String = ""
-
-func setup(id: String) -> void:
-	_id = id
-	var ss = get_node_or_null("/root/SigilSystem")
-	if not ss:
-		return
-	var d: Dictionary = ss.get_def(id)
-	name_lab.text = String(d.get("name", id))
-	desc_lab.text = String(d.get("text", ""))
-	var p: String = String(ss.get_icon_path(id))
-	if ResourceLoader.exists(p):
-		tex.texture = load(p)
+func setup(data: Dictionary) -> void:
+	sigil_id = data.get("id", "")
+	var icon_path = data.get("icon", "")
+	
+	if icon_path != "":
+		texture = load(icon_path)
+	else:
+		# Fallback to ArtRegistry if path missing in JSON
+		texture = ArtRegistry.get_texture(sigil_id)
+		
+	var name_text = data.get("name", "Unknown Sigil")
+	description = data.get("text", "")
+	
+	tooltip_text = "%s\n%s" % [name_text, description]
+	
+	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

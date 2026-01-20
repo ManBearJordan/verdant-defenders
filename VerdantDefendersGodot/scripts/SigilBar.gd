@@ -42,6 +42,8 @@ func _ready() -> void:
         
         _refresh_all()
 
+const SIGIL_ICON_SCENE = preload("res://Scenes/UI/Combat/SigilIcon.tscn")
+
 func _refresh_all(_unused_arg = null) -> void:
     # Clear all slots
     for slot in _slots:
@@ -58,22 +60,19 @@ func _refresh_all(_unused_arg = null) -> void:
         var sigil = active[i]
         var slot = _slots[i]
         
-        var icon = TextureRect.new()
+        # Instance SigilIcon
+        var icon = SIGIL_ICON_SCENE.instantiate()
         icon.name = "Icon"
+        # Anchors handled by SigilIcon Control props if using layout, 
+        # but slot is a Panel (Container?). If Panel is container, we might need layout presets.
+        # Panel is a Control. Children are just positioned.
+        # Let's set anchors to full rect.
         icon.layout_mode = 1 # Anchors
         icon.set_anchors_preset(Control.PRESET_FULL_RECT)
-        icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-        icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
         
-        # Art
-        var id = sigil.get("id", "")
-        var tex = ArtRegistry.get_texture(id)
-        if tex:
-            icon.texture = tex
-        else:
-            pass
+        if icon.has_method("setup"):
+            icon.setup(sigil)
             
-        icon.tooltip_text = "%s\n%s" % [sigil.get("name", "Unknown"), sigil.get("description", "")]
         slot.add_child(icon)
     
     # Update "No Sigils" visibility

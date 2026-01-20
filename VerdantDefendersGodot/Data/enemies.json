@@ -1,0 +1,64 @@
+{
+    "enemies": [
+        {
+            "id": "bramble_troll",
+            "name": "Bramble Troll",
+            "type": "miniboss",
+            "hp": 120,
+            "actions": [
+                {
+                    "type": "attack",
+                    "value": 12,
+                    "intent": "attack"
+                },
+                {
+                    "type": "buff",
+                    "effect": "thorns",
+                    "amount": 3,
+                    "intent": "buff"
+                },
+                {
+                    "type": "attack",
+                    "value": 18,
+                    "intent": "big_attack"
+                }
+            ],
+            "pattern": [
+                "attack",
+                "buff",
+                "attack",
+                "big_attack"
+            ]
+        },
+        {
+            "id": "corrupted_dryad",
+            "name": "Corrupted Dryad",
+            "type": "miniboss",
+            "hp": 90,
+            "actions": [
+                {
+                    "type": "debuff",
+                    "effect": "poison",
+                    "amount": 4,
+                    "intent": "debuff"
+                },
+                {
+                    "type": "attack",
+                    "value": 8,
+                    "intent": "attack"
+                },
+                {
+                    "type": "heal",
+                    "amount": 10,
+                    "intent": "buff"
+                }
+            ],
+            "pattern": [
+                "debuff",
+                "attack",
+                "attack",
+                "heal"
+            ]
+        }
+    ]
+}

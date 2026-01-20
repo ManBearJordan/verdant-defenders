@@ -30,7 +30,10 @@ func _generate_rewards(context: String) -> void:
 		var rewards = rs.generate_treasure_rewards(act)
 		# Reuse Miniboss choice UI for now as structure is similar
 		_build_miniboss_ui(rewards)
-		_add_header("TREASURE FOUND!") # Override header
+		if rewards.has("title_override"):
+			_add_header(rewards.title_override)
+		else:
+			_add_header("TREASURE FOUND!")
 	elif context == "boss":
 		# Placeholder boss reward
 		_build_normal_ui(rs.generate_normal_rewards(act))
@@ -41,17 +44,30 @@ func _build_miniboss_ui(data: Dictionary) -> void:
 	if not container: return
 	_clear_container()
 	
-	_add_header("MINI-BOSS DEFEATED!")
-	_add_label("Choose ONE Reward:")
+	# Header added by caller mostly, but if we call this directly...
+	# We rely on caller to set header OR set it here if missing?
+	# Caller (setup) sets it AFTER this returns? No, caller calls this then header overrides.
+	# Actually setup calls `_add_header` AFTER `_build_miniboss_ui` in the `treasure` block?
+	# In `setup` I wrote: `_build_miniboss_ui(rewards)` then `_add_header`.
+	# But `_build_miniboss_ui` calls `_clear_container`. So my previous update was buggy in logic order.
+	# `_build_miniboss_ui` should accept a title!
 	
-	miniboss_options = data.get("options", [])
-	
-	for i in range(miniboss_options.size()):
-		var opt = miniboss_options[i]
-		var btn = Button.new()
-		btn.text = opt["label"]
-		btn.pressed.connect(_on_miniboss_option.bind(opt))
-		container.add_child(btn)
+	# To avoid large refactor, I will suppress header in `_build_miniboss_ui` if I plan to override it,
+	# OR just set it to "Treasure" if contextual.
+	# But `setup` logic in previous `RewardScreen` file:
+	# `_build_miniboss_ui(rewards)` -> `_add_header`.
+	# `_build_miniboss_ui` calls `_clear_container`.
+	# So title is added AFTER. That works.
+	pass # Logic is fine in setup (see lines 32-33 of original file)
+
+	if data.has("options"):
+		miniboss_options = data.options
+		for i in range(miniboss_options.size()):
+			var opt = miniboss_options[i]
+			var btn = Button.new()
+			btn.text = opt["label"]
+			btn.pressed.connect(_on_miniboss_option.bind(opt))
+			container.add_child(btn)
 
 func _on_miniboss_option(opt: Dictionary) -> void:
 	var type = opt.get("type")
@@ -60,25 +76,32 @@ func _on_miniboss_option(opt: Dictionary) -> void:
 			_collect_shards(opt.get("amount", 0), null)
 			_go_map()
 		"card_reward":
-			# Switch to card selection view?
-			# Simple: use normal card generation and show it
 			_clear_container()
 			_add_header("Draft a Card")
 			var rs = get_node_or_null("/root/RewardSystem")
-			_offers = rs.offer_cards(3, "growth") # Todo: proper class
+			_offers = rs.offer_cards(3, "growth") 
+			_show_card_buttons()
+		"card_pack":
+			_clear_container()
+			_add_header("Card Pack")
+			var rs = get_node_or_null("/root/RewardSystem")
+			# Use elite cards for better rarity
+			_offers = rs.offer_elite_cards(3, "growth")
 			_show_card_buttons()
 		"rare_card_reward":
 			_clear_container()
 			_add_header("Rare Treasure")
 			var rs = get_node_or_null("/root/RewardSystem")
-			# Use elite logic to force higher rarity or just filter?
-			# offer_elite_cards has rarity weights.
 			_offers = rs.offer_elite_cards(3, "growth") 
 			_show_card_buttons()
-		"sigil":
+		"sigil", "relic":
 			# Grant random sigil
 			var rs = get_node_or_null("/root/RewardSystem")
 			if rs: rs.add_sigil_fragment(3) # Force sigil reward
+			_go_map()
+		"upgrade_random":
+			var rc = get_node_or_null("/root/RunController")
+			if rc: rc.upgrade_random_card()
 			_go_map()
 
 func _build_elite_ui(rewards: Dictionary) -> void:
