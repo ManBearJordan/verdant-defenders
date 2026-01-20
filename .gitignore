@@ -17,3 +17,8 @@ export/
 /android/
 godot/
 godot.zip
+
+# Large local archives
+VerdantDefendersGodot/Art/cards/cards.zip
+VerdantDefendersGodot/Art/cards/Decay Cards/decay card art 1100 x 800/decay_rotten_shield_1100x800.zip
+
