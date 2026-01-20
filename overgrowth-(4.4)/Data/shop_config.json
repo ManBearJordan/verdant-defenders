@@ -1,9 +1,0 @@
-{
-  "card_prices": {
-    "common": 35,
-    "uncommon": 70,
-    "rare": 120
-  },
-  "remove_price": 50,
-  "healing_price_per_hp": 1
-}

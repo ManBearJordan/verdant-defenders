@@ -1,1 +1,0 @@
-Visual starter kit created.

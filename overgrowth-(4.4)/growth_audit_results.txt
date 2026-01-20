@@ -1,5 +1,0 @@
---- Growth Archetype Audit (Simplified) ---
-Loading DataLayer...
-Loaded 235 cards.
-Growth Cards: 77
-PASS: Audit Complete
