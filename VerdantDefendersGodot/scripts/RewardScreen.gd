@@ -26,6 +26,11 @@ func _generate_rewards(context: String) -> void:
 		var rewards = rs.generate_miniboss_rewards(act)
 		# Build Choice UI
 		_build_miniboss_ui(rewards)
+	elif context == "treasure":
+		var rewards = rs.generate_treasure_rewards(act)
+		# Reuse Miniboss choice UI for now as structure is similar
+		_build_miniboss_ui(rewards)
+		_add_header("TREASURE FOUND!") # Override header
 	elif context == "boss":
 		# Placeholder boss reward
 		_build_normal_ui(rs.generate_normal_rewards(act))
@@ -61,6 +66,14 @@ func _on_miniboss_option(opt: Dictionary) -> void:
 			_add_header("Draft a Card")
 			var rs = get_node_or_null("/root/RewardSystem")
 			_offers = rs.offer_cards(3, "growth") # Todo: proper class
+			_show_card_buttons()
+		"rare_card_reward":
+			_clear_container()
+			_add_header("Rare Treasure")
+			var rs = get_node_or_null("/root/RewardSystem")
+			# Use elite logic to force higher rarity or just filter?
+			# offer_elite_cards has rarity weights.
+			_offers = rs.offer_elite_cards(3, "growth") 
 			_show_card_buttons()
 		"sigil":
 			# Grant random sigil

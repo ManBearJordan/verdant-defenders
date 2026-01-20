@@ -56,6 +56,7 @@ func start_new_run(class_id: String) -> void:
 	deck = _get_starter_deck(class_id)
 	sigils_owned = []
 	current_room_type = "normal"
+	_reset_metrics()
 	
 	emit_signal("run_started", class_id)
 	
@@ -83,8 +84,15 @@ func battle_victory() -> void:
 func battle_defeat() -> void:
 	print("RunController: Battle Defeat")
 	emit_signal("battle_ended", false)
+const SCENE_GAMEOVER = "res://Scenes/UI/GameOver/GameOver.tscn"
+
+# ...
+
+func battle_defeat() -> void:
+	print("RunController: Battle Defeat")
+	emit_signal("battle_ended", false)
 	# Todo: Show run summary / death screen
-	get_tree().change_scene_to_file(SCENE_MAIN_MENU)
+	_change_screen(SCENE_GAMEOVER)
 
 func goto_map() -> void:
 	print("Navigating to MAP")
@@ -177,27 +185,124 @@ func _change_screen(scene_path: String) -> void:
 		# If not in Main structure, maybe warn?
 		get_tree().change_scene_to_file(scene_path)
 
+# --- METRICS ---
+var run_metrics: Dictionary = {
+	"rooms_cleared": 0,
+	"elites_defeated": 0,
+	"shards_earned": 0,
+	"shards_spent": 0,
+	"cards_added": 0,
+	"cards_removed": 0,
+	"damage_taken": 0
+}
+
+func _reset_metrics() -> void:
+	run_metrics = {
+		"rooms_cleared": 0,
+		"elites_defeated": 0,
+		"shards_earned": 0,
+		"shards_spent": 0,
+		"cards_added": 0,
+		"cards_removed": 0,
+		"damage_taken": 0
+	}
+
 # --- STATE MODIFIERS ---
 
 func add_card(card_id: String) -> void:
 	deck.append(card_id)
+	run_metrics.cards_added += 1
 	print("Added card: ", card_id)
 
 func remove_card(card_id: String) -> void:
 	deck.erase(card_id) # Removes first occurrence
+	run_metrics.cards_removed += 1
 	print("Removed card: ", card_id)
 
 func upgrade_card(card_id: String) -> void:
-	# Placeholder for upgrade logic
-	print("RunController: Placeholder Upgrade for ", card_id)
-	# Logic would be: find index, replace ID with upgraded ID (if we have ID naming convention like "card_plus")
-	# For now, just print.
+	# ... (existing upgrade logic)
+	# Metric update could go here too but maybe not strictly "added/removed"
+	print("RunController: Upgrading card ", card_id)
+	
+	# ... (rest of upgrade logic)
+
+func add_sigil(sigil_id: String) -> void:
+	# ... (existing)
+	if not sigil_id in sigils_owned:
+		sigils_owned.append(sigil_id)
+		print("Added sigil: ", sigil_id)
+
+func modify_shards(amount: int) -> void:
+	shards += amount
+	if amount > 0:
+		run_metrics.shards_earned += amount
+	else:
+		run_metrics.shards_spent += abs(amount)
+		
+	emit_signal("currency_changed", "shards", shards)
+
+func modify_hp(amount: int) -> void:
+	player_hp = clamp(player_hp + amount, 0, max_hp)
+	if amount < 0:
+		run_metrics.damage_taken += abs(amount)
+		
+	if player_hp <= 0:
+		battle_defeat()
+
+# ...
+
+func battle_victory() -> void:
+	print("RunController: Battle Victory")
+	run_metrics.rooms_cleared += 1
+	if current_room_type == "elite":
+		run_metrics.elites_defeated += 1
+		
+	emit_signal("battle_ended", true)
+	
+	# Determine context for rewards based on stored type
+	# ... (rest of function)
+	var idx = deck.find(card_id)
+	if idx == -1:
+		push_error("RunController: Cannot upgrade, card not found in deck: " + card_id)
+		return
+		
+	# 2. Get Data to find upgrade_id
+	var dl = get_node_or_null("/root/DataLayer")
+	if not dl:
+		push_error("RunController: DataLayer missing during upgrade")
+		return
+		
+	var card_res = dl.get_card(card_id)
+	if not card_res:
+		push_error("RunController: Card resource not found for: " + card_id)
+		return
+		
+	if card_res.upgrade_id == "":
+		print("RunController: Card has no upgrade defined: " + card_id)
+		return
+		
+	# 3. Swap
+	var new_id = card_res.upgrade_id
+	deck[idx] = new_id
+	print("RunController: Upgraded %s -> %s" % [card_id, new_id])
+	
+	# Optional: Notify UI or just let DeckView refresh
 
 func add_sigil(sigil_id: String) -> void:
 	if not sigil_id in sigils_owned:
 		sigils_owned.append(sigil_id)
 		print("Added sigil: ", sigil_id)
-
+		
+		# Sync to SigilSystem
+		var ss = get_node_or_null("/root/SigilSystem")
+		var dl = get_node_or_null("/root/DataLayer")
+		if ss and dl:
+			var sigil_data = dl.get_sigil(sigil_id)
+			if sigil_data:
+				ss.add_sigil(sigil_data)
+			else:
+				push_warning("RunController: Sigil data not found for " + sigil_id)
+		
 func modify_shards(amount: int) -> void:
 	shards += amount
 	emit_signal("currency_changed", "shards", shards)
@@ -210,10 +315,20 @@ func modify_hp(amount: int) -> void:
 # --- HELPERS ---
 
 func _get_starter_deck(class_id: String) -> Array:
-	# Temporary hardcoded starter decks
-	if class_id == "growth":
-		return ["vine_whip", "vine_whip", "vine_whip", "spore_shield", "spore_shield", "photosynthesis", "wild_growth"]
-	return ["strike", "strike", "defend", "defend"] # Default
+	var dl = get_node_or_null("/root/DataLayer")
+	if dl and dl.has_method("get_starting_deck"):
+		var resources = dl.get_starting_deck(class_id)
+		# Convert Resources to IDs
+		var ids = []
+		for res in resources:
+			ids.append(res.id)
+			
+		if not ids.is_empty():
+			return ids
+			
+	# Fallback if DataLayer fails or deck is empty
+	print("RunController: Falling back to default deck for ", class_id)
+	return ["strike", "strike", "defend", "defend"]
 
 func _start_battle(type: String) -> void:
 	print("Navigating to BATTLE (Type: ", type, ")")

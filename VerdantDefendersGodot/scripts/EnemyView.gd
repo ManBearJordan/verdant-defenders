@@ -88,10 +88,27 @@ func _update_intent() -> void:
 		_intent_icon.texture = null # Placeholder visual logic?
 		
 	# Label
+	var tooltip = "Unknown Intent"
 	if val > 0:
 		_intent_label.text = str(val)
 	else:
-		_intent_label.text = "" # type icon handles explanation usually
+		_intent_label.text = "" 
+
+	# Tooltip Logic
+	match type:
+		"attack": 
+			tooltip = "Intends to Attack for %d damage." % val
+		"block":
+			tooltip = "Intends to Gain %d Block." % val
+		"buff":
+			tooltip = "Intends to apply a Buff."
+		"debuff":
+			tooltip = "Intends to apply a Debuff."
+		"unknown":
+			tooltip = "Intent Hidden."
+			
+	if _intent_icon:
+		_intent_icon.tooltip_text = tooltip
 
 func _on_intent_updated() -> void:
 	_update_intent()

@@ -132,7 +132,57 @@ func _build_layer_deck(layer_idx: int) -> void:
 	for card in temp_deck:
 		room_deck.append(card)
 		
-	# Note: No shuffle needed for fixed template.
+	# Note: No shuffle used for fixed template currently, but validation is applied below.
+	fix_adjacency(room_deck)
+
+func fix_adjacency(deck: Array) -> void:
+	# Rule: No Event next to Treasure.
+	# We iterate and swap if we find a violation.
+	var conflict_found = true
+	var attempts = 0
+	
+	while conflict_found and attempts < 5:
+		conflict_found = false
+		attempts += 1
+		
+		for i in range(deck.size() - 1):
+			var c1 = deck[i]
+			var c2 = deck[i+1]
+			
+			if (c1.type == "EVENT" and c2.type == "TREASURE") or \
+			   (c1.type == "TREASURE" and c2.type == "EVENT"):
+				
+				# Found conflict at i, i+1.
+				# Try to find a swappable card (COMBAT) later in the deck
+				var swap_idx = -1
+				for j in range(i + 2, deck.size()):
+					if deck[j].type == "COMBAT":
+						swap_idx = j
+						break
+				
+				# If no forward swap, try backward (0 to i-1)
+				if swap_idx == -1:
+					for j in range(0, i):
+						if deck[j].type == "COMBAT":
+							# Ensure swapping here doesn't create new conflict
+							# Simplified: Just swap
+							swap_idx = j
+							break
+							
+				if swap_idx != -1:
+					# Swap deck[i+1] (the second card) with deck[swap_idx]
+					var temp = deck[i+1]
+					deck[i+1] = deck[swap_idx]
+					deck[swap_idx] = temp
+					
+					print("MapController: Adjacency Fix! Swapped %s(%d) with %s(%d)" % 
+						[temp.type, i+1, deck[i+1].type, swap_idx])
+						
+					conflict_found = true # Restart loop to verify
+					break # Break inner for loop
+	
+	if conflict_found:
+		push_warning("MapController: Could not fully resolve adjacency rules after 5 passes.")
 
 func next_room() -> void:
 	current_room_index += 1

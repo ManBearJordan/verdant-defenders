@@ -1,51 +1,51 @@
 {
     "Growth": [
         {
-            "name": "Thorn Lash",
+            "id": "thorn_lash",
             "count": 5
         },
         {
-            "name": "Seed Shield",
+            "id": "seed_shield",
             "count": 4
         },
         {
-            "name": "Sprout Heal",
+            "id": "sprout_heal",
             "count": 1
         }
     ],
     "Decay": [
         {
-            "name": "Pestilent Strike",
+            "id": "pestilent_strike",
             "count": 4
         },
         {
-            "name": "Rotten Shield",
+            "id": "rotten_shield",
             "count": 4
         },
         {
-            "name": "Rotting Ritual",
+            "id": "rotting_ritual",
             "count": 1
         },
         {
-            "name": "Blighted Bolt",
+            "id": "blighted_bolt",
             "count": 1
         }
     ],
     "Elemental": [
         {
-            "name": "Spark Jab",
+            "id": "spark_jab",
             "count": 3
         },
         {
-            "name": "Flame Lash",
+            "id": "flame_lash",
             "count": 3
         },
         {
-            "name": "Static Shield",
+            "id": "static_shield",
             "count": 3
         },
         {
-            "name": "Ice Shard",
+            "id": "ice_shard",
             "count": 1
         }
     ]

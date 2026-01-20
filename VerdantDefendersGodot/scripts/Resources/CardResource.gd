@@ -17,6 +17,7 @@ class_name CardResource
 @export var rarity: String = "common" # common, uncommon, rare
 @export var pool: String = "growth"   # growth, decay, elemental
 @export var tags: Array[String] = []
+@export var upgrade_id: String = "" # ID of the upgraded version (e.g. "strike_plus")
 
 # Optional: properties for logic not covered by standard damage/block
 @export var logic_meta: Dictionary = {} 

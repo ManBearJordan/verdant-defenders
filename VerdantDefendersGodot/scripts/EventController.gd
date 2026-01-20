@@ -88,5 +88,21 @@ func _apply_outcome(outcome: Dictionary) -> void:
 				deck_manager.discard_card(picked.duplicate(true))
 
 	elif type == "remove_card":
-		print("EventController: remove_card not fully implemented yet")
+		if game_controller:
+			game_controller.goto_deck_view("remove", "map")
+
+	elif type == "upgrade_card":
+		if game_controller:
+			game_controller.goto_deck_view("upgrade", "map")
+
+	elif type == "reward":
+		# Trigger Reward Screen (e.g. for Treasure)
+		if game_controller:
+			game_controller.goto_reward("treasure")
+
+	elif type == "damage":
+		# Direct damage (duplicate of cost_hp logic but as outcome)
+		var amt = int(outcome.get("amount", 0))
+		if game_controller:
+			game_controller.modify_hp(-amt)
 

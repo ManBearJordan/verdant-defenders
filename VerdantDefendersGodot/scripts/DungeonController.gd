@@ -1,21 +1,5 @@
 extends Node
 
-signal room_entered(room_card: Dictionary)
-signal floor_cleared
-signal choices_ready(choices: Array) # (Legacy? MapScreen handles selection now)
-signal map_updated(map_data: Dictionary, current_layer: int, current_index: int)
-
-@onready var data = get_node("/root/DataLayer")
-
-# Map Logic
-var map_generator_script = preload("res://scripts/MapGenerator.gd")
-var _map_generator: Node = null
-var current_map: Dictionary = {}
-var current_layer: int = 0
-var current_node_index: int = -1 # -1 = Start
-
-extends Node
-
 # DungeonController.gd
 # SCENE ORCHESTRATOR
 # Replaces old linear logic with MapController signals.
@@ -78,7 +62,7 @@ func _on_room_selected(card: RoomCard) -> void:
 			_load_scene(SCENE_EVENT)
 		"TREASURE":
 			_setup_treasure()
-			_load_scene(SCENE_TREASURE)
+			# SCENE loading handled by RunController in setup
 		_:
 			push_error("Unknown card type: " + card.type)
 			_return_to_map()
@@ -111,8 +95,18 @@ func _setup_event() -> void:
 	if ec: ec.start_random_event()
 	
 func _setup_treasure() -> void:
-	var ec = get_node_or_null("/root/EventController")
-	if ec: ec.start_event("treasure_chest")
+	if run_controller:
+		# Route treasure to standard Reward Screen with "treasure" context
+		# Note: We load SCENE_REWARD via goto_reward in next step usually?
+		# Here we are in _setup_treasure called by _on_room_selected.
+		# _on_room_selected calls _load_scene(SCENE_TREASURE).
+		# We should change SCENE_TREASURE to SCENE_REWARD logic or just rely on RC.
+		run_controller.goto_reward("treasure")
+		# We don't need _load_scene calls in _on_room_selected if RC handles it?
+		# But _on_room_selected currently does:
+		# _setup_treasure() -> _load_scene(SCENE_TREASURE)
+		# If RC.goto_reward does change screen, we double load?
+		# Yes. I should edit _on_room_selected to use RC where possible.
 
 # --- Completion Handlers ---
 

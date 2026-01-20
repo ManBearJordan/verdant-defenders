@@ -583,27 +583,8 @@ func _set_view_mode(mode: ViewMode) -> void:
 	# Event (If we have a dedicated container)
 
 # --- Map/Room ---
-var _map_screen_instance: Control = null
-func _on_map_updated(map_data, layer, idx): 
-	_show_map(map_data, layer, idx)
-
-func _show_map(map_data, layer, idx):
-	_set_view_mode(ViewMode.MAP)
-	
-	if not _map_screen_instance:
-		var s = load("res://scripts/MapScreen.gd")
-		if s:
-			_map_screen_instance = s.new()
-			add_child(_map_screen_instance)
-			_map_screen_instance.set_anchors_preset(Control.PRESET_FULL_RECT)
-			_map_screen_instance.node_selected.connect(_on_map_node_selected)
-			
-	move_child(_map_screen_instance, get_child_count()-1)
-	_map_screen_instance.setup(map_data, layer, idx)
-
-func _on_map_node_selected(l, i, t):
-	var dc = get_node_or_null("/root/DungeonController")
-	if dc: dc.choose_node(l, i)
+# Map handling moved to MapScene / RunController dedicated flow.
+# GameUI is now primarily Combat HUD.
 
 func _on_room_entered(room):
 	# Clear previous combat state just in case

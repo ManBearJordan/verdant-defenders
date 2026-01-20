@@ -50,7 +50,7 @@ func _populate() -> void:
 		var view = CARD_SCENE.instantiate()
 		grid.add_child(view)
 		
-		# Resource Binding
+		# Resource Binding (Strict)
 		var card_res = null
 		if data_layer:
 			card_res = data_layer.get_card(card_id)
@@ -59,9 +59,12 @@ func _populate() -> void:
 			if view.has_method("setup"):
 				view.setup(card_res)
 		else:
-			# Fallback
+			push_error("DeckView: Failed to resolve card resource for ID: " + card_id)
+			# Fallback or Skip? User says "log error; do not silently fall back".
+			# We can show a placeholder or just error.
+			# Let's show it with a warning visual if possible, or just error string
 			if view.has_method("set_title"):
-				view.set_title(card_id.capitalize())
+				view.set_title("MISSING: " + card_id)
 		
 		# Connect Click
 		if mode == "remove" or mode == "upgrade":
@@ -72,13 +75,15 @@ func _populate() -> void:
 				view.find_child("ClickCatcher").pressed.connect(_on_card_clicked.bind(card_id))
 				view.mouse_filter = Control.MOUSE_FILTER_PASS
 
-func _bind_card_visuals(view, card_id: String) -> void:
-	# Deprecated by _populate logic using DataLayer
-	pass
-
 func _on_card_clicked(card_id: String) -> void:
 	print("DeckView: Selected (Mode: %s) %s" % [mode, card_id])
-	card_selected.emit(card_id)
+	
+	if mode == "remove":
+		card_selected.emit(card_id)
+	elif mode == "upgrade":
+		if run_controller and run_controller.has_method("upgrade_card"):
+			run_controller.upgrade_card(card_id)
+			cancelled.emit() # Close after action
 
 func _on_cancel() -> void:
 	cancelled.emit()
