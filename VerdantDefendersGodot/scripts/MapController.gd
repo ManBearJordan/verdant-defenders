@@ -21,7 +21,7 @@ const DECK_COMPOSITION = {
 	"SHOP": 3,
 	"EVENT": 2,
 	"TREASURE": 2,
-	"COMBAT": 7 # 14 - 3 - 2 - 2 = 7
+	"COMBAT": 7 # Total 14 cards
 }
 
 var current_layer_index: int = 0
@@ -53,144 +53,250 @@ func _build_layer_deck(layer_idx: int) -> void:
 	elite_defeated_in_layer = false
 	mini_boss_defeated_in_layer = false
 	room_deck.clear()
-	# discard_pile.clear() # Should we clear discard? "Reset... Call _build". Rebuilding usually implies fresh start for layer?
-	# "Populate room_deck with 14 room cards...". 
-	# User Spec: "Recreate _build_layer_deck... Clear room_deck."
+	discard_pile.clear()
 	
-	var deck_composition = [
-		"SHOP", "SHOP", "SHOP", 
-		"EVENT", "EVENT", 
-		"TREASURE", "TREASURE",
-		"COMBAT", "COMBAT", "COMBAT", "COMBAT", "COMBAT", "COMBAT", "COMBAT"
-	] # 3+2+2+7 = 14
+	# 1. Create Base Cards
+	var temp_deck = []
+	for i in range(DECK_COMPOSITION.SHOP): temp_deck.append(_create_card("SHOP"))
+	for i in range(DECK_COMPOSITION.EVENT): temp_deck.append(_create_card("EVENT"))
+	for i in range(DECK_COMPOSITION.TREASURE): temp_deck.append(_create_card("TREASURE"))
+	for i in range(DECK_COMPOSITION.COMBAT): temp_deck.append(_create_card("COMBAT"))
+	
+	# 2. Shuffle initially
+	temp_deck.shuffle()
+	
+	# 3. Enforce R1 = Combat Only (First 3 cards must be COMBAT)
+	# We swap non-combats out of 0,1,2
+	for i in range(3):
+		if temp_deck[i].type != "COMBAT":
+			# Find a combat later in the deck
+			for j in range(3, temp_deck.size()):
+				if temp_deck[j].type == "COMBAT":
+					var t = temp_deck[i]
+					temp_deck[i] = temp_deck[j]
+					temp_deck[j] = t
+					break
+	
+	# 4. Enforce Spacing Rules (simplified "fix" passes)
+	# - Shops spaced 4-5? (Hard to strictly guarantee in 14 cards with refill logic, 
+	#   but we can try to separate them).
+	# - Events not adjacent to Treasure.
+	# - Treasure not adjacent to Treasure (implied by "cannot appear twice in same draw" roughly).
+	
+	temp_deck = _fix_deck_constraints(temp_deck)
 	
 	room_deck = []
-	for type in deck_composition:
-		room_deck.append(_create_card(type))
-		
-	# Shuffle Combats optionally? Or full shuffle?
-	# "Optionally shuffle combat cards while maintaining spacing rules."
-	# Usually we shuffle EVERYTHING then fix.
-	room_deck.shuffle()
-	
-	# Enforce Rules
-	# 1. First draw (top 3, so indices 0, 1, 2) never contains Shop.
-	# We iterate and swap away shops from 0,1,2.
-	for i in range(3):
-		if i < room_deck.size() and room_deck[i].type == "SHOP":
-			# Swap with something later
-			for j in range(3, room_deck.size()):
-				if room_deck[j].type != "SHOP":
-					var temp = room_deck[i]
-					room_deck[i] = room_deck[j]
-					room_deck[j] = temp
-					break
-					
-	# 2. Events and Treasures aren't adjacent.
-	fix_adjacency(room_deck)
-	
+	room_deck.append_array(temp_deck)
 	print("MapController: Deck Built (Size: %d)" % room_deck.size())
 
-func fix_adjacency(deck: Array) -> void:
-	# Rule: No Event next to Treasure.
-	var conflict_found = true
-	var attempts = 0
+func _fix_deck_constraints(deck: Array) -> Array:
+	# Iterative swaps to resolve conflicts
+	var max_passes = 10
 	
-	while conflict_found and attempts < 10:
-		conflict_found = false
-		attempts += 1
+	for pass_idx in range(max_passes):
+		var conflict = false
 		
 		for i in range(deck.size() - 1):
 			var c1 = deck[i]
 			var c2 = deck[i+1]
 			
+			# Rule: No Event <-> Treasure
 			if (c1.type == "EVENT" and c2.type == "TREASURE") or \
 			   (c1.type == "TREASURE" and c2.type == "EVENT"):
+				_swap_away(deck, i+1)
+				conflict = true
+				break
 				
-				# Swap c2 with a random candidate that isn't problematic
-				var swap_idx = -1
-				var candidates = []
-				for j in range(deck.size()):
-					if j == i or j == i+1: continue
-					candidates.append(j)
+			# Rule: No Shop <-> Shop (Enforce spacing)
+			if c1.type == "SHOP" and c2.type == "SHOP":
+				_swap_away(deck, i+1)
+				conflict = true
+				break
 				
-				candidates.shuffle()
-				for j in candidates:
-					var cand = deck[j]
-					# Check if swapping cand into i+1 causes issues at i or i+2
-					# Also check if moving c2 to j causes issues at j-1 or j+1
-					# For simplicity, just swap with COMBAT if found?
-					if cand.type == "COMBAT":
-						swap_idx = j
-						break
+			# Rule: No Treasure <-> Treasure (Reduce chance of double draw)
+			if c1.type == "TREASURE" and c2.type == "TREASURE":
+				_swap_away(deck, i+1)
+				conflict = true
+				break
 				
-				if swap_idx != -1:
-					var temp = deck[i+1]
-					deck[i+1] = deck[swap_idx]
-					deck[swap_idx] = temp
-					conflict_found = true # Re-check
-					break
+		if not conflict:
+			break
+			
+	return deck
+
+func _swap_away(deck: Array, idx: int) -> void:
+	# Swap card at idx with a random card elsewhere (avoiding 0-2 if possible)
+	# Prefer swapping with COMBAT
+	var candidates = []
+	for j in range(3, deck.size()):
+		if j != idx and deck[j].type == "COMBAT":
+			candidates.append(j)
+			
+	if not candidates.is_empty():
+		var target = candidates.pick_random()
+		var temp = deck[idx]
+		deck[idx] = deck[target]
+		deck[target] = temp
 
 func next_room() -> void:
-	# Call draw_choices AFTER previous room cleared.
-	# But logic for scene switch (RunController) might handle timing.
-	# User spec: "Call draw_choices() after the previous room is cleared."
-	# If we just finished room index 0, we are now seeking room 1.
-	if current_room_index < ROOMS_PER_LAYER:
+	# Check if we are done with Boss (Index 14) and trying to advance?
+	# If we are at 14, we shouldn't be calling next_room unless we defeated the boss?
+	# RunController calls next_room() after battle.
+	if current_room_index == 14:
+		# Boss defeated?
+		# Actually, next_room() is usually called *after* resolution.
+		# If we just finished 14, we should advance LAYER.
+		next_layer()
+	elif current_room_index < ROOMS_PER_LAYER: # Max 15
 		draw_choices()
 
+func next_layer() -> void:
+	current_layer_index += 1
+	if current_layer_index >= LAYERS.size():
+		emit_signal("run_completed")
+		return
+		
+	# Reset for new layer
+	current_room_index = 0
+	_build_layer_deck(current_layer_index)
+	_emit_layer_info()
+	draw_choices()
+	# Reset Ribbon? Ribbon renders based on current_room_index 0 so it resets automatically.
+
 func draw_choices() -> void:
-	# Check Boss
+	# Check Boss (Index 14 = 15th room)
 	if current_room_index == 14:
-		print("MapController: Boss Reached")
-		emit_signal("boss_reached")
+		print("MapController: Boss Room Reached")
+		active_choices.clear()
+		
+		# Single Boss Choice
+		# We'll represent this as a special card or just handle in UI?
+		# Request: "Show a single 'Enter Boss' card or button"
+		# Let's create a BOSS card so UI can render it easily
+		var boss_card = _create_card("BOSS")
+		active_choices.append(boss_card)
+		
+		emit_signal("boss_reached") # Keeping signal for legacy, but ensuring choices are set
+		emit_signal("choices_ready", active_choices)
 		return
 
-	# Refill if empty (Cyclic deck)
-	if room_deck.is_empty():
-		_build_layer_deck(current_layer_index)
-		
-	# Draw 3
-	# Ensure we have enough? 
-	# If deck has < 3, we might need to partially fill then rebuild?
-	# "If room_deck is empty, call _build". What if it has 1?
-	# Simplest: If < 3, rebuild fully? Or append?
-	# Spec says "If room_deck is empty...".
-	# I will handle the "running out" edge case by forcing rebuild if < 3.
+	# Normal Draw
+	# Refill Logic
 	if room_deck.size() < 3:
-		# Preserve remaining? Or clear and rebuild?
-		# Spec "Call _build_layer_deck". That function clears it.
-		# So existing < 3 cards are lost? Or we should put them back?
-		# I'll just clear and rebuild to keep it simple and robust.
+		# If we run out, shuffled restart? 
+		# "When deck is empty, reshuffle discard"
+		# But we need 3. If we have 1 left, we draw 1 then refill?
+		# Or refill first?
+		_reshuffle_discard()
+		
+	# Safety check if still empty (shouldn't happen with 14 cards + discard)
+	if room_deck.size() < 3:
+		# Emergency rebuild if discard was empty too?
 		_build_layer_deck(current_layer_index)
 
-	# Draw top 3
 	active_choices.clear()
 	for i in range(3):
 		if not room_deck.is_empty():
 			active_choices.append(room_deck.pop_front())
+			
+	# Update: "Treasure cannot appear twice in the same draw"
+	# _fix_deck_constraints tries to prevent adjacency.
+	# But if we draw index 0, 1, 2, adjacency matters.
+	# Checks are done.
 
-	# Inject Optional Elite/MiniBoss Logic (Rooms 7-11)
-	if current_room_index >= 7 and current_room_index <= 11:
+	# Elite / Mini-Boss Injection
+	# "Eligible rooms: 7–11 only"
+	# "20% chance per eligible draw"
+	# "Replaces a combat card only"
+	# "Only one elite OR mini-boss per layer"
+	
+	if current_room_index >= 6 and current_room_index <= 10: # Rooms 7-11 (Indices 6-10)
 		if not elite_defeated_in_layer and not mini_boss_defeated_in_layer:
-			# Replace middle choice (index 1)
-			if active_choices.size() >= 2:
-				var type_to_inject = "ELITE"
-				if randf() > 0.7: # 30% Chance for MiniBoss (inverted logic: >0.7 is 30% of range 0-1)
-					type_to_inject = "MINI_BOSS"
+			if randf() < 0.2: # 20% Chance
+				# Find a combat card to replace
+				var combat_indices = []
+				for k in range(active_choices.size()):
+					if active_choices[k].type == "COMBAT":
+						combat_indices.append(k)
 				
-				active_choices[1] = _create_card(type_to_inject)
+				if not combat_indices.is_empty():
+					var target_idx = combat_indices.pick_random()
+					# Replace
+					# Elite or MiniBoss? Request says "Elite / Mini-Boss Injection".
+					# Let's say 50/50 split or logic?
+					# "Elite / mini-boss replaces... If elite..."
+					# I'll stick to ELITE mostly as per "Elite cards must..." section.
+					# Or use MiniBoss if defined. 
+					# Earlier spec said "70% Elite / 30% Mini". Keeping that distribution.
+					var type = "ELITE"
+					if randf() < 0.3: type = "MINI_BOSS"
+					
+					active_choices[target_idx] = _create_card(type)
+					print("MapController: Injected %s at index %d" % [type, target_idx])
 
 	emit_signal("choices_ready", active_choices)
 
+func _reshuffle_discard() -> void:
+	print("MapController: Reshuffling discard...")
+	room_deck.append_array(discard_pile)
+	discard_pile.clear()
+	room_deck.shuffle()
+	# Apply constraints again? Maybe essential ones?
+	# "Reshuffle discard (except boss)".
+	# Adjacency might break here. Let's run a quick fix.
+	room_deck = _fix_deck_constraints(room_deck)
+
 func select_card(card: RoomCard) -> void:
-	current_room_index += 1
+	# Determine if we advance NOW or LATER
+	# "Updates immediately when returning... after a room"
+	# So we don't increment yet?
+	# Wait, `next_room` is called by RunController `return_to_map`.
+	# So here we DO NOT increment current_room_index.
+	# We just mark selection and emit.
 	
-	if card.type == "ELITE":
-		elite_defeated_in_layer = true
-	elif card.type == "MINI_BOSS":
-		mini_boss_defeated_in_layer = true
+	# Handle specific logic
+	if card.type == "ELITE": elite_defeated_in_layer = true
+	if card.type == "MINI_BOSS": mini_boss_defeated_in_layer = true
+	
+	if card.type == "BOSS":
+		# Boss entered.
+		# Note: Index 14.
+		pass
 		
+	# Consume card logic:
+	# "Chosen card is resolved -> discarded"
+	# "Remaining cards stay" -> This contradicts "Refills to 3" if we don't remove them?
+	# No, "Draw 3, Choose 1". The drawn 3 are removed from deck.
+	# The unchosen 2 are... in `active_choices`.
+	# If we discard the chosen one, what happens to the unchosen?
+	# "Remaining cards stay -> deck refills to 3".
+	# This implies unchosen cards return to the front of the deck? Or stay in "Hand"?
+	# Standard: Put unchosen back on top of deck? Or keep `active_choices` persistent?
+	# "Refills to 3".
+	# If I have [A, B, C]. I pick A.
+	# B and C remain.
+	# I need 3. So I draw D.
+	# Next hand [B, C, D].
+	# So unchosen cards STAY.
+	# Implementation: Push unchosen back to front of `room_deck`?
+	# Yes.
+	
+	active_choices.erase(card) # Remove chosen
+	
+	# Push remaining back to front of deck (in order)
+	# To preserve order [B, C], we push C then B?
+	# pop_front took them.
+	# If choices were [0, 1, 2].
+	# We want next draw to be [1, 2, 3].
+	# So we just prepend them.
+	
+	# Reverse iterate to prepend correctly
+	for i in range(active_choices.size()-1, -1, -1):
+		room_deck.push_front(active_choices[i])
+		
+	active_choices.clear()
+	discard_pile.append(card)
+	
 	emit_signal("room_selected", card)
 
 func _emit_layer_info() -> void:
@@ -217,7 +323,9 @@ func _create_card(type: String) -> RoomCard:
 			c.icon_path = "res://Art/map/icons/node_elite.png"
 			c.title = "Elite Enemy"
 		"MINI_BOSS":
-			# Use elite icon or specific if available. Re-using elite for now.
 			c.icon_path = "res://Art/map/icons/node_elite.png" 
 			c.title = "Mini-Boss"
+		"BOSS":
+			c.icon_path = "res://Art/map/icons/node_boss.png"
+			c.title = "%s Boss" % active_layer_name
 	return c
